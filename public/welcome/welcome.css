@@ -1,0 +1,138 @@
+/* =========================================================
+   Welcome page — first sign-in / invite acceptance
+   ========================================================= */
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: radial-gradient(ellipse at top, var(--paper) 0%, var(--cream) 60%, var(--cream-deep) 100%);
+}
+
+.welcome-stage {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  animation: rise 0.8s ease-out both;
+  position: relative;
+  z-index: 1;
+}
+
+.welcome-ornament {
+  color: var(--gold);
+  margin: 0 auto 16px;
+  display: flex;
+  justify-content: center;
+  animation: spin-slow 60s linear infinite;
+}
+.welcome-ornament.error-ornament {
+  font-size: 48px;
+  animation: none;
+  color: var(--rose);
+}
+
+.welcome-title {
+  font-size: clamp(40px, 8vw, 64px);
+  font-weight: 300;
+  margin: 8px 0 20px;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.welcome-title em {
+  font-weight: 400;
+  color: var(--gold);
+}
+
+.welcome-sub {
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+.loading-text {
+  color: var(--ink-soft);
+  font-style: italic;
+  font-family: var(--font-display);
+  margin-top: 16px;
+}
+
+.welcome-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  text-align: left;
+}
+
+.welcome-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.welcome-field > span:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-left: 2px;
+}
+
+.welcome-field input {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.welcome-field input:focus {
+  outline: none;
+  border-color: var(--evergreen);
+  background: white;
+}
+
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.emoji-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 22px;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.emoji-btn:hover {
+  background: var(--cream-deep);
+  transform: scale(1.1);
+}
+.emoji-btn.selected {
+  background: var(--evergreen);
+  border-color: var(--evergreen);
+  transform: scale(1.05);
+}
+
+.welcome-form .btn-primary {
+  margin-top: 8px;
+  padding: 16px 28px;
+  font-size: 16px;
+}
+
+@media (max-width: 480px) {
+  .emoji-grid { grid-template-columns: repeat(6, 1fr); }
+  .emoji-btn { font-size: 20px; }
+}

@@ -1,0 +1,106 @@
+/* =========================================================
+   Sign-in page styles
+   ========================================================= */
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: radial-gradient(ellipse at top, var(--paper) 0%, var(--cream) 60%, var(--cream-deep) 100%);
+}
+
+.signin-back {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-family: var(--font-body);
+  padding: 8px 16px;
+  border-radius: 999px;
+  transition: background 0.2s ease;
+}
+.signin-back:hover {
+  background: var(--paper);
+  text-decoration: none;
+  color: var(--evergreen);
+}
+
+.signin-stage {
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  animation: rise 0.8s ease-out both;
+  position: relative;
+  z-index: 1;
+}
+
+.signin-ornament {
+  color: var(--gold);
+  margin: 0 auto 8px;
+  display: flex;
+  justify-content: center;
+  animation: spin-slow 60s linear infinite;
+}
+
+.signin-title {
+  font-size: clamp(48px, 9vw, 72px);
+  font-weight: 300;
+  margin: 16px 0 20px;
+  letter-spacing: -0.02em;
+}
+.signin-title em {
+  font-weight: 400;
+  color: var(--gold);
+}
+
+.signin-sub {
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  font-weight: 300;
+}
+
+.signin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+.signin-form label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-left: 4px;
+}
+.signin-form input {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--ink);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.signin-form input:focus {
+  outline: none;
+  border-color: var(--evergreen);
+  background: white;
+}
+.signin-form .btn-primary { margin-top: 8px; }
+
+.signin-message {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--evergreen);
+  min-height: 20px;
+  font-style: italic;
+  font-family: var(--font-display);
+}

@@ -1,0 +1,166 @@
+/* =========================================================
+   Family management page — parents only
+   ========================================================= */
+
+.family-main {
+  padding: 48px 40px 96px;
+  max-width: 760px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.family-hero {
+  text-align: center;
+  padding: 48px 24px 56px;
+  background: var(--paper);
+  border-radius: 24px;
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-warm);
+  margin-bottom: 64px;
+}
+.family-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: -80px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, var(--gold-soft) 0%, transparent 70%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.family-hero > * { position: relative; z-index: 1; }
+
+.family-title {
+  font-size: clamp(48px, 7vw, 72px);
+  font-weight: 300;
+  margin: 16px 0 16px;
+  letter-spacing: -0.02em;
+}
+.family-title em { font-weight: 400; color: var(--gold); }
+
+.family-sub {
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 460px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-heading {
+  font-size: 14px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+  padding-left: 4px;
+}
+
+.family-section {
+  margin-bottom: 48px;
+}
+
+.members-list {
+  list-style: none;
+}
+.member-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  margin-bottom: 8px;
+  animation: rise 0.4s ease-out both;
+}
+.member-row.pending {
+  background: transparent;
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.member-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: var(--cream-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 1px solid var(--rule);
+}
+.member-row.pending .member-avatar {
+  background: transparent;
+  font-size: 20px;
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-style: italic;
+}
+
+.member-body strong {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--evergreen);
+  display: block;
+  margin-bottom: 2px;
+}
+.member-meta {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.member-meta .role-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(184, 133, 60, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-right: 8px;
+}
+.member-meta .role-pill.parent {
+  color: var(--evergreen);
+  background: rgba(31, 61, 43, 0.1);
+}
+
+.member-action {
+  font-size: 12px;
+  color: var(--ink-soft);
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s ease;
+}
+.member-action:hover {
+  color: var(--rose);
+  border-color: var(--rose);
+}
+
+.invite-error {
+  color: var(--rose);
+  font-size: 14px;
+  font-style: italic;
+  font-family: var(--font-display);
+  margin-top: -4px;
+}
+
+@media (max-width: 720px) {
+  .family-main { padding: 32px 20px 64px; }
+  .family-hero { padding: 32px 20px 40px; margin-bottom: 40px; }
+  .member-row { grid-template-columns: 44px 1fr auto; gap: 12px; padding: 12px 16px; }
+  .member-avatar { width: 40px; height: 40px; font-size: 20px; }
+  .member-body strong { font-size: 16px; }
+}

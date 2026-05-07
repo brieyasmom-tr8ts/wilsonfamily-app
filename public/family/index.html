@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Family · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/family/family.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Family</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="family-main">
+
+  <section class="family-hero">
+    <p class="eyebrow centered">The Family</p>
+    <h1 class="family-title">Who&rsquo;s <em>here.</em></h1>
+    <p class="family-sub">Invite the rest of the family. Each person picks their own avatar when they join.</p>
+    <button id="invite-btn" class="btn-primary">+ Invite someone</button>
+  </section>
+
+  <section class="family-section">
+    <h2 class="section-heading">In the family</h2>
+    <ul id="members-list" class="members-list"></ul>
+  </section>
+
+  <section id="pending-section" class="family-section hidden">
+    <h2 class="section-heading">Pending invites</h2>
+    <ul id="pending-list" class="members-list"></ul>
+  </section>
+
+</main>
+
+<!-- INVITE MODAL -->
+<div id="modal-invite" class="modal hidden">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">×</button>
+    <p class="eyebrow">Invite to the family</p>
+    <h3 class="modal-title">A new <em>chair at the table</em></h3>
+    <form id="invite-form" class="modal-form">
+      <label>
+        <span>Name</span>
+        <input id="invite-name" type="text" required placeholder="Their first name" maxlength="80" />
+      </label>
+      <label>
+        <span>Email</span>
+        <input id="invite-email" type="email" required placeholder="them@example.com" />
+      </label>
+      <label>
+        <span>Role</span>
+        <select id="invite-role">
+          <option value="member">Family member</option>
+          <option value="parent">Parent / co-admin</option>
+        </select>
+      </label>
+      <p id="invite-error" class="invite-error hidden"></p>
+      <button type="submit" class="btn-primary">Send the invite</button>
+    </form>
+  </div>
+</div>
+
+<script src="/family/family.js"></script>
+</body>
+</html>

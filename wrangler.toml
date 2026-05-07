@@ -1,0 +1,16 @@
+name = "wilsonfamily-app"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "wilsonfamily-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[vars]
+# Update this to your deployed URL after first deploy.
+# For local dev: http://localhost:8788
+# For production: https://wilsonfamily.app
+APP_URL = "http://localhost:8788"
+# Set FROM_EMAIL via the Cloudflare dashboard or wrangler secret
+# Set POSTMARK_API_KEY via wrangler secret put POSTMARK_API_KEY

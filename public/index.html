@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/home.css" />
+</head>
+<body>
+
+<div class="home-bg" aria-hidden="true">
+  <div class="orb orb-gold"></div>
+  <div class="orb orb-green"></div>
+  <div class="orb orb-rose"></div>
+</div>
+
+<header class="home-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+  </a>
+  <div id="home-user-chip" class="user-chip hidden">
+    <span id="home-user-emoji">🌱</span>
+    <span id="home-user-name"></span>
+    <button id="home-signout-btn" class="link-btn">Sign out</button>
+  </div>
+  <a id="home-signin-link" href="/signin/" class="btn-ghost">Sign in</a>
+</header>
+
+<main class="home-main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-ornament" aria-hidden="true">
+      <svg viewBox="0 0 120 120" width="100" height="100">
+        <circle cx="60" cy="60" r="48" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+        <path d="M60 28 L60 92 M28 60 L92 60" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+        <circle cx="60" cy="60" r="5" fill="currentColor"/>
+      </svg>
+    </div>
+    <p class="eyebrow centered">A shared little corner of the internet</p>
+    <h1 class="hero-title">
+      Just for <em>us.</em>
+    </h1>
+    <p class="hero-sub">
+      A handcrafted home for the things that matter to our family — <br>
+      who we&rsquo;re blessing, what we&rsquo;re celebrating, where we&rsquo;re going next.
+    </p>
+  </section>
+
+  <!-- ROOMS GRID -->
+  <section class="rooms">
+    <h2 class="section-heading">Rooms</h2>
+
+    <div class="room-grid">
+
+      <a href="/generosity/" class="room room-live">
+        <div class="room-icon">🌱</div>
+        <div class="room-status">Live now</div>
+        <h3 class="room-title">The Generosity <em>Fund</em></h3>
+        <p class="room-text">Our shared pot for blessing others. Suggest, vote, give, and remember the stories together.</p>
+        <span class="room-cta">Open the fund &rarr;</span>
+      </a>
+
+      <a id="family-room-card" href="/family/" class="room room-live room-admin hidden">
+        <div class="room-icon">👨‍👩‍👧‍👦</div>
+        <div class="room-status">Parents only</div>
+        <h3 class="room-title">Family <em>Settings</em></h3>
+        <p class="room-text">Invite family members, manage who&rsquo;s in, change roles. The admin behind the scenes.</p>
+        <span class="room-cta">Manage &rarr;</span>
+      </a>
+
+      <div class="room room-soon">
+        <div class="room-icon">🎂</div>
+        <div class="room-status">Coming soon</div>
+        <h3 class="room-title">Birthdays <em>&amp; Days</em></h3>
+        <p class="room-text">Never miss a birthday, anniversary, or family milestone again. Gentle reminders for everyone.</p>
+        <span class="room-cta">Soon</span>
+      </div>
+
+      <div class="room room-soon">
+        <div class="room-icon">📅</div>
+        <div class="room-status">Coming soon</div>
+        <h3 class="room-title">The Family <em>Calendar</em></h3>
+        <p class="room-text">What&rsquo;s happening, who&rsquo;s where, what&rsquo;s coming up. One shared rhythm, all in one place.</p>
+        <span class="room-cta">Soon</span>
+      </div>
+
+      <div class="room room-soon">
+        <div class="room-icon">📝</div>
+        <div class="room-status">Coming soon</div>
+        <h3 class="room-title">Lists <em>&amp; Wishes</em></h3>
+        <p class="room-text">Christmas wishes, gift ideas, grocery runs, what we need, what we want. Shared and easy.</p>
+        <span class="room-cta">Soon</span>
+      </div>
+
+      <div class="room room-soon">
+        <div class="room-icon">📸</div>
+        <div class="room-status">Coming soon</div>
+        <h3 class="room-title">Memories <em>&amp; Stories</em></h3>
+        <p class="room-text">Photos, milestones, family moments worth keeping. A scrapbook that lives with us.</p>
+        <span class="room-cta">Soon</span>
+      </div>
+
+      <div class="room room-soon">
+        <div class="room-icon">✏️</div>
+        <div class="room-status">Coming soon</div>
+        <h3 class="room-title">Notes <em>&amp; Verses</em></h3>
+        <p class="room-text">Verses we&rsquo;re holding onto, prayers, family announcements, words from Mom and Dad.</p>
+        <span class="room-cta">Soon</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- VERSE / FOOTER -->
+  <footer class="home-footer">
+    <p class="verse">
+      <em>&ldquo;As for me and my house, we will serve the Lord.&rdquo;</em>
+      <span class="verse-cite">Joshua 24:15</span>
+    </p>
+  </footer>
+
+</main>
+
+<script src="/home.js"></script>
+</body>
+</html>

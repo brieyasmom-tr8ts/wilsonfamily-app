@@ -1,0 +1,258 @@
+/* =========================================================
+   Wilson Family — Homepage
+   The "front door" of the family hub
+   ========================================================= */
+
+/* Decorative ambient orbs */
+.home-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+.orb-gold {
+  width: 480px; height: 480px;
+  background: var(--gold-soft);
+  top: -120px; right: -120px;
+}
+.orb-green {
+  width: 540px; height: 540px;
+  background: var(--evergreen);
+  bottom: -200px; left: -150px;
+  opacity: 0.18;
+}
+.orb-rose {
+  width: 320px; height: 320px;
+  background: var(--rose);
+  top: 40%; left: 60%;
+  opacity: 0.08;
+}
+
+/* Header */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 48px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero */
+.home-main {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px 96px;
+}
+
+.hero {
+  text-align: center;
+  padding: 80px 24px 96px;
+  animation: rise 0.8s ease-out both;
+}
+
+.hero-ornament {
+  color: var(--gold);
+  margin: 0 auto 24px;
+  display: flex;
+  justify-content: center;
+  animation: spin-slow 80s linear infinite;
+}
+
+.hero-title {
+  font-size: clamp(64px, 11vw, 128px);
+  font-weight: 300;
+  margin: 16px 0 32px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.hero-title em {
+  font-weight: 400;
+  color: var(--gold);
+}
+
+.hero-sub {
+  color: var(--ink-soft);
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.7;
+  font-weight: 300;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+/* Section heading */
+.section-heading {
+  font-size: 14px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 32px;
+  text-align: center;
+  position: relative;
+}
+.section-heading::before,
+.section-heading::after {
+  content: '';
+  display: inline-block;
+  width: 40px;
+  height: 1px;
+  background: var(--rule);
+  vertical-align: middle;
+  margin: 0 16px;
+}
+
+/* Rooms grid */
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.room {
+  background: var(--paper);
+  border-radius: 24px;
+  padding: 36px 32px 32px;
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  animation: rise 0.6s ease-out both;
+}
+.room:nth-child(2) { animation-delay: 0.05s; }
+.room:nth-child(3) { animation-delay: 0.1s; }
+.room:nth-child(4) { animation-delay: 0.15s; }
+.room:nth-child(5) { animation-delay: 0.2s; }
+.room:nth-child(6) { animation-delay: 0.25s; }
+
+.room-live {
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--paper) 0%, #f5ecd6 100%);
+  border-color: rgba(184, 133, 60, 0.3);
+}
+.room-live::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--evergreen) 100%);
+}
+.room-live:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-warm);
+  border-color: var(--gold);
+  text-decoration: none;
+}
+
+.room-soon {
+  opacity: 0.7;
+}
+.room-soon .room-icon { filter: grayscale(0.4); }
+
+.room-admin {
+  background: linear-gradient(180deg, var(--paper) 0%, #ede5d6 100%);
+  border-color: rgba(31, 61, 43, 0.25);
+}
+.room-admin::before {
+  background: linear-gradient(90deg, var(--evergreen) 0%, var(--gold) 100%);
+}
+.room-admin .room-status { color: var(--evergreen); }
+
+.room-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.room-status {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.room-soon .room-status { color: var(--ink-soft); opacity: 0.6; }
+
+.room-title {
+  font-size: 26px;
+  font-weight: 400;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.room-text {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.room-cta {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--evergreen);
+  font-weight: 500;
+  margin-top: auto;
+}
+.room-soon .room-cta {
+  color: var(--ink-soft);
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* Footer / verse */
+.home-footer {
+  margin-top: 96px;
+  padding: 48px 24px;
+  text-align: center;
+  border-top: 1px solid var(--rule);
+}
+.verse {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  color: var(--evergreen);
+  font-weight: 300;
+  line-height: 1.5;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.verse-cite {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  font-style: normal;
+  font-family: var(--font-body);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+@media (max-width: 720px) {
+  .home-header { padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
+  .home-main { padding: 0 20px 64px; }
+  .hero { padding: 48px 16px 64px; }
+  .hero-title { margin: 12px 0 24px; }
+  .room { padding: 28px 24px 24px; min-height: 240px; }
+  .room-title { font-size: 22px; }
+  .home-footer { margin-top: 64px; padding: 32px 20px; }
+  .verse { font-size: 18px; }
+}

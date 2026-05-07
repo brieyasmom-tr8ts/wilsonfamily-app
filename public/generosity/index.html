@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Generosity Fund · Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/generosity/generosity.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Generosity</span>
+  </a>
+  <nav class="app-nav">
+    <button data-tab="pot" class="nav-tab active">The Pot</button>
+    <button data-tab="suggest" class="nav-tab">Suggest</button>
+    <button data-tab="vote" class="nav-tab">Vote</button>
+    <button data-tab="stories" class="nav-tab">Stories</button>
+  </nav>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="app-main">
+
+  <!-- THE POT TAB -->
+  <section id="tab-pot" class="tab active">
+    <div class="hero-pot">
+      <p class="eyebrow centered">The Pot Right Now</p>
+      <div class="balance-display">
+        <span class="balance-currency">$</span>
+        <span id="balance-amount" class="balance-amount">0.00</span>
+      </div>
+      <p class="balance-caption">
+        <span id="balance-contributed">$0</span> given · <span id="balance-disbursed">$0</span> sent out
+      </p>
+      <div class="pot-actions">
+        <button id="add-contribution-btn" class="btn-primary">+ Add to the pot</button>
+      </div>
+    </div>
+
+    <div class="contributions-section">
+      <h2 class="section-title">Recent gifts <em>into</em> the pot</h2>
+      <ul id="contributions-list" class="contributions-list">
+        <li class="empty">Loading…</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="tab-suggest" class="tab">
+    <div class="placeholder-stage">
+      <p class="eyebrow centered">Coming in Stage 2</p>
+      <h2 class="placeholder-title">Suggest someone to bless</h2>
+      <p class="placeholder-text">Anyone in the family will be able to nominate a person, share their story, and propose an amount.</p>
+    </div>
+  </section>
+
+  <section id="tab-vote" class="tab">
+    <div class="placeholder-stage">
+      <p class="eyebrow centered">Coming in Stage 2</p>
+      <h2 class="placeholder-title">Family vote</h2>
+      <p class="placeholder-text">Open suggestions land here for everyone to vote on. Mom and Dad make the final call.</p>
+    </div>
+  </section>
+
+  <section id="tab-stories" class="tab">
+    <div class="placeholder-stage">
+      <p class="eyebrow centered">Coming in Stage 3</p>
+      <h2 class="placeholder-title">The story archive</h2>
+      <p class="placeholder-text">Every gift becomes a story — the person, the reception, the reflection on what God did through it.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ADD CONTRIBUTION MODAL -->
+<div id="modal-contribution" class="modal hidden">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">×</button>
+    <p class="eyebrow">Add to the pot</p>
+    <h3 class="modal-title">Generosity multiplies <em>together</em></h3>
+    <form id="contribution-form" class="modal-form">
+      <label>
+        <span>Amount</span>
+        <div class="amount-input-wrap">
+          <span class="amount-prefix">$</span>
+          <input id="amount-input" type="number" step="0.01" min="0.01" required placeholder="0.00" />
+        </div>
+      </label>
+      <label id="kind-label">
+        <span>Kind</span>
+        <select id="kind-select">
+          <option value="one-time">One-time gift</option>
+          <option value="kid-contribution">My own money</option>
+          <option value="monthly-allocation">Monthly allocation</option>
+        </select>
+      </label>
+      <label>
+        <span>Note <em>(optional)</em></span>
+        <input id="note-input" type="text" maxlength="500" placeholder="A line about this contribution…" />
+      </label>
+      <button type="submit" class="btn-primary">Add it</button>
+    </form>
+  </div>
+</div>
+
+<script src="/generosity/generosity.js"></script>
+</body>
+</html>

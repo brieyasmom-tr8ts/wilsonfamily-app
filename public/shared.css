@@ -1,0 +1,307 @@
+/* =========================================================
+   Wilson Family — Shared Design System
+   Used by every "room" (generosity, future birthdays, calendar, etc.)
+   ========================================================= */
+
+:root {
+  --cream: #f7f1e3;
+  --cream-deep: #efe6d2;
+  --paper: #fbf8ee;
+  --ink: #1c2a22;
+  --ink-soft: #4a5650;
+  --evergreen: #1f3d2b;
+  --evergreen-deep: #122319;
+  --gold: #b8853c;
+  --gold-soft: #d9b574;
+  --rose: #c9624c;
+  --sky: #5b7b8c;
+  --rule: rgba(28, 42, 34, 0.12);
+  --shadow-warm: 0 24px 60px -30px rgba(28, 42, 34, 0.35);
+
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--cream);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  z-index: 0;
+}
+
+a { color: var(--evergreen); text-decoration-color: var(--rule); text-underline-offset: 3px; }
+a:hover { text-decoration-color: var(--evergreen); }
+
+.hidden { display: none !important; }
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.eyebrow.centered { text-align: center; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--evergreen);
+  line-height: 1.05;
+}
+
+em { font-style: italic; font-family: var(--font-display); }
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn-primary {
+  background: var(--evergreen);
+  color: var(--cream);
+  border: none;
+  padding: 14px 28px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px -4px rgba(31, 61, 43, 0.4);
+}
+.btn-primary:hover {
+  background: var(--evergreen-deep);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px -8px rgba(31, 61, 43, 0.5);
+  text-decoration: none;
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--evergreen);
+  border: 1px solid var(--rule);
+  padding: 12px 24px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  border-color: var(--evergreen);
+  background: var(--paper);
+  text-decoration: none;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
+}
+.link-btn:hover { color: var(--evergreen); text-decoration-color: var(--evergreen); }
+
+/* =========================================================
+   SHARED HEADER (used in /generosity and future rooms)
+   ========================================================= */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 40px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--cream);
+  flex-wrap: wrap;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.brand:hover { text-decoration: none; }
+.brand-mark {
+  color: var(--gold);
+  font-size: 20px;
+  font-family: var(--font-display);
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--evergreen);
+  letter-spacing: -0.01em;
+}
+.brand-room {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin-left: 4px;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.user-chip > span:first-child { font-size: 20px; }
+
+/* =========================================================
+   MODAL (shared)
+   ========================================================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fade-in 0.2s ease-out;
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 42, 34, 0.5);
+  backdrop-filter: blur(4px);
+}
+.modal-card {
+  position: relative;
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 40px 36px 32px;
+  max-width: 460px;
+  width: 100%;
+  box-shadow: 0 30px 80px -20px rgba(28, 42, 34, 0.6);
+  border: 1px solid var(--rule);
+  animation: rise 0.3s ease-out both;
+}
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+}
+.modal-close:hover { color: var(--evergreen); }
+.modal-title {
+  font-size: 28px;
+  margin: 8px 0 24px;
+  font-weight: 400;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.modal-form label > span:first-child {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.modal-form label > span em {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  margin-left: 6px;
+}
+.modal-form input,
+.modal-form select {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+}
+.modal-form input:focus,
+.modal-form select:focus {
+  outline: none;
+  border-color: var(--evergreen);
+  background: white;
+}
+.modal-form .btn-primary { margin-top: 8px; }
+
+/* =========================================================
+   ANIMATIONS (shared)
+   ========================================================= */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+@media (max-width: 720px) {
+  .app-header {
+    padding: 16px 20px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .user-chip { justify-content: center; }
+}

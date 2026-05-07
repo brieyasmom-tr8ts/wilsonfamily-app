@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/signin/signin.css" />
+</head>
+<body>
+
+<a href="/" class="signin-back">← Back to home</a>
+
+<div class="signin-stage">
+  <div class="signin-ornament" aria-hidden="true">
+    <svg viewBox="0 0 120 120" width="120" height="120">
+      <circle cx="60" cy="60" r="48" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+      <circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+      <path d="M60 28 L60 92 M28 60 L92 60" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+      <circle cx="60" cy="60" r="5" fill="currentColor"/>
+    </svg>
+  </div>
+  <p class="eyebrow">The Wilson Family</p>
+  <h1 class="signin-title">Welcome <em>home.</em></h1>
+  <p class="signin-sub">Sign in with your family email and we&rsquo;ll<br>send you a one-tap link.</p>
+
+  <form id="signin-form" class="signin-form">
+    <label for="email-input">Your family email</label>
+    <input id="email-input" type="email" required placeholder="you@yourfamily.com" autocomplete="email" />
+    <button type="submit" class="btn-primary">Send me a sign-in link</button>
+  </form>
+  <p id="signin-message" class="signin-message"></p>
+</div>
+
+<script src="/signin/signin.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Welcome · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/welcome/welcome.css" />
+</head>
+<body>
+
+<!-- Loading state -->
+<div id="loading" class="welcome-stage">
+  <div class="welcome-ornament" aria-hidden="true">
+    <svg viewBox="0 0 120 120" width="100" height="100">
+      <circle cx="60" cy="60" r="48" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+      <circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+    </svg>
+  </div>
+  <p class="loading-text">Loading your invitation…</p>
+</div>
+
+<!-- Error state -->
+<div id="error" class="welcome-stage hidden">
+  <div class="welcome-ornament error-ornament">⚠</div>
+  <h1 class="welcome-title">Hmm.</h1>
+  <p id="error-text" class="welcome-sub"></p>
+  <a href="/" class="btn-ghost">Back to home</a>
+</div>
+
+<!-- The actual welcome flow -->
+<div id="welcome" class="welcome-stage hidden">
+  <div class="welcome-ornament" aria-hidden="true">
+    <svg viewBox="0 0 120 120" width="120" height="120">
+      <circle cx="60" cy="60" r="48" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+      <circle cx="60" cy="60" r="32" fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.5"/>
+      <path d="M60 28 L60 92 M28 60 L92 60" stroke="currentColor" stroke-width="0.6" opacity="0.3"/>
+      <circle cx="60" cy="60" r="5" fill="currentColor"/>
+    </svg>
+  </div>
+
+  <p class="eyebrow">An invitation</p>
+  <h1 class="welcome-title">Welcome <em>home,</em><br><span id="welcome-name"></span>.</h1>
+  <p id="welcome-sub" class="welcome-sub"></p>
+
+  <form id="welcome-form" class="welcome-form">
+    <label class="welcome-field">
+      <span>Your name</span>
+      <input id="name-input" type="text" required maxlength="80" />
+    </label>
+
+    <div class="welcome-field">
+      <span>Pick an emoji that feels like you</span>
+      <div id="emoji-grid" class="emoji-grid"></div>
+    </div>
+
+    <button type="submit" class="btn-primary">Enter the family</button>
+  </form>
+</div>
+
+<script src="/welcome/welcome.js"></script>
+</body>
+</html>
