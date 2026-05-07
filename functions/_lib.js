@@ -32,7 +32,10 @@ export async function getCurrentMember(request, env) {
   const now = Math.floor(Date.now() / 1000);
   const result = await env.DB.prepare(`
     SELECT m.id, m.name, m.email, m.role, m.avatar_emoji,
-           m.username, m.birthday, m.anniversary, m.profile_complete
+           m.username, m.birthday, m.anniversary, m.profile_complete,
+           m.favorite_icecream, m.favorite_snack, m.favorite_color,
+           m.favorite_game, m.favorite_movie, m.favorite_song,
+           m.favorite_hobby, m.fun_fact
     FROM sessions s
     JOIN members m ON m.id = s.member_id
     WHERE s.id = ? AND s.expires_at > ?

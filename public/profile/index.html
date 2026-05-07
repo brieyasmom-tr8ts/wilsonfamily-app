@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profile · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/profile/profile.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Profile</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <a href="/" class="link-btn">Home</a>
+  </div>
+</header>
+
+<main class="profile-main" id="profile-content">
+  <div class="profile-card">
+    <div class="profile-avatar" id="profile-avatar">🌱</div>
+    <h1 class="profile-name" id="profile-name"></h1>
+    <p class="profile-username" id="profile-username"></p>
+    <p class="profile-dates" id="profile-dates"></p>
+    <button id="edit-profile-btn" class="btn-ghost hidden">Edit my profile</button>
+  </div>
+
+  <section class="favorites-section" id="favorites-section">
+    <h2 class="section-label">Favorites</h2>
+    <div id="favorites-grid" class="favorites-grid"></div>
+  </section>
+</main>
+
+<!-- EDIT PROFILE MODAL -->
+<div id="modal-edit-profile" class="modal hidden">
+  <div class="modal-backdrop" data-close-profile></div>
+  <div class="modal-card" style="max-width:520px">
+    <button class="modal-close" data-close-profile aria-label="Close">&times;</button>
+    <p class="eyebrow">Your profile</p>
+    <h3 class="modal-title">Make it <em>you</em></h3>
+    <form id="profile-form" class="modal-form">
+      <label><span>Name</span><input id="edit-p-name" type="text" required maxlength="80" /></label>
+      <label><span>Username</span><input id="edit-p-username" type="text" required maxlength="30" /></label>
+      <label><span>Emoji</span><input id="edit-p-emoji" type="text" maxlength="4" /></label>
+      <label><span>Birthday</span><input id="edit-p-birthday" type="date" /></label>
+      <label><span>Anniversary</span><input id="edit-p-anniversary" type="date" /></label>
+      <hr style="border:none;border-top:1px solid var(--rule);margin:4px 0" />
+      <label><span>Favorite ice cream</span><input id="edit-p-icecream" type="text" maxlength="100" placeholder="Mint chocolate chip..." /></label>
+      <label><span>Favorite snack</span><input id="edit-p-snack" type="text" maxlength="100" /></label>
+      <label><span>Favorite color</span><input id="edit-p-color" type="text" maxlength="60" /></label>
+      <label><span>Favorite game</span><input id="edit-p-game" type="text" maxlength="100" /></label>
+      <label><span>Favorite movie</span><input id="edit-p-movie" type="text" maxlength="100" /></label>
+      <label><span>Favorite song</span><input id="edit-p-song" type="text" maxlength="100" /></label>
+      <label><span>Favorite hobby</span><input id="edit-p-hobby" type="text" maxlength="100" /></label>
+      <label><span>Fun fact about you</span><input id="edit-p-funfact" type="text" maxlength="200" /></label>
+      <p id="profile-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Save profile</button>
+    </form>
+  </div>
+</div>
+
+<script src="/profile/profile.js"></script>
+</body>
+</html>
