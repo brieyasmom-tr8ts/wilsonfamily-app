@@ -31,7 +31,10 @@
     <p class="eyebrow centered">The Family</p>
     <h1 class="family-title">Who&rsquo;s <em>here.</em></h1>
     <p class="family-sub">Invite the rest of the family. Each person picks their own avatar when they join.</p>
-    <button id="invite-btn" class="btn-primary">+ Invite someone</button>
+    <div class="hero-actions">
+      <button id="invite-btn" class="btn-primary">+ Invite someone</button>
+      <button id="add-kid-btn" class="btn-ghost">+ Add a kid</button>
+    </div>
   </section>
 
   <section class="family-section">
@@ -45,6 +48,59 @@
   </section>
 
 </main>
+
+<!-- ADD KID MODAL -->
+<div id="modal-kid" class="modal hidden">
+  <div class="modal-backdrop" data-close-kid></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-kid aria-label="Close">&times;</button>
+    <p class="eyebrow">Kid account</p>
+    <h3 class="modal-title">A young <em>Wilson</em></h3>
+    <form id="kid-form" class="modal-form">
+      <label>
+        <span>Name</span>
+        <input id="kid-name" type="text" required placeholder="Their first name" maxlength="80" />
+      </label>
+      <label>
+        <span>Avatar emoji</span>
+        <input id="kid-emoji" type="text" placeholder="🌱" maxlength="4" />
+      </label>
+      <label>
+        <span>4-digit PIN</span>
+        <input id="kid-pin" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" required placeholder="e.g. 1234" />
+      </label>
+      <label>
+        <span>Confirm PIN</span>
+        <input id="kid-pin-confirm" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" required placeholder="Same 4 digits" />
+      </label>
+      <p id="kid-error" class="invite-error hidden"></p>
+      <button type="submit" class="btn-primary">Create kid account</button>
+    </form>
+  </div>
+</div>
+
+<!-- RESET PIN MODAL -->
+<div id="modal-reset-pin" class="modal hidden">
+  <div class="modal-backdrop" data-close-reset></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-reset aria-label="Close">&times;</button>
+    <p class="eyebrow">Reset PIN</p>
+    <h3 class="modal-title">New PIN for <em id="reset-pin-name"></em></h3>
+    <form id="reset-pin-form" class="modal-form">
+      <input type="hidden" id="reset-pin-member-id" />
+      <label>
+        <span>New 4-digit PIN</span>
+        <input id="reset-pin-value" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" required placeholder="e.g. 5678" />
+      </label>
+      <label>
+        <span>Confirm PIN</span>
+        <input id="reset-pin-confirm" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" required placeholder="Same 4 digits" />
+      </label>
+      <p id="reset-pin-error" class="invite-error hidden"></p>
+      <button type="submit" class="btn-primary">Reset PIN</button>
+    </form>
+  </div>
+</div>
 
 <!-- INVITE MODAL -->
 <div id="modal-invite" class="modal hidden">

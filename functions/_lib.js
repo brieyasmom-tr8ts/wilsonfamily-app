@@ -61,3 +61,50 @@ export function forbidden(message = 'Not allowed') {
 export function badRequest(message) {
   return json({ error: message }, { status: 400 });
 }
+
+export function tooManyRequests(message = 'Too many attempts. Try again later.') {
+  return json({ error: message }, { status: 429 });
+}
+
+// --- PIN hashing (PBKDF2 via Web Crypto, Workers-compatible) ---
+
+export async function hashPin(pin) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(pin),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    key,
+    256
+  );
+  const hash = new Uint8Array(bits);
+  const saltHex = Array.from(salt, b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = Array.from(hash, b => b.toString(16).padStart(2, '0')).join('');
+  return `${saltHex}:${hashHex}`;
+}
+
+export async function verifyPin(pin, stored) {
+  if (!stored || !pin) return false;
+  const [saltHex, expectedHex] = stored.split(':');
+  if (!saltHex || !expectedHex) return false;
+  const salt = new Uint8Array(saltHex.match(/.{2}/g).map(h => parseInt(h, 16)));
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(pin),
+    'PBKDF2',
+    false,
+    ['deriveBits']
+  );
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    key,
+    256
+  );
+  const hashHex = Array.from(new Uint8Array(bits), b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex === expectedHex;
+}

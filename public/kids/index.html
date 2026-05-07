@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>Who are you? · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/kids/kids.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+  </a>
+  <a href="/signin/" class="link-btn">Sign in with email instead</a>
+</header>
+
+<!-- STEP 1: Pick who you are -->
+<main id="step-pick" class="kids-main">
+  <p class="eyebrow centered">Welcome home</p>
+  <h1 class="kids-title">Who are <em>you?</em></h1>
+  <div id="kid-grid" class="kid-grid"></div>
+  <p id="no-kids" class="no-kids hidden">No kid accounts yet. A parent can add them on the Family page.</p>
+</main>
+
+<!-- STEP 2: Enter your PIN -->
+<main id="step-pin" class="kids-main hidden">
+  <button id="back-btn" class="back-btn" aria-label="Go back">&larr;</button>
+  <div class="pin-hello">
+    <div id="pin-avatar" class="pin-avatar"></div>
+    <h2 class="pin-name">Hi, <em id="pin-name-text"></em></h2>
+  </div>
+  <p class="pin-prompt">Enter your 4-digit PIN</p>
+  <div id="pin-dots" class="pin-dots">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+  <p id="pin-error" class="pin-error hidden"></p>
+  <div class="pin-pad">
+    <button class="pin-key" data-key="1">1</button>
+    <button class="pin-key" data-key="2">2</button>
+    <button class="pin-key" data-key="3">3</button>
+    <button class="pin-key" data-key="4">4</button>
+    <button class="pin-key" data-key="5">5</button>
+    <button class="pin-key" data-key="6">6</button>
+    <button class="pin-key" data-key="7">7</button>
+    <button class="pin-key" data-key="8">8</button>
+    <button class="pin-key" data-key="9">9</button>
+    <button class="pin-key pin-key-empty" disabled></button>
+    <button class="pin-key" data-key="0">0</button>
+    <button class="pin-key pin-key-del" id="pin-delete" aria-label="Delete">&larr;</button>
+  </div>
+</main>
+
+<script src="/kids/kids.js"></script>
+</body>
+</html>

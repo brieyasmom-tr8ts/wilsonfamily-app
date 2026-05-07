@@ -149,6 +149,25 @@
   border-color: var(--rose);
 }
 
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.kid-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sky);
+  background: rgba(91, 123, 140, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
 .invite-error {
   color: var(--rose);
   font-size: 14px;

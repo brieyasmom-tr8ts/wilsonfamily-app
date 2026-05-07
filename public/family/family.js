@@ -38,6 +38,13 @@ function init() {
   $$('#modal-invite [data-close]').forEach(el => el.addEventListener('click', closeInviteModal));
   $('#invite-form').addEventListener('submit', submitInvite);
 
+  $('#add-kid-btn').addEventListener('click', openKidModal);
+  $$('[data-close-kid]').forEach(el => el.addEventListener('click', closeKidModal));
+  $('#kid-form').addEventListener('submit', submitKid);
+
+  $$('[data-close-reset]').forEach(el => el.addEventListener('click', closeResetPinModal));
+  $('#reset-pin-form').addEventListener('submit', submitResetPin);
+
   loadFamily();
 }
 
@@ -53,19 +60,29 @@ async function loadFamily() {
 
 function renderMembers(members) {
   const list = $('#members-list');
-  list.innerHTML = members.map(m => `
+  list.innerHTML = members.map(m => {
+    const isKid = m.email && m.email.endsWith('@family.internal');
+    const metaText = isKid ? '<span class="kid-badge">PIN login</span>' : escapeHtml(m.email);
+    const action = isKid
+      ? `<button class="member-action reset-pin-btn" data-id="${m.id}" data-name="${escapeAttr(m.name)}">Reset PIN</button>`
+      : '<div></div>';
+    return `
     <li class="member-row">
       <div class="member-avatar">${m.avatar_emoji || '🌱'}</div>
       <div class="member-body">
         <strong>${escapeHtml(m.name)}</strong>
         <div class="member-meta">
           <span class="role-pill ${m.role === 'parent' ? 'parent' : ''}">${m.role}</span>
-          ${escapeHtml(m.email)}
+          ${metaText}
         </div>
       </div>
-      <div></div>
-    </li>
-  `).join('');
+      ${action}
+    </li>`;
+  }).join('');
+
+  list.querySelectorAll('.reset-pin-btn').forEach(btn => {
+    btn.addEventListener('click', () => openResetPinModal(parseInt(btn.dataset.id, 10), btn.dataset.name));
+  });
 }
 
 function renderPending(invites) {
@@ -150,10 +167,132 @@ async function submitInvite(e) {
   }
 }
 
+// --- Kid account modal ---
+
+function openKidModal() {
+  $('#modal-kid').classList.remove('hidden');
+  $('#kid-error').classList.add('hidden');
+  setTimeout(() => $('#kid-name').focus(), 100);
+}
+
+function closeKidModal() {
+  $('#modal-kid').classList.add('hidden');
+  $('#kid-form').reset();
+  $('#kid-error').classList.add('hidden');
+}
+
+async function submitKid(e) {
+  e.preventDefault();
+  const name = $('#kid-name').value.trim();
+  const emoji = $('#kid-emoji').value.trim() || '🌱';
+  const pin = $('#kid-pin').value;
+  const confirm = $('#kid-pin-confirm').value;
+
+  const errEl = $('#kid-error');
+  errEl.classList.add('hidden');
+
+  if (!/^\d{4}$/.test(pin)) {
+    errEl.textContent = 'PIN must be exactly 4 digits.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (pin !== confirm) {
+    errEl.textContent = 'PINs don\u2019t match.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Creating\u2026';
+
+  try {
+    const res = await fetch('/api/kids', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, pin, avatar_emoji: emoji })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = data.error || 'Could not create kid account.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    closeKidModal();
+    loadFamily();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Create kid account';
+  }
+}
+
+// --- Reset PIN modal ---
+
+function openResetPinModal(memberId, name) {
+  $('#reset-pin-member-id').value = memberId;
+  $('#reset-pin-name').textContent = name;
+  $('#reset-pin-error').classList.add('hidden');
+  $('#modal-reset-pin').classList.remove('hidden');
+  setTimeout(() => $('#reset-pin-value').focus(), 100);
+}
+
+function closeResetPinModal() {
+  $('#modal-reset-pin').classList.add('hidden');
+  $('#reset-pin-form').reset();
+  $('#reset-pin-error').classList.add('hidden');
+}
+
+async function submitResetPin(e) {
+  e.preventDefault();
+  const memberId = parseInt($('#reset-pin-member-id').value, 10);
+  const pin = $('#reset-pin-value').value;
+  const confirm = $('#reset-pin-confirm').value;
+
+  const errEl = $('#reset-pin-error');
+  errEl.classList.add('hidden');
+
+  if (!/^\d{4}$/.test(pin)) {
+    errEl.textContent = 'PIN must be exactly 4 digits.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (pin !== confirm) {
+    errEl.textContent = 'PINs don\u2019t match.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Resetting\u2026';
+
+  try {
+    const res = await fetch('/api/kids/reset-pin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ member_id: memberId, pin })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = data.error || 'Could not reset PIN.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    closeResetPinModal();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Reset PIN';
+  }
+}
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[c]);
+}
+
+function escapeAttr(s) {
+  return escapeHtml(s);
 }
 
 function timeAgo(unix) {
