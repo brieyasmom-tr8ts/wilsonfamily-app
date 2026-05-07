@@ -1,7 +1,8 @@
-// GET /api/media/:key — serve a file from R2
+// GET /api/media/* — serve a file from R2
+// Handles both /api/media/key.jpg and /api/media/photos/key.jpg
 
 export async function onRequestGet({ params, env }) {
-  const key = params.key;
+  const key = (params.path || []).join('/');
   if (!key) return new Response('Not found', { status: 404 });
 
   const object = await env.MEDIA.get(key);
