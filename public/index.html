@@ -53,6 +53,31 @@
     </p>
   </section>
 
+  <!-- JOIN THE FAMILY (shown when not signed in) -->
+  <section id="join-section" class="join-section hidden">
+    <div class="join-card">
+      <p class="eyebrow centered">Got the family code?</p>
+      <h2 class="join-title">Come on <em>in.</em></h2>
+      <form id="join-form" class="join-form">
+        <label>
+          <span>Your name</span>
+          <input id="join-name" type="text" required placeholder="First name" maxlength="80" />
+        </label>
+        <label>
+          <span>Email</span>
+          <input id="join-email" type="email" required placeholder="you@example.com" />
+        </label>
+        <label>
+          <span>Family code</span>
+          <input id="join-code" type="text" required placeholder="The code from Mom or Dad" maxlength="40" autocomplete="off" />
+        </label>
+        <p id="join-error" class="join-error hidden"></p>
+        <p id="join-success" class="join-success hidden"></p>
+        <button type="submit" class="btn-primary">Join the family</button>
+      </form>
+    </div>
+  </section>
+
   <!-- ROOMS GRID -->
   <section class="rooms">
     <h2 class="section-heading">Rooms</h2>

@@ -218,6 +218,78 @@
   font-style: italic;
 }
 
+/* Join the family */
+.join-section {
+  max-width: 460px;
+  margin: 0 auto 64px;
+  animation: rise 0.6s ease-out both;
+}
+.join-card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 24px;
+  padding: 40px 36px 36px;
+  box-shadow: var(--shadow-warm);
+  text-align: center;
+}
+.join-title {
+  font-size: 32px;
+  font-weight: 300;
+  margin: 12px 0 28px;
+}
+.join-title em { font-weight: 400; color: var(--gold); }
+
+.join-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+.join-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.join-form label > span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.join-form input {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+}
+.join-form input:focus {
+  outline: none;
+  border-color: var(--evergreen);
+  background: white;
+}
+.join-form .btn-primary { margin-top: 8px; }
+
+.join-error {
+  color: var(--rose);
+  font-size: 14px;
+  font-style: italic;
+  font-family: var(--font-display);
+  margin: -4px 0;
+  text-align: center;
+}
+.join-success {
+  color: var(--evergreen);
+  font-size: 14px;
+  font-style: italic;
+  font-family: var(--font-display);
+  margin: -4px 0;
+  text-align: center;
+}
+
 /* Footer / verse */
 .home-footer {
   margin-top: 96px;
