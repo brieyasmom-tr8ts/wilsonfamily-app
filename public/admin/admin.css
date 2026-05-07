@@ -75,7 +75,7 @@
   vertical-align: middle;
 }
 .admin-table tr:last-child td { border-bottom: none; }
-.admin-table tr:hover td { background: rgba(109, 92, 255, 0.02); }
+.admin-table tr:hover td { background: rgba(37, 99, 235, 0.02); }
 
 .td-emoji { font-size: 20px; text-align: center; width: 40px; }
 .td-name { font-weight: 600; color: var(--ink); }

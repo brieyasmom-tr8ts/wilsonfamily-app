@@ -9,9 +9,9 @@
   --surface-raised: #ffffff;
   --ink: #1a1a2e;
   --ink-soft: #6b7280;
-  --primary: #6d5cff;
-  --primary-deep: #5a47e6;
-  --primary-light: rgba(109, 92, 255, 0.1);
+  --primary: #2563eb;
+  --primary-deep: #1d4ed8;
+  --primary-light: rgba(37, 99, 235, 0.08);
   --accent: #ff6b35;
   --accent-soft: #ffb088;
   --accent-light: rgba(255, 107, 53, 0.1);
@@ -23,7 +23,7 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 20px 50px -12px rgba(0, 0, 0, 0.15);
-  --shadow-glow: 0 0 40px rgba(109, 92, 255, 0.15);
+  --shadow-glow: 0 0 40px rgba(37, 99, 235, 0.15);
 
   --font-display: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -87,12 +87,12 @@ em { font-style: italic; }
   text-decoration: none;
   display: inline-block;
   transition: all 0.2s ease;
-  box-shadow: var(--shadow-sm), 0 0 0 0 rgba(109, 92, 255, 0);
+  box-shadow: var(--shadow-sm), 0 0 0 0 rgba(37, 99, 235, 0);
 }
 .btn-primary:hover {
   background: var(--primary-deep);
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md), 0 0 20px rgba(109, 92, 255, 0.25);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(37, 99, 235, 0.2);
   text-decoration: none;
 }
 .btn-primary:active { transform: translateY(0); }
