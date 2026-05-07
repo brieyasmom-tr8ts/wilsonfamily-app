@@ -5,7 +5,7 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "wilsonfamily-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "253eb4a2-7cee-4a1d-b172-91d3b656b1b3"
 
 [vars]
 # Update this to your deployed URL after first deploy.
