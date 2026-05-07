@@ -1,4 +1,4 @@
-// Scrapbook — photo grid with tags
+// Scrapbook — page-flip book view
 
 const $ = (sel) => document.querySelector(sel);
 const $$ = (sel) => document.querySelectorAll(sel);
@@ -7,7 +7,7 @@ let me = null;
 let photos = [];
 let members = [];
 let selectedTags = new Set();
-let currentPage = 1;
+let currentPageIdx = 0;
 
 (async function boot() {
   try {
@@ -28,10 +28,8 @@ function init() {
     window.location.href = '/';
   });
 
-  // Load members for filter + tag picker
   loadMembers();
 
-  // Photo file preview
   $('#photo-file').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -41,24 +39,13 @@ function init() {
     $('#photo-upload-label').style.display = 'none';
   });
 
-  // Modal
   $('#add-photo-btn').addEventListener('click', openPhotoModal);
   $$('[data-close-photo]').forEach(el => el.addEventListener('click', closePhotoModal));
   $('#photo-form').addEventListener('submit', submitPhoto);
 
-  // Viewer
-  $('#viewer-close').addEventListener('click', closeViewer);
-  $('.viewer-backdrop').addEventListener('click', closeViewer);
-
-  // Filter
   $('#filter-member').addEventListener('change', () => {
-    currentPage = 1;
+    currentPageIdx = 0;
     loadPhotos();
-  });
-
-  $('#load-more').addEventListener('click', () => {
-    currentPage++;
-    loadPhotos(true);
   });
 
   loadPhotos();
@@ -66,20 +53,12 @@ function init() {
 
 async function loadMembers() {
   try {
-    // Use admin endpoint if admin, otherwise use a simpler approach
-    const res = await fetch('/api/kids'); // This returns all members with pin, but we need all
-    // Actually let's just load from the tag grid after getting photos
-    // For now, fetch admin members list if admin, or use a dedicated endpoint
-    const res2 = await fetch('/api/admin/members');
-    if (res2.ok) {
-      const data = await res2.json();
+    const res = await fetch('/api/admin/members');
+    if (res.ok) {
+      const data = await res.json();
       members = data.members || [];
     }
-  } catch (e) {
-    // Not admin — we'll get member names from photo tags
-    members = [];
-  }
-
+  } catch (e) { members = []; }
   renderFilter();
   renderTagPicker();
 }
@@ -93,124 +72,130 @@ function renderFilter() {
 
 function renderTagPicker() {
   const grid = $('#tag-grid');
-  if (members.length === 0) {
-    grid.innerHTML = '<span style="color:var(--ink-soft);font-size:13px">Loading members...</span>';
-    return;
-  }
+  if (members.length === 0) return;
   grid.innerHTML = members.map(m =>
     `<button type="button" class="tag-opt" data-member-id="${m.id}">${esc(m.avatar_emoji || '🌱')} ${esc(m.name)}</button>`
   ).join('');
-
   grid.querySelectorAll('.tag-opt').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = parseInt(btn.dataset.memberId);
-      if (selectedTags.has(id)) {
-        selectedTags.delete(id);
-        btn.classList.remove('selected');
-      } else {
-        selectedTags.add(id);
-        btn.classList.add('selected');
-      }
+      if (selectedTags.has(id)) { selectedTags.delete(id); btn.classList.remove('selected'); }
+      else { selectedTags.add(id); btn.classList.add('selected'); }
     });
   });
 }
 
-async function loadPhotos(append) {
+async function loadPhotos() {
   const filterMember = $('#filter-member').value;
-  let url = `/api/photos?page=${currentPage}`;
+  let url = '/api/photos?page=1';
   if (filterMember) url += `&member=${filterMember}`;
 
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return;
-    const data = await res.json();
+  // Load all pages for the book
+  let allPhotos = [];
+  let page = 1;
+  while (true) {
+    let fetchUrl = `/api/photos?page=${page}`;
+    if (filterMember) fetchUrl += `&member=${filterMember}`;
+    try {
+      const res = await fetch(fetchUrl);
+      if (!res.ok) break;
+      const data = await res.json();
+      if (!data.photos || data.photos.length === 0) break;
+      allPhotos = allPhotos.concat(data.photos);
+      if (data.photos.length < 24) break;
+      page++;
+    } catch (e) { break; }
+  }
 
-    if (append) {
-      photos = [...photos, ...(data.photos || [])];
-    } else {
-      photos = data.photos || [];
-    }
-
-    renderGrid(append);
-
-    // Show/hide load more
-    const loadMore = $('#load-more');
-    if ((data.photos || []).length >= 24) {
-      loadMore.classList.remove('hidden');
-    } else {
-      loadMore.classList.add('hidden');
-    }
-  } catch (e) { console.error(e); }
+  // Sort chronologically (oldest first for the book)
+  photos = allPhotos.sort((a, b) => a.created_at - b.created_at);
+  currentPageIdx = photos.length > 0 ? photos.length - 1 : 0; // Start at latest
+  renderBook();
 }
 
-function renderGrid(append) {
+function renderBook() {
   const grid = $('#photo-grid');
   if (photos.length === 0) {
-    grid.innerHTML = '<p class="empty" style="grid-column:1/-1;text-align:center;padding:48px;color:var(--ink-soft)">No photos yet. Add the first one!</p>';
+    grid.innerHTML = `
+      <div class="book">
+        <div class="book-empty">
+          <div class="book-empty-icon">📸</div>
+          <div class="book-empty-text">The scrapbook is empty.<br>Add the first memory!</div>
+        </div>
+      </div>`;
     return;
   }
 
-  const html = photos.map((p, i) => {
-    const tagNames = p.tags.map(t => t.name).join(', ');
-    return `
-    <div class="photo-card" data-idx="${i}" style="animation-delay:${Math.min(i * 0.03, 0.3)}s">
-      <img src="${esc(p.url)}" loading="lazy" alt="${esc(p.caption || '')}" />
-      <div class="photo-card-info">
-        ${p.caption ? '<div class="photo-card-caption">' + esc(p.caption) + '</div>' : ''}
-        ${tagNames ? '<div class="photo-card-tags">' + esc(tagNames) + '</div>' : ''}
+  renderPage();
+}
+
+function renderPage() {
+  const grid = $('#photo-grid');
+  const p = photos[currentPageIdx];
+  if (!p) return;
+
+  const isAdmin = me.role === 'admin';
+  const canDelete = p.uploaded_by === me.id || isAdmin;
+  const dateStr = p.taken_date
+    ? new Date(p.taken_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : new Date(p.created_at * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+  grid.innerHTML = `
+    <div class="book">
+      <div class="page">
+        <div class="page-photo-wrap">
+          <img class="page-photo" src="${esc(p.url)}" alt="${esc(p.caption || '')}" />
+        </div>
+        ${p.caption ? `<div class="page-caption">${esc(p.caption)}</div>` : ''}
+        ${p.tags.length > 0 ? `<div class="page-tags">${p.tags.map(t => `<span class="page-tag">${esc(t.avatar_emoji || '🌱')} ${esc(t.name)}</span>`).join('')}</div>` : ''}
+        <div class="page-meta">${esc(p.uploaded_by_name)} &middot; ${dateStr}</div>
+        <div class="page-number">Page ${currentPageIdx + 1} of ${photos.length}</div>
+        ${canDelete ? `<div class="page-actions"><button class="page-del-btn" id="page-delete">Delete this page</button></div>` : ''}
+      </div>
+      <div class="page-nav">
+        <button class="page-nav-btn" id="prev-page" ${currentPageIdx === 0 ? 'disabled' : ''}>&larr; Previous</button>
+        <span class="page-indicator">${currentPageIdx + 1} / ${photos.length}</span>
+        <button class="page-nav-btn" id="next-page" ${currentPageIdx === photos.length - 1 ? 'disabled' : ''}>Next &rarr;</button>
       </div>
     </div>`;
-  }).join('');
 
-  if (append) {
-    grid.insertAdjacentHTML('beforeend', html);
-  } else {
-    grid.innerHTML = html;
+  $('#prev-page').addEventListener('click', () => { if (currentPageIdx > 0) { currentPageIdx--; renderPage(); } });
+  $('#next-page').addEventListener('click', () => { if (currentPageIdx < photos.length - 1) { currentPageIdx++; renderPage(); } });
+
+  const delBtn = $('#page-delete');
+  if (delBtn) {
+    delBtn.addEventListener('click', () => deletePhoto(p.id));
   }
 
-  grid.querySelectorAll('.photo-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const idx = parseInt(card.dataset.idx);
-      openViewer(photos[idx]);
-    });
-  });
-}
+  // Keyboard navigation
+  document.onkeydown = (e) => {
+    if (e.key === 'ArrowLeft' && currentPageIdx > 0) { currentPageIdx--; renderPage(); }
+    if (e.key === 'ArrowRight' && currentPageIdx < photos.length - 1) { currentPageIdx++; renderPage(); }
+  };
 
-function openViewer(photo) {
-  $('#viewer-img').src = photo.url;
-  $('#viewer-caption').textContent = photo.caption || '';
-  $('#viewer-tags').innerHTML = photo.tags.map(t =>
-    `<span class="viewer-tag">${esc(t.avatar_emoji || '🌱')} ${esc(t.name)}</span>`
-  ).join('');
-
-  const date = photo.taken_date || new Date(photo.created_at * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  $('#viewer-meta').textContent = `${photo.uploaded_by_name} · ${date}`;
-
-  const actions = $('#viewer-actions');
-  if (photo.uploaded_by === me.id || me.role === 'admin') {
-    actions.classList.remove('hidden');
-    $('#viewer-delete').onclick = () => deletePhoto(photo.id);
-  } else {
-    actions.classList.add('hidden');
-  }
-
-  $('#photo-viewer').classList.remove('hidden');
-}
-
-function closeViewer() {
-  $('#photo-viewer').classList.add('hidden');
+  // Swipe support
+  let touchStartX = 0;
+  const book = grid.querySelector('.book');
+  book.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  book.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && currentPageIdx < photos.length - 1) { currentPageIdx++; renderPage(); }
+      if (diff < 0 && currentPageIdx > 0) { currentPageIdx--; renderPage(); }
+    }
+  }, { passive: true });
 }
 
 async function deletePhoto(id) {
-  if (!confirm('Delete this photo?')) return;
+  if (!confirm('Delete this page from the scrapbook?')) return;
   await fetch('/api/photos', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ id })
   });
-  closeViewer();
-  currentPage = 1;
-  loadPhotos();
+  photos = photos.filter(p => p.id !== id);
+  if (currentPageIdx >= photos.length) currentPageIdx = Math.max(0, photos.length - 1);
+  renderBook();
 }
 
 function openPhotoModal() {
@@ -261,7 +246,6 @@ async function submitPhoto(e) {
       statusEl.className = 'upload-status done';
       setTimeout(() => {
         closePhotoModal();
-        currentPage = 1;
         loadPhotos();
       }, 500);
     } else {

@@ -1,10 +1,10 @@
 /* =========================================================
-   Scrapbook
+   Scrapbook — page-flip book style
    ========================================================= */
 
 .scrap-main {
   padding: 24px 20px 96px;
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
@@ -32,124 +32,161 @@
   cursor: pointer;
 }
 
-/* Photo grid — masonry-like */
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.photo-card {
-  position: relative;
-  border-radius: 14px;
-  overflow: hidden;
-  cursor: pointer;
+/* The Book */
+.book {
   background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg),
+    -4px 0 0 #e8e4de,
+    -8px 0 0 #ddd8d0;
   border: 1px solid var(--rule);
-  transition: all 0.2s ease;
-  animation: rise 0.4s ease-out both;
-}
-.photo-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-.photo-card img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-}
-.photo-card-info {
-  padding: 10px 12px;
-}
-.photo-card-caption {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-}
-.photo-card-tags {
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 2px;
+  position: relative;
+  min-height: 500px;
 }
 
-.load-more {
-  display: block;
-  margin: 32px auto 0;
+/* Page */
+.page {
+  padding: 32px;
+  animation: page-flip 0.4s ease-out both;
 }
 
-/* Viewer */
-.photo-viewer {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: fade-in 0.2s ease-out;
+@keyframes page-flip {
+  from { opacity: 0; transform: perspective(800px) rotateY(-8deg); }
+  to { opacity: 1; transform: perspective(800px) rotateY(0); }
 }
-.viewer-backdrop {
+
+.page-photo-wrap {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 20px;
+  background: #f0f0f0;
+  position: relative;
+}
+.page-photo-wrap::after {
+  content: '';
   position: absolute;
   inset: 0;
-  background: rgba(26, 26, 46, 0.85);
-  backdrop-filter: blur(12px);
+  border-radius: 12px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.06);
+  pointer-events: none;
 }
-.viewer-content {
-  position: relative;
-  max-width: 700px;
+.page-photo {
   width: 100%;
-  animation: rise 0.3s ease-out both;
-}
-.viewer-img {
-  width: 100%;
-  border-radius: 16px;
   display: block;
-  max-height: 70vh;
+  max-height: 480px;
   object-fit: contain;
-  background: black;
+  background: #fafafa;
 }
-.viewer-info {
-  background: var(--surface);
-  border-radius: 0 0 16px 16px;
-  padding: 20px;
-  margin-top: -8px;
-  position: relative;
-}
-.viewer-caption {
-  font-size: 16px;
-  font-weight: 600;
+
+.page-caption {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
   color: var(--ink);
   margin-bottom: 8px;
+  text-align: center;
 }
-.viewer-tags {
+
+.page-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  justify-content: center;
   margin-bottom: 8px;
 }
-.viewer-tag {
+.page-tag {
   font-size: 12px;
   font-weight: 600;
   background: var(--primary-light);
   color: var(--primary);
-  padding: 3px 10px;
+  padding: 3px 12px;
   border-radius: 999px;
 }
-.viewer-meta {
+
+.page-meta {
+  text-align: center;
   font-size: 12px;
   color: var(--ink-soft);
-}
-.viewer-actions {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--rule);
+  font-weight: 500;
 }
 
-/* Upload */
+.page-number {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+  margin-top: 16px;
+  font-style: italic;
+  font-family: var(--font-display);
+}
+
+/* Page navigation */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid var(--rule);
+  background: var(--bg);
+}
+.page-nav-btn {
+  padding: 10px 24px;
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.page-nav-btn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+.page-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.page-indicator {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* Empty state */
+.book-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  padding: 40px;
+  color: var(--ink-soft);
+}
+.book-empty-icon { font-size: 48px; margin-bottom: 16px; }
+.book-empty-text { font-size: 16px; font-weight: 500; }
+
+/* Delete button on page */
+.page-actions {
+  text-align: center;
+  margin-top: 12px;
+}
+.page-del-btn {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  cursor: pointer;
+  color: var(--ink-soft);
+  transition: all 0.15s ease;
+}
+.page-del-btn:hover { color: var(--rose); border-color: var(--rose); }
+
+/* Upload modal */
 .file-input {
   position: absolute;
   width: 1px; height: 1px;
@@ -193,7 +230,6 @@
 .upload-status.uploading { color: var(--primary); background: var(--primary-light); }
 .upload-status.done { color: var(--emerald); background: var(--emerald-light); }
 
-/* Tag picker */
 .tag-grid {
   display: flex;
   flex-wrap: wrap;
@@ -231,7 +267,8 @@
 
 @media (max-width: 720px) {
   .scrap-main { padding: 16px 12px 64px; }
-  .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .photo-card-info { padding: 8px 10px; }
-  .viewer-content { max-width: 100%; }
+  .page { padding: 20px 16px; }
+  .page-caption { font-size: 17px; }
+  .page-photo { max-height: 360px; }
+  .book { min-height: 400px; }
 }

@@ -35,29 +35,15 @@
     </div>
   </div>
 
-  <div id="photo-grid" class="photo-grid">
-    <p class="empty">Loading...</p>
-  </div>
-
-  <button id="load-more" class="btn-ghost load-more hidden">Load more</button>
-</main>
-
-<!-- PHOTO VIEWER OVERLAY -->
-<div id="photo-viewer" class="photo-viewer hidden">
-  <div class="viewer-backdrop"></div>
-  <div class="viewer-content">
-    <button id="viewer-close" class="modal-close" aria-label="Close">&times;</button>
-    <img id="viewer-img" class="viewer-img" />
-    <div class="viewer-info">
-      <p id="viewer-caption" class="viewer-caption"></p>
-      <div id="viewer-tags" class="viewer-tags"></div>
-      <p id="viewer-meta" class="viewer-meta"></p>
-      <div id="viewer-actions" class="viewer-actions hidden">
-        <button id="viewer-delete" class="btn-ghost" style="color:var(--rose);border-color:var(--rose)">Delete</button>
+  <div id="photo-grid">
+    <div class="book">
+      <div class="book-empty">
+        <div class="book-empty-icon">📸</div>
+        <div class="book-empty-text">Loading...</div>
       </div>
     </div>
   </div>
-</div>
+</main>
 
 <!-- ADD PHOTO MODAL -->
 <div id="modal-photo" class="modal hidden">

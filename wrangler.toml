@@ -15,7 +15,7 @@ binding = "MEDIA"
 # Update this to your deployed URL after first deploy.
 # For local dev: http://localhost:8788
 # For production: https://wilsonfamily.app
-APP_URL = "http://localhost:8788"
+APP_URL = "https://wilsonfamily.app"
 # Family join code — give this to family members so they can sign up
 FAMILY_CODE = "iamawilson"
 # Set FROM_EMAIL via the Cloudflare dashboard or wrangler secret

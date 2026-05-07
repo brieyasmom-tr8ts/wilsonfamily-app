@@ -90,7 +90,7 @@ export async function onRequestPost({ request, env }) {
 
   // Upload to R2
   const ext = mimeType.split('/')[1]?.split(';')[0] || 'jpg';
-  const key = `photos/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const key = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   await env.MEDIA.put(key, file.stream(), {
     httpMetadata: { contentType: mimeType },
