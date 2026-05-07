@@ -9,26 +9,26 @@
   text-align: center;
   position: relative;
   z-index: 1;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 70px);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .kids-title {
-  font-size: clamp(40px, 8vw, 64px);
-  font-weight: 300;
-  margin: 12px 0 40px;
-  letter-spacing: -0.02em;
+  font-size: clamp(36px, 7vw, 56px);
+  font-weight: 800;
+  margin: 10px 0 36px;
+  letter-spacing: -0.03em;
 }
-.kids-title em { font-weight: 400; color: var(--gold); }
+.kids-title em { color: var(--primary); }
 
 /* ---- Tile grid ---- */
 
 .kid-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
+  gap: 14px;
   width: 100%;
   max-width: 480px;
 }
@@ -38,50 +38,48 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  padding: 28px 16px;
-  background: var(--paper);
+  padding: 24px 16px;
+  background: var(--surface);
   border: 2px solid var(--rule);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }
 .kid-tile:hover {
-  border-color: var(--gold);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px -8px rgba(31, 61, 43, 0.2);
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
 }
 .kid-tile:active {
   transform: translateY(0);
-  border-color: var(--evergreen);
 }
 
 .kid-tile-emoji {
-  font-size: 48px;
+  font-size: 44px;
   line-height: 1;
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--cream-deep);
-  border-radius: 50%;
+  background: var(--bg);
+  border-radius: 20px;
   border: 2px solid var(--rule);
 }
 
 .kid-tile-name {
   font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--evergreen);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .no-kids {
   color: var(--ink-soft);
   font-size: 15px;
-  font-style: italic;
-  font-family: var(--font-display);
+  font-weight: 500;
   margin-top: 24px;
 }
 
@@ -91,22 +89,22 @@
   position: absolute;
   top: 32px;
   left: 24px;
-  background: none;
-  border: 1px solid var(--rule);
-  border-radius: 50%;
+  background: var(--surface);
+  border: 1.5px solid var(--rule);
+  border-radius: 12px;
   width: 44px;
   height: 44px;
-  font-size: 20px;
+  font-size: 18px;
   color: var(--ink-soft);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 .back-btn:hover {
-  border-color: var(--evergreen);
-  color: var(--evergreen);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .pin-hello {
@@ -118,56 +116,57 @@
 }
 
 .pin-avatar {
-  font-size: 56px;
+  font-size: 52px;
   line-height: 1;
-  width: 96px;
-  height: 96px;
+  width: 88px;
+  height: 88px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--cream-deep);
-  border-radius: 50%;
+  background: var(--bg);
+  border-radius: 24px;
   border: 2px solid var(--rule);
 }
 
 .pin-name {
-  font-size: 28px;
-  font-weight: 300;
-  color: var(--evergreen);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
 }
-.pin-name em { font-weight: 400; color: var(--gold); }
+.pin-name em { color: var(--primary); }
 
 .pin-prompt {
   color: var(--ink-soft);
   font-size: 14px;
+  font-weight: 500;
   margin: 24px 0 16px;
 }
 
 .pin-dots {
   display: flex;
-  gap: 16px;
+  gap: 14px;
   justify-content: center;
   margin-bottom: 8px;
 }
 .pin-dots .dot {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 2px solid var(--rule);
   background: transparent;
   transition: all 0.15s ease;
 }
 .pin-dots .dot.filled {
-  background: var(--evergreen);
-  border-color: var(--evergreen);
-  transform: scale(1.1);
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(109, 92, 255, 0.3);
 }
 
 .pin-error {
   color: var(--rose);
   font-size: 14px;
-  font-style: italic;
-  font-family: var(--font-display);
+  font-weight: 500;
   min-height: 24px;
   margin: 4px 0;
 }
@@ -175,8 +174,8 @@
 .pin-pad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: 300px;
+  gap: 10px;
+  max-width: 280px;
   width: 100%;
   margin-top: 16px;
 }
@@ -184,13 +183,13 @@
 .pin-key {
   width: 100%;
   aspect-ratio: 1.4;
-  font-size: 28px;
+  font-size: 26px;
   font-family: var(--font-display);
-  font-weight: 400;
-  color: var(--evergreen);
-  background: var(--paper);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
   border: 1.5px solid var(--rule);
-  border-radius: 16px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.12s ease;
   -webkit-tap-highlight-color: transparent;
@@ -200,20 +199,20 @@
   justify-content: center;
 }
 .pin-key:hover:not(:disabled) {
-  background: var(--cream-deep);
-  border-color: var(--gold-soft);
+  background: var(--primary-light);
+  border-color: var(--primary);
 }
 .pin-key:active:not(:disabled) {
   transform: scale(0.95);
-  background: var(--evergreen);
-  color: var(--cream);
+  background: var(--primary);
+  color: white;
 }
 
 .pin-key-empty {
   visibility: hidden;
 }
 .pin-key-del {
-  font-size: 22px;
+  font-size: 20px;
   color: var(--ink-soft);
 }
 
@@ -231,20 +230,19 @@
 
 /* ---- Responsive ---- */
 @media (max-width: 720px) {
-  .kids-main { padding: 24px 16px 48px; }
-  .kid-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .kid-tile { padding: 20px 12px; }
-  .kid-tile-emoji { font-size: 40px; width: 68px; height: 68px; }
-  .pin-pad { max-width: 260px; gap: 10px; }
-  .pin-key { font-size: 24px; border-radius: 12px; }
+  .kids-main { padding: 20px 16px 40px; }
+  .kid-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .kid-tile { padding: 18px 12px; }
+  .kid-tile-emoji { font-size: 36px; width: 64px; height: 64px; border-radius: 16px; }
+  .pin-pad { max-width: 240px; gap: 8px; }
+  .pin-key { font-size: 22px; border-radius: 12px; }
 }
 
-/* Landscape tablet */
 @media (min-width: 721px) and (max-height: 600px) {
-  .kids-main { min-height: auto; padding: 16px 24px 32px; }
+  .kids-main { min-height: auto; padding: 16px 24px 28px; }
   .pin-hello { margin-top: 8px; }
-  .pin-avatar { width: 64px; height: 64px; font-size: 36px; }
-  .pin-name { font-size: 22px; }
-  .pin-prompt { margin: 12px 0 8px; }
+  .pin-avatar { width: 60px; height: 60px; font-size: 32px; }
+  .pin-name { font-size: 20px; }
+  .pin-prompt { margin: 10px 0 8px; }
   .pin-key { aspect-ratio: 1.8; }
 }

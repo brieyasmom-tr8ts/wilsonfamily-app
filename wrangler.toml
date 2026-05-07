@@ -13,6 +13,6 @@ database_id = "253eb4a2-7cee-4a1d-b172-91d3b656b1b3"
 # For production: https://wilsonfamily.app
 APP_URL = "http://localhost:8788"
 # Family join code — give this to family members so they can sign up
-FAMILY_CODE = "wilson2024"
+FAMILY_CODE = "iamawilson"
 # Set FROM_EMAIL via the Cloudflare dashboard or wrangler secret
 # Set POSTMARK_API_KEY via wrangler secret put POSTMARK_API_KEY

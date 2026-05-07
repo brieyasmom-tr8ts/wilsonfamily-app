@@ -1,117 +1,98 @@
 /* =========================================================
    Generosity Room
-   Only the styles unique to this room. Common stuff is in shared.css.
    ========================================================= */
 
 .app-nav {
   display: flex;
   gap: 4px;
-  background: var(--paper);
+  background: var(--bg);
   padding: 4px;
-  border-radius: 999px;
+  border-radius: 12px;
   border: 1px solid var(--rule);
 }
 .nav-tab {
   background: none;
   border: none;
-  padding: 8px 18px;
-  border-radius: 999px;
+  padding: 8px 16px;
+  border-radius: 8px;
   font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
-.nav-tab:hover { color: var(--evergreen); }
+.nav-tab:hover { color: var(--ink); }
 .nav-tab.active {
-  background: var(--evergreen);
-  color: var(--cream);
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
 }
 
 .app-main {
-  padding: 48px 40px 96px;
+  padding: 40px 32px 96px;
   max-width: 920px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
 }
 
-.tab { display: none; animation: rise 0.5s ease-out both; }
+.tab { display: none; animation: rise 0.4s ease-out both; }
 .tab.active { display: block; }
 
 /* THE POT - hero */
 .hero-pot {
   text-align: center;
-  padding: 64px 24px;
-  background: var(--paper);
-  border-radius: 24px;
+  padding: 56px 24px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--rule);
   position: relative;
   overflow: hidden;
-  box-shadow: var(--shadow-warm);
-}
-.hero-pot::before {
-  content: '';
-  position: absolute;
-  top: -100px; right: -100px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, var(--gold-soft) 0%, transparent 70%);
-  opacity: 0.4;
-  pointer-events: none;
-}
-.hero-pot::after {
-  content: '';
-  position: absolute;
-  bottom: -100px; left: -100px;
-  width: 280px; height: 280px;
-  background: radial-gradient(circle, rgba(31, 61, 43, 0.15) 0%, transparent 70%);
-  pointer-events: none;
+  box-shadow: var(--shadow-md);
 }
 .hero-pot > * { position: relative; z-index: 1; }
 
 .balance-display {
   font-family: var(--font-display);
-  font-weight: 300;
-  color: var(--evergreen);
-  margin: 24px 0 12px;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 20px 0 10px;
   display: flex;
   justify-content: center;
   align-items: baseline;
   letter-spacing: -0.04em;
 }
 .balance-currency {
-  font-size: clamp(32px, 5vw, 48px);
-  color: var(--gold);
-  margin-right: 6px;
-  margin-top: -4px;
+  font-size: clamp(28px, 4vw, 40px);
+  color: var(--primary);
+  margin-right: 4px;
 }
 .balance-amount {
-  font-size: clamp(72px, 14vw, 128px);
+  font-size: clamp(64px, 12vw, 112px);
   line-height: 1;
 }
 
 .balance-caption {
   font-size: 14px;
   color: var(--ink-soft);
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 .balance-caption span {
-  font-family: var(--font-display);
-  font-weight: 500;
-  color: var(--evergreen);
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .pot-actions { margin-top: 8px; }
 
 /* CONTRIBUTIONS LIST */
-.contributions-section { margin-top: 64px; }
+.contributions-section { margin-top: 56px; }
 .section-title {
-  font-size: 28px;
-  font-weight: 400;
-  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
   position: relative;
-  padding-left: 18px;
+  padding-left: 16px;
 }
 .section-title::before {
   content: '';
@@ -120,37 +101,37 @@
   top: 50%;
   transform: translateY(-50%);
   width: 4px;
-  height: 28px;
-  background: var(--gold);
+  height: 24px;
+  background: var(--primary);
   border-radius: 2px;
 }
 
 .contributions-list { list-style: none; }
 .contribution-item {
   display: grid;
-  grid-template-columns: 44px 1fr auto;
-  gap: 16px;
+  grid-template-columns: 40px 1fr auto;
+  gap: 14px;
   align-items: center;
-  padding: 18px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--rule);
 }
 .contribution-item:last-child { border-bottom: none; }
 
 .contrib-avatar {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: var(--cream-deep);
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: var(--bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 20px;
   border: 1px solid var(--rule);
 }
 .contrib-body strong {
   font-family: var(--font-display);
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--evergreen);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
   display: block;
   margin-bottom: 2px;
 }
@@ -162,35 +143,34 @@
   font-size: 13px;
   font-style: italic;
   color: var(--ink-soft);
-  margin-top: 4px;
-  font-family: var(--font-display);
+  margin-top: 3px;
 }
 .contrib-amount {
   font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 500;
-  color: var(--evergreen);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--emerald);
 }
 
 .empty {
   text-align: center;
   padding: 48px 16px;
   color: var(--ink-soft);
-  font-style: italic;
-  font-family: var(--font-display);
+  font-weight: 500;
 }
 
 /* PLACEHOLDER TABS */
 .placeholder-stage {
   text-align: center;
-  padding: 96px 24px;
-  background: var(--paper);
-  border-radius: 24px;
-  border: 1px dashed var(--rule);
+  padding: 80px 24px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--rule);
 }
 .placeholder-title {
-  font-size: clamp(36px, 5vw, 52px);
-  margin: 16px 0 12px;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 700;
+  margin: 12px 0 10px;
 }
 .placeholder-text {
   color: var(--ink-soft);
@@ -210,7 +190,8 @@
   left: 14px;
   font-family: var(--font-display);
   font-size: 18px;
-  color: var(--gold);
+  font-weight: 700;
+  color: var(--primary);
   pointer-events: none;
 }
 .amount-input-wrap input {
@@ -218,14 +199,15 @@
   width: 100%;
   font-family: var(--font-display);
   font-size: 18px;
+  font-weight: 600;
 }
 
 /* MOBILE */
 @media (max-width: 720px) {
   .app-nav { justify-content: center; flex-wrap: wrap; }
-  .nav-tab { padding: 8px 14px; font-size: 12px; }
-  .app-main { padding: 32px 20px 64px; }
-  .hero-pot { padding: 48px 20px; }
-  .contribution-item { grid-template-columns: 36px 1fr auto; gap: 12px; }
-  .contrib-avatar { width: 36px; height: 36px; font-size: 18px; }
+  .nav-tab { padding: 8px 12px; font-size: 12px; }
+  .app-main { padding: 28px 16px 64px; }
+  .hero-pot { padding: 40px 16px; }
+  .contribution-item { grid-template-columns: 32px 1fr auto; gap: 10px; }
+  .contrib-avatar { width: 32px; height: 32px; font-size: 16px; border-radius: 10px; }
 }
