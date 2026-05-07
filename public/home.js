@@ -25,10 +25,8 @@ const $$ = (sel) => document.querySelectorAll(sel);
       $('#rooms-section').classList.remove('hidden');
       $('#home-footer').classList.remove('hidden');
 
-      // Show admin rooms for admin/parent
-      if (me.role === 'parent' || me.role === 'admin') {
-        const familyCard = $('#family-room-card');
-        if (familyCard) familyCard.classList.remove('hidden');
+      // Show admin panel for admins only
+      if (me.role === 'admin') {
         const adminCard = $('#admin-room-card');
         if (adminCard) adminCard.classList.remove('hidden');
       }
