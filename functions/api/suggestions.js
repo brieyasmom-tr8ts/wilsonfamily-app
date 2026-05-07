@@ -13,7 +13,7 @@ export async function onRequestGet({ request, env }) {
 
   let query = `
     SELECT s.id, s.recipient_name, s.story, s.scripture, s.suggested_amount_cents,
-           s.status, s.parent_decision_note, s.parent_decision_at, s.created_at,
+           s.status, s.parent_decision_note, s.parent_decision_at, s.created_at, s.decision_needed_by,
            s.suggested_by, m.name AS suggested_by_name, m.avatar_emoji,
            dm.name AS decided_by_name,
            (SELECT COUNT(*) FROM votes v WHERE v.suggestion_id = s.id AND v.vote = 'yes') AS yes_count,
@@ -44,7 +44,7 @@ export async function onRequestPost({ request, env }) {
   let body;
   try { body = await request.json(); } catch { return badRequest('Invalid JSON'); }
 
-  const { recipient_name, story, scripture, suggested_amount_cents } = body;
+  const { recipient_name, story, scripture, suggested_amount_cents, decision_needed_by } = body;
   if (!recipient_name || !recipient_name.trim()) return badRequest('Recipient name is required');
   if (!story || !story.trim()) return badRequest('Please share their story');
 
@@ -54,13 +54,14 @@ export async function onRequestPost({ request, env }) {
   }
 
   const result = await env.DB.prepare(
-    'INSERT INTO suggestions (suggested_by, recipient_name, story, scripture, suggested_amount_cents) VALUES (?, ?, ?, ?, ?)'
+    'INSERT INTO suggestions (suggested_by, recipient_name, story, scripture, suggested_amount_cents, decision_needed_by) VALUES (?, ?, ?, ?, ?, ?)'
   ).bind(
     member.id,
     recipient_name.trim(),
     story.trim(),
     (scripture || '').trim() || null,
-    amount
+    amount,
+    decision_needed_by || null
   ).run();
 
   return json({ ok: true, id: result.meta.last_row_id });

@@ -17,6 +17,7 @@ let me = null;
 })();
 
 function init() {
+  $('#admin-content').classList.remove('hidden');
   $('#user-name').textContent = me.name;
   $('#user-emoji').textContent = me.avatar_emoji || '🌱';
 

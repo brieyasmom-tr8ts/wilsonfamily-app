@@ -28,7 +28,10 @@
     <span id="home-user-name"></span>
     <button id="home-signout-btn" class="link-btn">Sign out</button>
   </div>
-  <a id="home-signin-link" href="/signin/" class="btn-ghost">Sign in</a>
+  <div class="home-header-right">
+    <a id="admin-link" href="/admin/" class="link-btn hidden">Admin</a>
+    <a id="home-signin-link" href="/signin/" class="btn-ghost">Sign in</a>
+  </div>
 </header>
 
 <main class="home-main">
@@ -108,44 +111,27 @@
         <span class="room-cta">Open the fund &rarr;</span>
       </a>
 
-      <a id="admin-room-card" href="/admin/" class="room room-live room-admin hidden">
-        <div class="room-icon">🔧</div>
-        <div class="room-status">Admin</div>
-        <h3 class="room-title">Admin <em>Panel</em></h3>
-        <p class="room-text">Manage members, edit contributions, full control over the family hub.</p>
-        <span class="room-cta">Open admin &rarr;</span>
+      <a href="/calendar/" class="room room-live">
+        <div class="room-icon">📅</div>
+        <div class="room-status">Live now</div>
+        <h3 class="room-title">Family <em>Calendar</em></h3>
+        <p class="room-text">Birthdays, anniversaries, trips, and events. Everything the family has coming up, in one place.</p>
+        <span class="room-cta">Open calendar &rarr;</span>
       </a>
 
-
-      <div class="room room-soon">
-        <div class="room-icon">🎂</div>
-        <div class="room-status">Coming soon</div>
-        <h3 class="room-title">Birthdays <em>&amp; Days</em></h3>
-        <p class="room-text">Never miss a birthday, anniversary, or family milestone again. Gentle reminders for everyone.</p>
-        <span class="room-cta">Soon</span>
-      </div>
-
-      <div class="room room-soon">
-        <div class="room-icon">📅</div>
-        <div class="room-status">Coming soon</div>
-        <h3 class="room-title">The Family <em>Calendar</em></h3>
-        <p class="room-text">What&rsquo;s happening, who&rsquo;s where, what&rsquo;s coming up. One shared rhythm, all in one place.</p>
-        <span class="room-cta">Soon</span>
-      </div>
+      <a href="/scrapbook/" class="room room-live">
+        <div class="room-icon">📸</div>
+        <div class="room-status">Live now</div>
+        <h3 class="room-title">The <em>Scrapbook</em></h3>
+        <p class="room-text">Photos and moments worth keeping. Tag who&rsquo;s in each one and flip through memories together.</p>
+        <span class="room-cta">Open scrapbook &rarr;</span>
+      </a>
 
       <div class="room room-soon">
         <div class="room-icon">📝</div>
         <div class="room-status">Coming soon</div>
         <h3 class="room-title">Lists <em>&amp; Wishes</em></h3>
         <p class="room-text">Christmas wishes, gift ideas, grocery runs, what we need, what we want. Shared and easy.</p>
-        <span class="room-cta">Soon</span>
-      </div>
-
-      <div class="room room-soon">
-        <div class="room-icon">📸</div>
-        <div class="room-status">Coming soon</div>
-        <h3 class="room-title">Memories <em>&amp; Stories</em></h3>
-        <p class="room-text">Photos, milestones, family moments worth keeping. A scrapbook that lives with us.</p>
         <span class="room-cta">Soon</span>
       </div>
 

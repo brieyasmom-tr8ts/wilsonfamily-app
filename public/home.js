@@ -25,10 +25,10 @@ const $$ = (sel) => document.querySelectorAll(sel);
       $('#rooms-section').classList.remove('hidden');
       $('#home-footer').classList.remove('hidden');
 
-      // Show admin panel for admins only
+      // Show admin link for admins only
       if (me.role === 'admin') {
-        const adminCard = $('#admin-room-card');
-        if (adminCard) adminCard.classList.remove('hidden');
+        const adminLink = $('#admin-link');
+        if (adminLink) adminLink.classList.remove('hidden');
       }
 
       $('#home-signout-btn').addEventListener('click', async () => {

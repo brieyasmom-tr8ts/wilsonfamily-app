@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Family Calendar · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/calendar/calendar.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Calendar</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="cal-main">
+  <div class="cal-header">
+    <button id="prev-month" class="cal-nav-btn">&larr;</button>
+    <h1 id="cal-month-title" class="cal-month-title"></h1>
+    <button id="next-month" class="cal-nav-btn">&rarr;</button>
+    <button id="add-event-btn" class="btn-primary cal-add-btn">+ Add event</button>
+  </div>
+
+  <div class="cal-grid">
+    <div class="cal-day-header">Sun</div>
+    <div class="cal-day-header">Mon</div>
+    <div class="cal-day-header">Tue</div>
+    <div class="cal-day-header">Wed</div>
+    <div class="cal-day-header">Thu</div>
+    <div class="cal-day-header">Fri</div>
+    <div class="cal-day-header">Sat</div>
+    <div id="cal-cells"></div>
+  </div>
+
+  <!-- Upcoming events list below calendar -->
+  <section class="upcoming-section">
+    <h2 class="section-label">This month</h2>
+    <div id="upcoming-list" class="upcoming-list"></div>
+  </section>
+</main>
+
+<!-- ADD/EDIT EVENT MODAL -->
+<div id="modal-event" class="modal hidden">
+  <div class="modal-backdrop" data-close-event></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-event aria-label="Close">&times;</button>
+    <p class="eyebrow">Family event</p>
+    <h3 class="modal-title">What's <em>happening?</em></h3>
+    <form id="event-form" class="modal-form">
+      <input type="hidden" id="event-id" value="" />
+      <label><span>Title</span><input id="event-title" type="text" required maxlength="120" placeholder="Birthday party, trip, etc." /></label>
+      <label><span>Date</span><input id="event-date" type="date" required /></label>
+      <label><span>End date <em>(optional, for multi-day)</em></span><input id="event-end-date" type="date" /></label>
+      <label><span>Description <em>(optional)</em></span><input id="event-desc" type="text" maxlength="300" placeholder="Details" /></label>
+      <label>
+        <span>Repeats</span>
+        <select id="event-recurring">
+          <option value="">One-time</option>
+          <option value="yearly">Every year</option>
+          <option value="monthly">Every month</option>
+        </select>
+      </label>
+      <label>
+        <span>Color</span>
+        <div id="event-color-grid" class="event-color-grid"></div>
+        <input type="hidden" id="event-color" value="#2563eb" />
+      </label>
+      <p id="event-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Save event</button>
+    </form>
+  </div>
+</div>
+
+<script src="/calendar/calendar.js"></script>
+</body>
+</html>

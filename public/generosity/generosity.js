@@ -222,7 +222,8 @@ $('#suggest-form').addEventListener('submit', async (e) => {
     recipient_name: $('#suggest-name').value.trim(),
     story: $('#suggest-story').value.trim(),
     scripture: $('#suggest-scripture').value.trim() || null,
-    suggested_amount_cents: $('#suggest-amount').value ? Math.round(parseFloat($('#suggest-amount').value) * 100) : null
+    suggested_amount_cents: $('#suggest-amount').value ? Math.round(parseFloat($('#suggest-amount').value) * 100) : null,
+    decision_needed_by: $('#suggest-deadline').value || null
   };
 
   if (!body.recipient_name || !body.story) return;
@@ -259,30 +260,19 @@ async function loadSuggestions() {
     const data = await res.json();
     state.suggestions = data.suggestions || [];
     renderSuggestTab();
-    renderVoteTab();
     renderStoriesTab();
   } catch (e) { console.error(e); }
 }
 
 function renderSuggestTab() {
-  const mine = state.suggestions.filter(s => s.suggested_by === state.member.id);
-  const container = $('#my-suggestions');
-  if (mine.length === 0) {
-    container.innerHTML = '';
-    return;
-  }
-  container.innerHTML = '<h3 class="section-title">Your suggestions</h3>' +
-    mine.map(s => renderSuggestionCard(s, false)).join('');
-}
-
-function renderVoteTab() {
   const open = state.suggestions.filter(s => s.status === 'open');
-  const list = $('#vote-list');
+  const container = $('#my-suggestions');
   if (open.length === 0) {
-    list.innerHTML = '<p class="empty">No open suggestions right now. Go to Suggest to nominate someone!</p>';
-    return;
+    container.innerHTML = '<p class="empty">No suggestions yet. Be the first to nominate someone!</p>';
+  } else {
+    container.innerHTML = '<h3 class="section-title">Open suggestions</h3>' +
+      open.map(s => renderSuggestionCard(s, true)).join('');
   }
-  list.innerHTML = open.map(s => renderSuggestionCard(s, true)).join('');
   wireVoteButtons();
 }
 
@@ -341,7 +331,7 @@ function renderSuggestionCard(s, showVoting) {
     </div>
     <div class="sg-story">${escapeHtml(s.story)}</div>
     ${s.scripture ? '<div class="sg-scripture">"' + escapeHtml(s.scripture) + '"</div>' : ''}
-    <div class="sg-meta">${escapeHtml(s.avatar_emoji || '🌱')} ${escapeHtml(s.suggested_by_name)} · ${timeAgo(s.created_at)}</div>
+    <div class="sg-meta">${escapeHtml(s.avatar_emoji || '🌱')} ${escapeHtml(s.suggested_by_name)} · ${timeAgo(s.created_at)}${s.decision_needed_by ? ' · <strong style="color:var(--accent)">Need decision by ' + escapeHtml(s.decision_needed_by) + '</strong>' : ''}</div>
     ${s.parent_decision_note ? '<div class="sg-decision-note">' + escapeHtml(s.parent_decision_note) + '</div>' : ''}
     ${footer}
   </div>`;

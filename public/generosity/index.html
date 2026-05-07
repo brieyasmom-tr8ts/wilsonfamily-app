@@ -20,8 +20,7 @@
   </a>
   <nav class="app-nav">
     <button data-tab="pot" class="nav-tab active">The Pot</button>
-    <button data-tab="suggest" class="nav-tab">Suggest</button>
-    <button data-tab="vote" class="nav-tab">Vote</button>
+    <button data-tab="suggest" class="nav-tab">Suggest &amp; Vote</button>
     <button data-tab="stories" class="nav-tab">Stories</button>
   </nav>
   <div class="user-chip">
@@ -66,18 +65,6 @@
       <button id="new-suggestion-btn" class="btn-primary">+ Suggest someone</button>
     </div>
     <div id="my-suggestions" class="suggestions-section"></div>
-  </section>
-
-  <!-- VOTE TAB -->
-  <section id="tab-vote" class="tab">
-    <div class="vote-hero">
-      <p class="eyebrow centered">Open for family vote</p>
-      <h2 class="tab-title">Who should we <em>bless?</em></h2>
-      <p class="tab-sub">Read each story and cast your vote. Every voice matters.</p>
-    </div>
-    <div id="vote-list" class="vote-list">
-      <p class="empty">Loading...</p>
-    </div>
   </section>
 
   <!-- STORIES TAB -->
@@ -150,6 +137,10 @@
           <span class="amount-prefix">$</span>
           <input id="suggest-amount" type="number" step="0.01" min="0.01" placeholder="0.00" />
         </div>
+      </label>
+      <label>
+        <span>Decision needed by <em>(optional)</em></span>
+        <input id="suggest-deadline" type="date" />
       </label>
       <p id="suggest-error" class="form-error hidden"></p>
       <button type="submit" class="btn-primary">Submit suggestion</button>
