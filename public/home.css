@@ -59,12 +59,22 @@
   animation: rise 0.6s ease-out both;
 }
 
-.hero-ornament {
-  color: var(--primary);
-  margin: 0 auto 20px;
-  display: flex;
-  justify-content: center;
-  opacity: 0.5;
+.hero-photo-wrap {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto 28px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 3px solid var(--surface);
+  outline: 1px solid var(--rule);
+}
+.hero-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 340px;
 }
 
 .hero-title {
