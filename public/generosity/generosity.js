@@ -8,6 +8,7 @@ const $$ = (sel) => document.querySelectorAll(sel);
 const state = {
   member: null,
   pot: null,
+  suggestions: [],
 };
 
 // =========================================================
@@ -41,6 +42,7 @@ function init() {
   setupModal();
   setupSignout();
   loadPot();
+  loadSuggestions();
 }
 
 function setupTabs() {
@@ -197,6 +199,215 @@ async function submitContribution(e) {
     btn.textContent = 'Add it';
   }
 }
+
+// =========================================================
+// SUGGEST TAB
+// =========================================================
+$('#new-suggestion-btn').addEventListener('click', () => {
+  $('#modal-suggest').classList.remove('hidden');
+  setTimeout(() => $('#suggest-name').focus(), 100);
+});
+$$('[data-close-suggest]').forEach(el => el.addEventListener('click', () => {
+  $('#modal-suggest').classList.add('hidden');
+  $('#suggest-form').reset();
+  $('#suggest-error').classList.add('hidden');
+}));
+
+$('#suggest-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errEl = $('#suggest-error');
+  errEl.classList.add('hidden');
+
+  const body = {
+    recipient_name: $('#suggest-name').value.trim(),
+    story: $('#suggest-story').value.trim(),
+    scripture: $('#suggest-scripture').value.trim() || null,
+    suggested_amount_cents: $('#suggest-amount').value ? Math.round(parseFloat($('#suggest-amount').value) * 100) : null
+  };
+
+  if (!body.recipient_name || !body.story) return;
+
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Submitting\u2026';
+
+  try {
+    const res = await fetch('/api/suggestions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = data.error || 'Could not submit.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    $('#modal-suggest').classList.add('hidden');
+    $('#suggest-form').reset();
+    loadSuggestions();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit suggestion';
+  }
+});
+
+async function loadSuggestions() {
+  try {
+    const res = await fetch('/api/suggestions');
+    if (!res.ok) return;
+    const data = await res.json();
+    state.suggestions = data.suggestions || [];
+    renderSuggestTab();
+    renderVoteTab();
+    renderStoriesTab();
+  } catch (e) { console.error(e); }
+}
+
+function renderSuggestTab() {
+  const mine = state.suggestions.filter(s => s.suggested_by === state.member.id);
+  const container = $('#my-suggestions');
+  if (mine.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = '<h3 class="section-title">Your suggestions</h3>' +
+    mine.map(s => renderSuggestionCard(s, false)).join('');
+}
+
+function renderVoteTab() {
+  const open = state.suggestions.filter(s => s.status === 'open');
+  const list = $('#vote-list');
+  if (open.length === 0) {
+    list.innerHTML = '<p class="empty">No open suggestions right now. Go to Suggest to nominate someone!</p>';
+    return;
+  }
+  list.innerHTML = open.map(s => renderSuggestionCard(s, true)).join('');
+  wireVoteButtons();
+}
+
+function renderStoriesTab() {
+  const decided = state.suggestions.filter(s => s.status === 'approved' || s.status === 'declined' || s.status === 'disbursed');
+  const list = $('#stories-list');
+  if (decided.length === 0) {
+    list.innerHTML = '<p class="empty">No stories yet. Suggest someone, vote, and watch the story unfold.</p>';
+    return;
+  }
+  list.innerHTML = decided.map(s => {
+    const badge = `<span class="sg-status-badge ${s.status}">${s.status}</span>`;
+    const decisionNote = s.parent_decision_note
+      ? `<div class="sg-decision-note">${escapeHtml(s.parent_decision_note)} &mdash; ${escapeHtml(s.decided_by_name || 'Parent')}</div>`
+      : '';
+    return `
+    <div class="story-card">
+      <div class="sg-header">
+        <span class="sg-recipient">${escapeHtml(s.recipient_name)}</span>
+        <div>${badge} ${s.suggested_amount_cents ? '<span class="sg-amount">' + formatMoney(s.suggested_amount_cents) + '</span>' : ''}</div>
+      </div>
+      <div class="sg-story">${escapeHtml(s.story)}</div>
+      ${s.scripture ? '<div class="sg-scripture">"' + escapeHtml(s.scripture) + '"</div>' : ''}
+      <div class="sg-meta">${escapeHtml(s.avatar_emoji || '🌱')} ${escapeHtml(s.suggested_by_name)} · ${s.yes_count} yes · ${s.pass_count} pass</div>
+      ${decisionNote}
+    </div>`;
+  }).join('');
+}
+
+function renderSuggestionCard(s, showVoting) {
+  const isAdmin = state.member.role === 'admin' || state.member.role === 'parent';
+  const badge = `<span class="sg-status-badge ${s.status}">${s.status}</span>`;
+
+  let footer = '';
+  if (showVoting && s.status === 'open') {
+    const yesClass = s.my_vote === 'yes' ? ' voted' : '';
+    const passClass = s.my_vote === 'pass' ? ' voted' : '';
+    footer = `
+    <div class="sg-footer">
+      <div class="vote-btns">
+        <button class="vote-btn vote-btn-yes${yesClass}" data-sg-id="${s.id}" data-vote="yes">Yes</button>
+        <button class="vote-btn vote-btn-pass${passClass}" data-sg-id="${s.id}" data-vote="pass">Pass</button>
+      </div>
+      <span class="vote-counts">${s.yes_count} yes · ${s.pass_count} pass</span>
+      ${isAdmin ? '<button class="decide-btn" data-decide-id="' + s.id + '" data-decide-name="' + escapeHtml(s.recipient_name) + '">Decide</button>' : ''}
+    </div>`;
+  } else {
+    footer = `<div class="sg-footer"><span class="vote-counts">${s.yes_count} yes · ${s.pass_count} pass</span>${badge}</div>`;
+  }
+
+  return `
+  <div class="suggestion-card">
+    <div class="sg-header">
+      <span class="sg-recipient">${escapeHtml(s.recipient_name)}</span>
+      ${s.suggested_amount_cents ? '<span class="sg-amount">' + formatMoney(s.suggested_amount_cents) + '</span>' : ''}
+    </div>
+    <div class="sg-story">${escapeHtml(s.story)}</div>
+    ${s.scripture ? '<div class="sg-scripture">"' + escapeHtml(s.scripture) + '"</div>' : ''}
+    <div class="sg-meta">${escapeHtml(s.avatar_emoji || '🌱')} ${escapeHtml(s.suggested_by_name)} · ${timeAgo(s.created_at)}</div>
+    ${s.parent_decision_note ? '<div class="sg-decision-note">' + escapeHtml(s.parent_decision_note) + '</div>' : ''}
+    ${footer}
+  </div>`;
+}
+
+function wireVoteButtons() {
+  $$('.vote-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const sgId = parseInt(btn.dataset.sgId);
+      const vote = btn.dataset.vote;
+      btn.disabled = true;
+      try {
+        await fetch('/api/votes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ suggestion_id: sgId, vote })
+        });
+        loadSuggestions();
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  // Decide buttons (admin)
+  $$('.decide-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('#decide-id').value = btn.dataset.decideId;
+      $('#decide-title').innerHTML = 'Decide on <em>' + btn.dataset.decideName + '</em>';
+      $('#modal-decide').classList.remove('hidden');
+    });
+  });
+}
+
+// Decide modal
+$$('[data-close-decide]').forEach(el => el.addEventListener('click', () => {
+  $('#modal-decide').classList.add('hidden');
+  $('#decide-form').reset();
+}));
+
+$('#decide-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const body = {
+    id: parseInt($('#decide-id').value),
+    status: $('#decide-status').value,
+    note: $('#decide-note').value.trim()
+  };
+
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Submitting\u2026';
+
+  try {
+    await fetch('/api/suggestions', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    $('#modal-decide').classList.add('hidden');
+    $('#decide-form').reset();
+    loadSuggestions();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Submit decision';
+  }
+});
 
 // =========================================================
 // EDIT MODAL (admin only)
