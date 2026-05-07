@@ -15,8 +15,10 @@ let currentPageIdx = 0;
     if (!res.ok) { window.location.replace('/'); return; }
     const data = await res.json();
     me = data.member;
+  } catch (e) { window.location.replace('/'); return; }
+  try {
     init();
-  } catch (e) { window.location.replace('/'); }
+  } catch (e) { console.error('Scrapbook init error:', e); }
 })();
 
 function init() {

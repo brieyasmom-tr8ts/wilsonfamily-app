@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prayer Wall · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/prayers/prayers.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Prayer Wall</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="prayer-main">
+  <div class="prayer-toolbar">
+    <button id="add-prayer-btn" class="btn-primary">+ Add to the wall</button>
+    <div class="filter-tabs">
+      <button class="filter-tab active" data-filter="">All</button>
+      <button class="filter-tab" data-filter="prayer">Prayers</button>
+      <button class="filter-tab" data-filter="praise">Praises</button>
+      <button class="filter-tab" data-filter="answered">Answered</button>
+    </div>
+  </div>
+
+  <div id="prayer-wall" class="prayer-wall">
+    <p class="empty">Loading...</p>
+  </div>
+</main>
+
+<!-- ADD PRAYER MODAL -->
+<div id="modal-prayer" class="modal hidden">
+  <div class="modal-backdrop" data-close-prayer></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-prayer aria-label="Close">&times;</button>
+    <p class="eyebrow">Add to the wall</p>
+    <h3 class="modal-title">Lift it <em>up</em></h3>
+    <form id="prayer-form" class="modal-form">
+      <label>
+        <span>Type</span>
+        <div class="type-toggle">
+          <button type="button" class="type-btn active" data-ptype="prayer">🙏 Prayer request</button>
+          <button type="button" class="type-btn" data-ptype="praise">🎉 Praise report</button>
+        </div>
+        <input type="hidden" id="prayer-type" value="prayer" />
+      </label>
+      <label>
+        <span>What's on your heart?</span>
+        <textarea id="prayer-content" rows="4" required placeholder="Share your prayer or praise..."></textarea>
+      </label>
+      <p id="prayer-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Post to the wall</button>
+    </form>
+  </div>
+</div>
+
+<!-- ANSWERED MODAL -->
+<div id="modal-answered" class="modal hidden">
+  <div class="modal-backdrop" data-close-answered></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-answered aria-label="Close">&times;</button>
+    <p class="eyebrow">God answered!</p>
+    <h3 class="modal-title">Tell us <em>how</em></h3>
+    <form id="answered-form" class="modal-form">
+      <input type="hidden" id="answered-id" />
+      <label>
+        <span>How did God answer? <em>(optional)</em></span>
+        <textarea id="answered-note" rows="3" placeholder="What happened?"></textarea>
+      </label>
+      <button type="submit" class="btn-primary">Mark as answered</button>
+    </form>
+  </div>
+</div>
+
+<script src="/prayers/prayers.js"></script>
+</body>
+</html>
