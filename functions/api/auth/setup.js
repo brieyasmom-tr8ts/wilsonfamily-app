@@ -30,10 +30,10 @@ export async function onRequestPost({ request, env }) {
 
   if (existing) return badRequest('That username is taken. Try another.');
 
-  // Validate date formats if provided (MM-DD)
-  const datePattern = /^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
-  if (birthday && !datePattern.test(birthday)) return badRequest('Birthday should be MM-DD format');
-  if (anniversary && !datePattern.test(anniversary)) return badRequest('Anniversary should be MM-DD format');
+  // Validate date formats if provided (YYYY-MM-DD)
+  const datePattern = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+  if (birthday && !datePattern.test(birthday)) return badRequest('Birthday should be YYYY-MM-DD format');
+  if (anniversary && !datePattern.test(anniversary)) return badRequest('Anniversary should be YYYY-MM-DD format');
 
   await env.DB.prepare(`
     UPDATE members
