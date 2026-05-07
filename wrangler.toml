@@ -7,6 +7,10 @@ binding = "DB"
 database_name = "wilsonfamily-db"
 database_id = "253eb4a2-7cee-4a1d-b172-91d3b656b1b3"
 
+[[r2_buckets]]
+bucket_name = "wilsonfamily-media"
+binding = "MEDIA"
+
 [vars]
 # Update this to your deployed URL after first deploy.
 # For local dev: http://localhost:8788

@@ -17,6 +17,7 @@ let rocks = [];
 let selectedColor = ROCK_COLORS[0];
 let selectedType = 'text';
 let editingId = null;
+let uploadedMediaUrl = null;
 
 // Boot
 (async function boot() {
@@ -66,6 +67,10 @@ function init() {
       $('#story-input-audio').classList.toggle('hidden', selectedType !== 'audio');
     });
   });
+
+  // File upload handlers
+  $('#rock-video-file').addEventListener('change', (e) => handleFileSelect(e, 'video'));
+  $('#rock-audio-file').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
 
   // Modal
   $('#add-rock-btn').addEventListener('click', () => openRockModal());
@@ -127,12 +132,14 @@ function openStory(rock) {
 
   const content = $('#story-content');
   if (rock.media_type === 'video' && rock.media_url) {
-    const embedUrl = toEmbed(rock.media_url);
-    content.innerHTML = (rock.story ? `<p>${escLines(rock.story)}</p>` : '') +
-      `<iframe src="${esc(embedUrl)}" allowfullscreen loading="lazy"></iframe>`;
+    const isUpload = rock.media_url.startsWith('/api/media/');
+    const mediaHtml = isUpload
+      ? `<video src="${esc(rock.media_url)}" controls playsinline style="width:100%;border-radius:12px;margin-top:8px"></video>`
+      : `<iframe src="${esc(toEmbed(rock.media_url))}" allowfullscreen loading="lazy"></iframe>`;
+    content.innerHTML = (rock.story ? `<p>${escLines(rock.story)}</p>` : '') + mediaHtml;
   } else if (rock.media_type === 'audio' && rock.media_url) {
     content.innerHTML = (rock.story ? `<p>${escLines(rock.story)}</p>` : '') +
-      `<audio controls src="${esc(rock.media_url)}"></audio>`;
+      `<audio controls src="${esc(rock.media_url)}" style="width:100%;margin-top:8px"></audio>`;
   } else if (rock.story) {
     content.innerHTML = `<p>${escLines(rock.story)}</p>`;
   } else {
@@ -158,12 +165,19 @@ function closeStory() {
 
 function openRockModal(rock) {
   editingId = rock ? rock.id : null;
+  uploadedMediaUrl = null;
   $('#rock-id').value = editingId || '';
   $('#rock-word').value = rock ? rock.word : '';
-  $('#rock-story').value = rock ? (rock.story || '') : '';
-  $('#rock-video-url').value = rock && rock.media_type === 'video' ? (rock.media_url || '') : '';
-  $('#rock-audio-url').value = rock && rock.media_type === 'audio' ? (rock.media_url || '') : '';
+  $('#rock-story').value = rock && rock.media_type === 'text' ? (rock.story || '') : '';
+  $('#rock-video-story').value = rock && rock.media_type === 'video' ? (rock.story || '') : '';
+  $('#rock-audio-story').value = rock && rock.media_type === 'audio' ? (rock.story || '') : '';
+  $('#rock-media-url').value = rock ? (rock.media_url || '') : '';
   $('#rock-error').classList.add('hidden');
+  $('#video-preview').classList.add('hidden');
+  $('#audio-preview').classList.add('hidden');
+  $('#video-upload-status').classList.add('hidden');
+  $('#audio-upload-status').classList.add('hidden');
+  if (rock && rock.media_url) uploadedMediaUrl = rock.media_url;
 
   // Set color
   selectedColor = rock ? (rock.color || ROCK_COLORS[0]) : ROCK_COLORS[0];
@@ -198,13 +212,16 @@ async function submitRock(e) {
   const errEl = $('#rock-error');
   errEl.classList.add('hidden');
 
+  const storyText = selectedType === 'text' ? $('#rock-story').value.trim() :
+                     selectedType === 'video' ? $('#rock-video-story').value.trim() :
+                     $('#rock-audio-story').value.trim();
+
   const body = {
     word,
     color: selectedColor,
     media_type: selectedType,
-    story: $('#rock-story').value.trim() || null,
-    media_url: selectedType === 'video' ? $('#rock-video-url').value.trim() :
-               selectedType === 'audio' ? $('#rock-audio-url').value.trim() : null
+    story: storyText || null,
+    media_url: (selectedType === 'video' || selectedType === 'audio') ? ($('#rock-media-url').value || uploadedMediaUrl || null) : null
   };
 
   const btn = e.target.querySelector('button[type=submit]');
@@ -243,6 +260,50 @@ async function deleteRock(id) {
   });
   closeStory();
   loadRocks();
+}
+
+// File upload
+async function handleFileSelect(e, type) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const previewEl = $(`#${type}-preview`);
+  const statusEl = $(`#${type}-upload-status`);
+
+  // Show preview
+  const url = URL.createObjectURL(file);
+  previewEl.classList.remove('hidden');
+  if (type === 'video') {
+    previewEl.innerHTML = `<video src="${url}" controls playsinline></video>`;
+  } else {
+    previewEl.innerHTML = `<audio src="${url}" controls></audio>`;
+  }
+
+  // Upload
+  statusEl.textContent = 'Uploading\u2026';
+  statusEl.className = 'upload-status uploading';
+  statusEl.classList.remove('hidden');
+
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const res = await fetch('/api/media/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    if (res.ok) {
+      uploadedMediaUrl = data.url;
+      $('#rock-media-url').value = data.url;
+      statusEl.textContent = 'Uploaded!';
+      statusEl.className = 'upload-status done';
+    } else {
+      statusEl.textContent = data.error || 'Upload failed';
+      statusEl.className = 'upload-status error';
+    }
+  } catch (err) {
+    statusEl.textContent = 'Upload failed. Try again.';
+    statusEl.className = 'upload-status error';
+  }
 }
 
 // Helpers
