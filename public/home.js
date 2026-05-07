@@ -12,6 +12,10 @@ const $ = (sel) => document.querySelector(sel);
       $('#home-user-chip').classList.remove('hidden');
       $('#home-signin-link').classList.add('hidden');
 
+      // Signed in — show rooms
+      $('#rooms-section').classList.remove('hidden');
+      $('#home-footer').classList.remove('hidden');
+
       // Show the Family settings room only for parents
       if (data.member.role === 'parent') {
         const familyCard = $('#family-room-card');
