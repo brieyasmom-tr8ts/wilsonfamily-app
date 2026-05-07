@@ -114,17 +114,45 @@
   margin: 0 16px;
 }
 
-/* Join the family */
-.join-section {
+/* Auth section */
+.auth-section {
   max-width: 460px;
   margin: 0 auto 64px;
   animation: rise 0.6s ease-out both;
 }
-.join-card {
+.auth-tabs {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+.auth-tab:hover { color: var(--ink); }
+.auth-tab.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.auth-card {
   background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: var(--radius-lg);
-  padding: 40px 36px 36px;
+  padding: 36px 32px 32px;
   box-shadow: var(--shadow-lg);
   text-align: center;
 }

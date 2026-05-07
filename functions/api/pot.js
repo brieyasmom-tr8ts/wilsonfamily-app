@@ -57,7 +57,7 @@ export async function onRequestPost({ request, env }) {
   }
 
   // Only parents can record monthly allocations
-  if (kind === 'monthly-allocation' && member.role !== 'parent') {
+  if (kind === 'monthly-allocation' && member.role !== 'parent' && member.role !== 'admin') {
     return forbidden('Only parents can record monthly allocations');
   }
 
@@ -66,4 +66,51 @@ export async function onRequestPost({ request, env }) {
   ).bind(member.id, amount_cents, kind, note).run();
 
   return json({ ok: true, id: result.meta.last_row_id });
+}
+
+// PUT /api/pot — admin edit a contribution
+export async function onRequestPut({ request, env }) {
+  const member = await getCurrentMember(request, env);
+  if (!member) return unauthorized();
+  if (member.role !== 'admin') return forbidden('Admin access required');
+
+  let body;
+  try { body = await request.json(); } catch { return badRequest('Invalid JSON'); }
+
+  const { id, amount_cents, kind, note } = body;
+  if (!id) return badRequest('Contribution ID is required');
+
+  const sets = [];
+  const vals = [];
+  if (amount_cents !== undefined) {
+    const cents = Math.round(Number(amount_cents));
+    if (!Number.isFinite(cents) || cents <= 0) return badRequest('Amount must be positive');
+    sets.push('amount_cents = ?'); vals.push(cents);
+  }
+  if (kind !== undefined) { sets.push('kind = ?'); vals.push(kind); }
+  if (note !== undefined) { sets.push('note = ?'); vals.push(note || null); }
+
+  if (sets.length === 0) return badRequest('Nothing to update');
+
+  vals.push(id);
+  await env.DB.prepare(`UPDATE contributions SET ${sets.join(', ')} WHERE id = ?`).bind(...vals).run();
+
+  return json({ ok: true });
+}
+
+// DELETE /api/pot — admin delete a contribution
+export async function onRequestDelete({ request, env }) {
+  const member = await getCurrentMember(request, env);
+  if (!member) return unauthorized();
+  if (member.role !== 'admin') return forbidden('Admin access required');
+
+  let body;
+  try { body = await request.json(); } catch { return badRequest('Invalid JSON'); }
+
+  const { id } = body;
+  if (!id) return badRequest('Contribution ID is required');
+
+  await env.DB.prepare('DELETE FROM contributions WHERE id = ?').bind(id).run();
+
+  return json({ ok: true });
 }

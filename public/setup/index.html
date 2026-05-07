@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Set up your profile · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/setup/setup.css" />
+</head>
+<body>
+
+<div class="setup-stage">
+  <p class="eyebrow centered">Almost there</p>
+  <h1 class="setup-title">Make it <em>yours.</em></h1>
+  <p class="setup-sub">Pick a username you'll sign in with, and share a few dates so the family never forgets.</p>
+
+  <form id="setup-form" class="setup-form">
+    <label>
+      <span>Username</span>
+      <input id="setup-username" type="text" required placeholder="e.g. heather, danny, bri" minlength="2" maxlength="30" pattern="[a-zA-Z0-9._-]+" autocomplete="username" />
+      <small>Letters, numbers, dots, dashes. This is how you'll sign in.</small>
+    </label>
+
+    <label>
+      <span>Pick your emoji</span>
+      <div id="emoji-grid" class="emoji-grid"></div>
+      <input type="hidden" id="setup-emoji" value="🌱" />
+    </label>
+
+    <label>
+      <span>Birthday <em>(optional)</em></span>
+      <input id="setup-birthday" type="text" placeholder="MM-DD (e.g. 03-15 for March 15)" maxlength="5" pattern="\d{2}-\d{2}" />
+    </label>
+
+    <label>
+      <span>Anniversary <em>(optional)</em></span>
+      <input id="setup-anniversary" type="text" placeholder="MM-DD (e.g. 06-22)" maxlength="5" pattern="\d{2}-\d{2}" />
+    </label>
+
+    <p id="setup-error" class="setup-error hidden"></p>
+    <button type="submit" class="btn-primary">Save &amp; enter</button>
+  </form>
+</div>
+
+<script src="/setup/setup.js"></script>
+</body>
+</html>

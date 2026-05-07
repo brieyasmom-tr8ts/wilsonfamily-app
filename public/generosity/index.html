@@ -114,6 +114,39 @@
   </div>
 </div>
 
+<!-- EDIT CONTRIBUTION MODAL (admin only, rendered for all but only used by admin) -->
+<div id="modal-edit" class="modal hidden">
+  <div class="modal-backdrop" data-close-edit></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-edit aria-label="Close">&times;</button>
+    <p class="eyebrow">Edit contribution</p>
+    <h3 class="modal-title">Update this <em>gift</em></h3>
+    <form id="edit-form" class="modal-form">
+      <input type="hidden" id="edit-id" />
+      <label>
+        <span>Amount</span>
+        <div class="amount-input-wrap">
+          <span class="amount-prefix">$</span>
+          <input id="edit-amount" type="number" step="0.01" min="0.01" required />
+        </div>
+      </label>
+      <label>
+        <span>Kind</span>
+        <select id="edit-kind">
+          <option value="one-time">One-time gift</option>
+          <option value="kid-contribution">My own money</option>
+          <option value="monthly-allocation">Monthly allocation</option>
+        </select>
+      </label>
+      <label>
+        <span>Note</span>
+        <input id="edit-note" type="text" maxlength="500" />
+      </label>
+      <button type="submit" class="btn-primary">Save changes</button>
+    </form>
+  </div>
+</div>
+
 <script src="/generosity/generosity.js"></script>
 </body>
 </html>

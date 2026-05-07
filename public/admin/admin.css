@@ -1,0 +1,128 @@
+/* =========================================================
+   Admin panel
+   ========================================================= */
+
+.admin-main {
+  padding: 40px 32px 96px;
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.admin-hero {
+  text-align: center;
+  padding: 36px 24px 40px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 48px;
+}
+.admin-title {
+  font-size: clamp(36px, 5vw, 52px);
+  font-weight: 800;
+  margin: 10px 0 20px;
+  letter-spacing: -0.03em;
+}
+.admin-title em { color: var(--primary); }
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.admin-section { margin-bottom: 40px; }
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 16px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.admin-table th {
+  text-align: left;
+  padding: 12px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg);
+  white-space: nowrap;
+}
+.admin-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tr:hover td { background: rgba(109, 92, 255, 0.02); }
+
+.td-emoji { font-size: 20px; text-align: center; width: 40px; }
+.td-name { font-weight: 600; color: var(--ink); }
+.td-role { white-space: nowrap; }
+.role-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.role-badge.admin { color: var(--primary); background: var(--primary-light); }
+.role-badge.parent { color: var(--emerald); background: var(--emerald-light); }
+.role-badge.member { color: var(--ink-soft); background: var(--bg); }
+
+.td-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.td-actions button {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-left: 4px;
+}
+.btn-edit { color: var(--primary); }
+.btn-edit:hover { background: var(--primary-light); border-color: var(--primary); }
+.btn-remove { color: var(--rose); }
+.btn-remove:hover { background: rgba(239, 68, 68, 0.08); border-color: var(--rose); }
+
+.form-error {
+  color: var(--rose);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .admin-main { padding: 24px 12px 64px; }
+  .admin-hero { padding: 28px 16px 32px; margin-bottom: 32px; }
+  .admin-table { font-size: 13px; }
+  .admin-table th, .admin-table td { padding: 10px 8px; }
+}

@@ -14,8 +14,7 @@ let me = null;
     }
     const data = await res.json();
     me = data.member;
-    if (me.role !== 'parent') {
-      // Not a parent - send them home
+    if (me.role !== 'parent' && me.role !== 'admin') {
       window.location.replace('/');
       return;
     }

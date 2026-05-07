@@ -1,25 +1,36 @@
 // Wilson Family — Homepage
 
 const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
 
 (async () => {
   try {
     const res = await fetch('/api/auth/me');
     if (res.ok) {
       const data = await res.json();
-      $('#home-user-name').textContent = data.member.name;
-      $('#home-user-emoji').textContent = data.member.avatar_emoji || '🌱';
+      const me = data.member;
+
+      // If profile not set up, redirect to setup
+      if (!me.profile_complete) {
+        window.location.replace('/setup/');
+        return;
+      }
+
+      $('#home-user-name').textContent = me.name;
+      $('#home-user-emoji').textContent = me.avatar_emoji || '🌱';
       $('#home-user-chip').classList.remove('hidden');
       $('#home-signin-link').classList.add('hidden');
 
-      // Signed in — show rooms
+      // Show rooms
       $('#rooms-section').classList.remove('hidden');
       $('#home-footer').classList.remove('hidden');
 
-      // Show the Family settings room only for parents
-      if (data.member.role === 'parent') {
+      // Show admin rooms for admin/parent
+      if (me.role === 'parent' || me.role === 'admin') {
         const familyCard = $('#family-room-card');
         if (familyCard) familyCard.classList.remove('hidden');
+        const adminCard = $('#admin-room-card');
+        if (adminCard) adminCard.classList.remove('hidden');
       }
 
       $('#home-signout-btn').addEventListener('click', async () => {
@@ -27,25 +38,73 @@ const $ = (sel) => document.querySelector(sel);
         window.location.reload();
       });
     } else {
-      // Not signed in — show the join form
-      $('#join-section').classList.remove('hidden');
+      // Not signed in — show auth section
+      $('#auth-section').classList.remove('hidden');
     }
   } catch (e) {
-    $('#join-section').classList.remove('hidden');
+    $('#auth-section').classList.remove('hidden');
   }
 })();
 
-// Join form
+// Auth tab switching
+$$('[data-auth-tab]').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.authTab;
+    $$('[data-auth-tab]').forEach(t => t.classList.toggle('active', t === tab));
+    $('#auth-signin').classList.toggle('hidden', target !== 'signin');
+    $('#auth-join').classList.toggle('hidden', target !== 'join');
+  });
+});
+
+// Sign in form (returning users)
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const username = $('#login-username').value.trim();
+  const code = $('#login-code').value.trim();
+  const errEl = $('#login-error');
+  errEl.classList.add('hidden');
+
+  if (!username || !code) return;
+
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Signing in\u2026';
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, code })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      if (data.needs_setup) {
+        window.location.replace('/setup/');
+      } else {
+        window.location.reload();
+      }
+    } else {
+      errEl.textContent = data.error || 'Could not sign in.';
+      errEl.classList.remove('hidden');
+    }
+  } catch (err) {
+    errEl.textContent = 'Network trouble. Try again?';
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign in';
+  }
+});
+
+// Join form (first time)
 $('#join-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = $('#join-name').value.trim();
   const email = $('#join-email').value.trim();
   const code = $('#join-code').value.trim();
-
   const errEl = $('#join-error');
-  const okEl = $('#join-success');
   errEl.classList.add('hidden');
-  okEl.classList.add('hidden');
 
   if (!name || !email || !code) return;
 
@@ -62,9 +121,7 @@ $('#join-form').addEventListener('submit', async (e) => {
     const data = await res.json();
 
     if (res.ok) {
-      okEl.textContent = 'Welcome to the family! Signing you in\u2026';
-      okEl.classList.remove('hidden');
-      setTimeout(() => window.location.reload(), 1000);
+      window.location.replace('/setup/');
     } else {
       errEl.textContent = data.error || 'Could not join. Check the code and try again.';
       errEl.classList.remove('hidden');

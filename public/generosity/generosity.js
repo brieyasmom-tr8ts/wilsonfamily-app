@@ -32,7 +32,7 @@ function init() {
   $('#user-name').textContent = state.member.name;
   $('#user-emoji').textContent = state.member.avatar_emoji || '🌱';
 
-  if (state.member.role !== 'parent') {
+  if (state.member.role !== 'parent' && state.member.role !== 'admin') {
     const opt = $('#kind-select option[value="monthly-allocation"]');
     if (opt) opt.remove();
   }
@@ -92,8 +92,14 @@ function renderPot() {
     return;
   }
 
+  const isAdmin = state.member.role === 'admin';
   list.innerHTML = recent_contributions.map(c => {
     const note = c.note ? `<div class="contrib-note">"${escapeHtml(c.note)}"</div>` : '';
+    const actions = isAdmin ? `
+      <div class="contrib-actions">
+        <button class="contrib-edit" data-id="${c.id}" data-amount="${c.amount_cents}" data-kind="${c.kind}" data-note="${escapeHtml(c.note || '')}">Edit</button>
+        <button class="contrib-del" data-id="${c.id}">Del</button>
+      </div>` : '';
     return `
       <li class="contribution-item">
         <div class="contrib-avatar">${c.avatar_emoji || '🌱'}</div>
@@ -102,10 +108,33 @@ function renderPot() {
           <div class="contrib-meta">${kindLabel(c.kind)} \u00b7 ${timeAgo(c.created_at)}</div>
           ${note}
         </div>
-        <div class="contrib-amount">+${formatMoney(c.amount_cents)}</div>
+        <div class="contrib-right">
+          <div class="contrib-amount">+${formatMoney(c.amount_cents)}</div>
+          ${actions}
+        </div>
       </li>
     `;
   }).join('');
+
+  // Admin action listeners
+  if (isAdmin) {
+    list.querySelectorAll('.contrib-del').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Delete this contribution?')) return;
+        await fetch('/api/pot', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: parseInt(btn.dataset.id) })
+        });
+        loadPot();
+      });
+    });
+    list.querySelectorAll('.contrib-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        openEditModal(parseInt(btn.dataset.id), parseInt(btn.dataset.amount), btn.dataset.kind, btn.dataset.note);
+      });
+    });
+  }
 }
 
 function kindLabel(kind) {
@@ -167,6 +196,53 @@ async function submitContribution(e) {
     btn.disabled = false;
     btn.textContent = 'Add it';
   }
+}
+
+// =========================================================
+// EDIT MODAL (admin only)
+// =========================================================
+function openEditModal(id, amountCents, kind, note) {
+  const modal = $('#modal-edit');
+  if (!modal) return;
+  $('#edit-id').value = id;
+  $('#edit-amount').value = (amountCents / 100).toFixed(2);
+  $('#edit-kind').value = kind;
+  $('#edit-note').value = note || '';
+  modal.classList.remove('hidden');
+}
+
+function closeEditModal() {
+  const modal = $('#modal-edit');
+  if (modal) modal.classList.add('hidden');
+}
+
+// Wire up edit modal if it exists (admin only)
+if ($('#modal-edit')) {
+  $$('#modal-edit [data-close-edit]').forEach(el => el.addEventListener('click', closeEditModal));
+  $('#edit-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = parseInt($('#edit-id').value);
+    const amount_cents = Math.round(parseFloat($('#edit-amount').value) * 100);
+    const kind = $('#edit-kind').value;
+    const note = $('#edit-note').value.trim();
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Saving\u2026';
+
+    try {
+      await fetch('/api/pot', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, amount_cents, kind, note })
+      });
+      closeEditModal();
+      loadPot();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Save changes';
+    }
+  });
 }
 
 // =========================================================

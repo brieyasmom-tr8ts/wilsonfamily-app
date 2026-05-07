@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/admin/admin.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Admin</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="admin-main">
+  <section class="admin-hero">
+    <p class="eyebrow centered">Admin panel</p>
+    <h1 class="admin-title">Run the <em>show.</em></h1>
+    <div class="hero-actions">
+      <button id="add-member-btn" class="btn-primary">+ Add member</button>
+    </div>
+  </section>
+
+  <section class="admin-section">
+    <h2 class="section-label">All members</h2>
+    <div id="members-table-wrap" class="table-wrap">
+      <table id="members-table" class="admin-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Birthday</th>
+            <th>Anniv.</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="members-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- ADD MEMBER MODAL -->
+<div id="modal-add" class="modal hidden">
+  <div class="modal-backdrop" data-close-add></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-add aria-label="Close">&times;</button>
+    <p class="eyebrow">Add member</p>
+    <h3 class="modal-title">New <em>family</em> member</h3>
+    <form id="add-form" class="modal-form">
+      <label><span>Name</span><input id="add-name" type="text" required maxlength="80" /></label>
+      <label><span>Email</span><input id="add-email" type="email" required /></label>
+      <label>
+        <span>Role</span>
+        <select id="add-role">
+          <option value="member">Member</option>
+          <option value="parent">Parent</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <p id="add-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Add member</button>
+    </form>
+  </div>
+</div>
+
+<!-- EDIT MEMBER MODAL -->
+<div id="modal-edit-member" class="modal hidden">
+  <div class="modal-backdrop" data-close-edit></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-edit aria-label="Close">&times;</button>
+    <p class="eyebrow">Edit member</p>
+    <h3 class="modal-title">Update <em id="edit-member-title"></em></h3>
+    <form id="edit-member-form" class="modal-form">
+      <input type="hidden" id="edit-member-id" />
+      <label><span>Name</span><input id="edit-name" type="text" required maxlength="80" /></label>
+      <label><span>Username</span><input id="edit-username" type="text" maxlength="30" /></label>
+      <label><span>Email</span><input id="edit-email" type="email" required /></label>
+      <label>
+        <span>Role</span>
+        <select id="edit-role">
+          <option value="member">Member</option>
+          <option value="parent">Parent</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <label><span>Birthday (MM-DD)</span><input id="edit-birthday" type="text" maxlength="5" pattern="\d{2}-\d{2}" placeholder="MM-DD" /></label>
+      <label><span>Anniversary (MM-DD)</span><input id="edit-anniversary" type="text" maxlength="5" pattern="\d{2}-\d{2}" placeholder="MM-DD" /></label>
+      <label><span>Emoji</span><input id="edit-emoji" type="text" maxlength="4" /></label>
+      <p id="edit-member-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Save changes</button>
+    </form>
+  </div>
+</div>
+
+<script src="/admin/admin.js"></script>
+</body>
+</html>

@@ -53,10 +53,32 @@
     </p>
   </section>
 
-  <!-- JOIN THE FAMILY (shown when not signed in) -->
-  <section id="join-section" class="join-section hidden">
-    <div class="join-card">
-      <p class="eyebrow centered">Got the family code?</p>
+  <!-- AUTH SECTION (shown when not signed in) -->
+  <section id="auth-section" class="auth-section hidden">
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-auth-tab="signin">Sign in</button>
+      <button class="auth-tab" data-auth-tab="join">First time? Join</button>
+    </div>
+
+    <!-- SIGN IN (returning users) -->
+    <div id="auth-signin" class="auth-card">
+      <h2 class="join-title">Welcome <em>back.</em></h2>
+      <form id="login-form" class="join-form">
+        <label>
+          <span>Username</span>
+          <input id="login-username" type="text" required placeholder="Your username" maxlength="30" autocomplete="username" />
+        </label>
+        <label>
+          <span>Family code</span>
+          <input id="login-code" type="text" required placeholder="The family code" maxlength="40" autocomplete="off" />
+        </label>
+        <p id="login-error" class="join-error hidden"></p>
+        <button type="submit" class="btn-primary">Sign in</button>
+      </form>
+    </div>
+
+    <!-- JOIN (first time) -->
+    <div id="auth-join" class="auth-card hidden">
       <h2 class="join-title">Come on <em>in.</em></h2>
       <form id="join-form" class="join-form">
         <label>
@@ -72,7 +94,6 @@
           <input id="join-code" type="text" required placeholder="The code from Mom or Dad" maxlength="40" autocomplete="off" />
         </label>
         <p id="join-error" class="join-error hidden"></p>
-        <p id="join-success" class="join-success hidden"></p>
         <button type="submit" class="btn-primary">Join the family</button>
       </form>
     </div>
@@ -90,6 +111,14 @@
         <h3 class="room-title">The Generosity <em>Fund</em></h3>
         <p class="room-text">Our shared pot for blessing others. Suggest, vote, give, and remember the stories together.</p>
         <span class="room-cta">Open the fund &rarr;</span>
+      </a>
+
+      <a id="admin-room-card" href="/admin/" class="room room-live room-admin hidden">
+        <div class="room-icon">🔧</div>
+        <div class="room-status">Admin</div>
+        <h3 class="room-title">Admin <em>Panel</em></h3>
+        <p class="room-text">Manage members, edit contributions, full control over the family hub.</p>
+        <span class="room-cta">Open admin &rarr;</span>
       </a>
 
       <a id="family-room-card" href="/family/" class="room room-live room-admin hidden">

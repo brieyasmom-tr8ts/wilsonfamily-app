@@ -1,0 +1,118 @@
+/* =========================================================
+   Profile setup page
+   ========================================================= */
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  min-height: 100vh;
+}
+
+.setup-stage {
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  animation: rise 0.6s ease-out both;
+}
+
+.setup-title {
+  font-size: clamp(36px, 7vw, 52px);
+  font-weight: 800;
+  margin: 10px 0 12px;
+  letter-spacing: -0.03em;
+}
+.setup-title em { color: var(--primary); }
+
+.setup-sub {
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px 28px;
+  box-shadow: var(--shadow-lg);
+}
+.setup-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.setup-form label > span:first-child {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.setup-form label > span em {
+  font-weight: 400;
+  opacity: 0.6;
+  margin-left: 4px;
+}
+.setup-form small {
+  font-size: 12px;
+  color: var(--ink-soft);
+  opacity: 0.7;
+}
+.setup-form input[type="text"] {
+  background: var(--bg);
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  transition: all 0.15s ease;
+}
+.setup-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.setup-form .btn-primary { margin-top: 8px; }
+
+.setup-error {
+  color: var(--rose);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Emoji grid */
+.emoji-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.emoji-opt {
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--rule);
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.emoji-opt:hover {
+  border-color: var(--primary);
+  transform: scale(1.1);
+}
+.emoji-opt.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
