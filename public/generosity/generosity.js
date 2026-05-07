@@ -41,8 +41,11 @@ function init() {
   setupTabs();
   setupModal();
   setupSignout();
+  setupPledges();
+  setupDisburse();
   loadPot();
   loadSuggestions();
+  loadPledges();
 }
 
 function setupTabs() {
@@ -283,10 +286,14 @@ function renderStoriesTab() {
     list.innerHTML = '<p class="empty">No stories yet. Suggest someone, vote, and watch the story unfold.</p>';
     return;
   }
+  const isAdmin = state.member.role === 'admin' || state.member.role === 'parent';
   list.innerHTML = decided.map(s => {
     const badge = `<span class="sg-status-badge ${s.status}">${s.status}</span>`;
     const decisionNote = s.parent_decision_note
       ? `<div class="sg-decision-note">${escapeHtml(s.parent_decision_note)} &mdash; ${escapeHtml(s.decided_by_name || 'Parent')}</div>`
+      : '';
+    const disburseBtn = (s.status === 'approved' && isAdmin)
+      ? `<div style="margin-top:12px"><button class="btn-primary disburse-btn" data-sg-id="${s.id}" data-amount="${s.suggested_amount_cents || 0}">Mark as sent</button></div>`
       : '';
     return `
     <div class="story-card">
@@ -298,8 +305,18 @@ function renderStoriesTab() {
       ${s.scripture ? '<div class="sg-scripture">"' + escapeHtml(s.scripture) + '"</div>' : ''}
       <div class="sg-meta">${escapeHtml(s.avatar_emoji || '🌱')} ${escapeHtml(s.suggested_by_name)} · ${s.yes_count} yes · ${s.pass_count} pass</div>
       ${decisionNote}
+      ${disburseBtn}
     </div>`;
   }).join('');
+
+  // Wire disburse buttons
+  list.querySelectorAll('.disburse-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('#disburse-sg-id').value = btn.dataset.sgId;
+      $('#disburse-amount').value = btn.dataset.amount ? (parseInt(btn.dataset.amount) / 100).toFixed(2) : '';
+      $('#modal-disburse').classList.remove('hidden');
+    });
+  });
 }
 
 function renderSuggestionCard(s, showVoting) {
@@ -398,6 +415,127 @@ $('#decide-form').addEventListener('submit', async (e) => {
     btn.textContent = 'Submit decision';
   }
 });
+
+// =========================================================
+// PLEDGES
+// =========================================================
+function setupPledges() {
+  $$('[data-close-pledge]').forEach(el => el.addEventListener('click', () => {
+    $('#modal-pledge').classList.add('hidden');
+  }));
+  $('#pledge-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const amount = parseFloat($('#pledge-amount').value);
+    if (!amount || amount <= 0) return;
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      await fetch('/api/pledges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount_cents: Math.round(amount * 100) })
+      });
+      $('#modal-pledge').classList.add('hidden');
+      loadPledges();
+    } finally { btn.disabled = false; }
+  });
+}
+
+async function loadPledges() {
+  try {
+    const res = await fetch('/api/pledges');
+    if (!res.ok) return;
+    const data = await res.json();
+    renderPledge(data.my_pledge, data.all_pledges);
+  } catch (e) { console.error(e); }
+}
+
+function renderPledge(myPledge, allPledges) {
+  const el = $('#pledge-status');
+  if (myPledge) {
+    const amount = (myPledge.amount_cents / 100).toFixed(2);
+    el.innerHTML = `
+      <span>Your monthly pledge: <strong>$${amount}</strong></span>
+      <button class="link-btn" id="change-pledge">Change</button>
+      <button class="link-btn" id="cancel-pledge" style="color:var(--rose)">Cancel</button>
+    `;
+    $('#change-pledge').addEventListener('click', () => {
+      $('#pledge-amount').value = (myPledge.amount_cents / 100).toFixed(2);
+      $('#modal-pledge').classList.remove('hidden');
+    });
+    $('#cancel-pledge').addEventListener('click', async () => {
+      if (!confirm('Cancel your monthly pledge?')) return;
+      await fetch('/api/pledges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cancel: true })
+      });
+      loadPledges();
+    });
+  } else {
+    el.innerHTML = '<button class="btn-ghost" id="start-pledge">Set up monthly giving</button>';
+    $('#start-pledge').addEventListener('click', () => {
+      $('#modal-pledge').classList.remove('hidden');
+      setTimeout(() => $('#pledge-amount').focus(), 100);
+    });
+  }
+
+  // Admin: show record button
+  const adminSection = $('#admin-pledge-section');
+  if (state.member.role === 'admin' && allPledges && allPledges.length > 0) {
+    adminSection.classList.remove('hidden');
+    const btn = $('#record-pledges-btn');
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = 'Recording\u2026';
+      try {
+        const res = await fetch('/api/pledges', { method: 'PUT' });
+        const data = await res.json();
+        btn.textContent = `Recorded ${data.recorded} pledges for ${data.month}`;
+        loadPot();
+      } finally {
+        setTimeout(() => { btn.disabled = false; btn.textContent = 'Record all monthly pledges'; }, 3000);
+      }
+    };
+  } else {
+    adminSection.classList.add('hidden');
+  }
+}
+
+// =========================================================
+// DISBURSE (admin — mark approved suggestion as sent)
+// =========================================================
+function setupDisburse() {
+  $$('[data-close-disburse]').forEach(el => el.addEventListener('click', () => {
+    $('#modal-disburse').classList.add('hidden');
+  }));
+  $('#disburse-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const body = {
+      suggestion_id: parseInt($('#disburse-sg-id').value),
+      amount_cents: Math.round(parseFloat($('#disburse-amount').value) * 100),
+      method: $('#disburse-method').value,
+      method_note: $('#disburse-note').value.trim()
+    };
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Sending\u2026';
+    try {
+      await fetch('/api/disburse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      $('#modal-disburse').classList.add('hidden');
+      $('#disburse-form').reset();
+      loadSuggestions();
+      loadPot();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Mark as sent';
+    }
+  });
+}
 
 // =========================================================
 // EDIT MODAL (admin only)

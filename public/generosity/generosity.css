@@ -85,6 +85,24 @@
 
 .pot-actions { margin-top: 8px; }
 
+.pledge-section {
+  margin-top: 24px;
+  text-align: center;
+}
+.pledge-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.admin-pledge-section {
+  text-align: center;
+  margin-top: 12px;
+}
+
 /* CONTRIBUTIONS LIST */
 .contributions-section { margin-top: 56px; }
 .section-title {

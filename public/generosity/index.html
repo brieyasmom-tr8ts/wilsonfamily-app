@@ -48,6 +48,16 @@
       </div>
     </div>
 
+    <!-- Monthly pledge -->
+    <div class="pledge-section">
+      <div id="pledge-status" class="pledge-status"></div>
+    </div>
+
+    <!-- Admin: record monthly pledges -->
+    <div id="admin-pledge-section" class="admin-pledge-section hidden">
+      <button id="record-pledges-btn" class="btn-ghost">Record all monthly pledges</button>
+    </div>
+
     <div class="contributions-section">
       <h2 class="section-title">Recent gifts <em>into</em> the pot</h2>
       <ul id="contributions-list" class="contributions-list">
@@ -169,6 +179,62 @@
         <textarea id="decide-note" rows="3" placeholder="Why this decision?"></textarea>
       </label>
       <button type="submit" class="btn-primary">Submit decision</button>
+    </form>
+  </div>
+</div>
+
+<!-- DISBURSE MODAL (admin) -->
+<div id="modal-disburse" class="modal hidden">
+  <div class="modal-backdrop" data-close-disburse></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-disburse aria-label="Close">&times;</button>
+    <p class="eyebrow">Send the blessing</p>
+    <h3 class="modal-title">Mark as <em>sent</em></h3>
+    <form id="disburse-form" class="modal-form">
+      <input type="hidden" id="disburse-sg-id" />
+      <label>
+        <span>Amount sent</span>
+        <div class="amount-input-wrap">
+          <span class="amount-prefix">$</span>
+          <input id="disburse-amount" type="number" step="0.01" min="0.01" required />
+        </div>
+      </label>
+      <label>
+        <span>Method</span>
+        <select id="disburse-method">
+          <option value="Venmo">Venmo</option>
+          <option value="Check">Check</option>
+          <option value="Cash">Cash</option>
+          <option value="Zelle">Zelle</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+      <label>
+        <span>Note <em>(optional)</em></span>
+        <input id="disburse-note" type="text" maxlength="300" placeholder="e.g. Sent to their Venmo @handle" />
+      </label>
+      <button type="submit" class="btn-primary">Mark as sent</button>
+    </form>
+  </div>
+</div>
+
+<!-- PLEDGE MODAL -->
+<div id="modal-pledge" class="modal hidden">
+  <div class="modal-backdrop" data-close-pledge></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-pledge aria-label="Close">&times;</button>
+    <p class="eyebrow">Monthly giving</p>
+    <h3 class="modal-title">Set up <em>recurring</em></h3>
+    <p style="color:var(--ink-soft);font-size:14px;margin-bottom:16px">Set an amount to give monthly. Send the money to the family Venmo — the app tracks it.</p>
+    <form id="pledge-form" class="modal-form">
+      <label>
+        <span>Monthly amount</span>
+        <div class="amount-input-wrap">
+          <span class="amount-prefix">$</span>
+          <input id="pledge-amount" type="number" step="0.01" min="0.01" required placeholder="0.00" />
+        </div>
+      </label>
+      <button type="submit" class="btn-primary">Set monthly pledge</button>
     </form>
   </div>
 </div>

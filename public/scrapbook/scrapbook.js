@@ -53,10 +53,18 @@ function init() {
 
 async function loadMembers() {
   try {
-    const res = await fetch('/api/admin/members');
+    // Try admin endpoint first, fall back to invites endpoint for member list
+    let res = await fetch('/api/admin/members');
     if (res.ok) {
       const data = await res.json();
       members = data.members || [];
+    } else {
+      // Non-admin: get members from invites endpoint
+      res = await fetch('/api/invites');
+      if (res.ok) {
+        const data = await res.json();
+        members = data.members || [];
+      }
     }
   } catch (e) { members = []; }
   renderFilter();
