@@ -43,6 +43,7 @@ function init() {
   setupSignout();
   setupPledges();
   setupDisburse();
+  setupReceptions();
   loadPot();
   loadSuggestions();
   loadPledges();
@@ -279,14 +280,28 @@ function renderSuggestTab() {
   wireVoteButtons();
 }
 
-function renderStoriesTab() {
+async function renderStoriesTab() {
   const decided = state.suggestions.filter(s => s.status === 'approved' || s.status === 'declined' || s.status === 'disbursed');
   const list = $('#stories-list');
   if (decided.length === 0) {
     list.innerHTML = '<p class="empty">No stories yet. Suggest someone, vote, and watch the story unfold.</p>';
     return;
   }
+
   const isAdmin = state.member.role === 'admin' || state.member.role === 'parent';
+
+  // Load receptions for all decided suggestions
+  const receptionsByStory = {};
+  for (const s of decided) {
+    try {
+      const res = await fetch(`/api/receptions?suggestion_id=${s.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        receptionsByStory[s.id] = data.receptions || [];
+      }
+    } catch (e) { /* skip */ }
+  }
+
   list.innerHTML = decided.map(s => {
     const badge = `<span class="sg-status-badge ${s.status}">${s.status}</span>`;
     const decisionNote = s.parent_decision_note
@@ -295,6 +310,21 @@ function renderStoriesTab() {
     const disburseBtn = (s.status === 'approved' && isAdmin)
       ? `<div style="margin-top:12px"><button class="btn-primary disburse-btn" data-sg-id="${s.id}" data-amount="${s.suggested_amount_cents || 0}">Mark as sent</button></div>`
       : '';
+
+    // Receptions / God stories
+    const receptions = receptionsByStory[s.id] || [];
+    const receptionsHtml = receptions.map(r => `
+      <div class="reception-update">
+        ${r.image_url ? `<img src="${escapeHtml(r.image_url)}" class="reception-img" />` : ''}
+        <div class="reception-text">${escapeHtml(r.content).replace(/\n/g, '<br>')}</div>
+        <div class="reception-meta">${escapeHtml(r.avatar_emoji || '🌱')} ${escapeHtml(r.added_by_name)} · ${timeAgo(r.created_at)}</div>
+      </div>
+    `).join('');
+
+    const addUpdateBtn = (s.status === 'approved' || s.status === 'disbursed')
+      ? `<button class="btn-ghost add-update-btn" data-sg-id="${s.id}" style="margin-top:12px">+ Add a God story update</button>`
+      : '';
+
     return `
     <div class="story-card">
       <div class="sg-header">
@@ -306,6 +336,8 @@ function renderStoriesTab() {
       <div class="sg-meta">${escapeHtml(s.avatar_emoji || '🌱')} ${escapeHtml(s.suggested_by_name)} · ${s.yes_count} yes · ${s.pass_count} pass</div>
       ${decisionNote}
       ${disburseBtn}
+      ${receptions.length > 0 ? '<div class="receptions-section"><h4 class="receptions-title">How God moved</h4>' + receptionsHtml + '</div>' : ''}
+      ${addUpdateBtn}
     </div>`;
   }).join('');
 
@@ -315,6 +347,16 @@ function renderStoriesTab() {
       $('#disburse-sg-id').value = btn.dataset.sgId;
       $('#disburse-amount').value = btn.dataset.amount ? (parseInt(btn.dataset.amount) / 100).toFixed(2) : '';
       $('#modal-disburse').classList.remove('hidden');
+    });
+  });
+
+  // Wire add update buttons
+  list.querySelectorAll('.add-update-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      $('#reception-sg-id').value = btn.dataset.sgId;
+      $('#reception-error').classList.add('hidden');
+      $('#modal-reception').classList.remove('hidden');
+      setTimeout(() => $('#reception-content').focus(), 100);
     });
   });
 }
@@ -533,6 +575,48 @@ function setupDisburse() {
     } finally {
       btn.disabled = false;
       btn.textContent = 'Mark as sent';
+    }
+  });
+}
+
+// =========================================================
+// RECEPTIONS (God story updates)
+// =========================================================
+function setupReceptions() {
+  $$('[data-close-reception]').forEach(el => el.addEventListener('click', () => {
+    $('#modal-reception').classList.add('hidden');
+    $('#reception-form').reset();
+  }));
+  $('#reception-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = $('#reception-error');
+    errEl.classList.add('hidden');
+
+    const formData = new FormData();
+    formData.append('suggestion_id', $('#reception-sg-id').value);
+    formData.append('content', $('#reception-content').value.trim());
+
+    const imageFile = $('#reception-image').files[0];
+    if (imageFile) formData.append('image', imageFile);
+
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true;
+    btn.textContent = 'Adding\u2026';
+
+    try {
+      const res = await fetch('/api/receptions', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        errEl.textContent = data.error || 'Could not add.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      $('#modal-reception').classList.add('hidden');
+      $('#reception-form').reset();
+      loadSuggestions();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Add update';
     }
   });
 }

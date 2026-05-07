@@ -345,6 +345,44 @@
   border-radius: 8px;
 }
 
+/* Receptions / God stories */
+.receptions-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+.receptions-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--emerald);
+  margin-bottom: 12px;
+}
+.reception-update {
+  padding: 14px;
+  background: var(--bg);
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+.reception-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.reception-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.reception-meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+
 .decide-btn {
   font-size: 12px;
   font-weight: 600;

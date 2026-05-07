@@ -183,6 +183,29 @@
   </div>
 </div>
 
+<!-- RECEPTION UPDATE MODAL -->
+<div id="modal-reception" class="modal hidden">
+  <div class="modal-backdrop" data-close-reception></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-reception aria-label="Close">&times;</button>
+    <p class="eyebrow">God story</p>
+    <h3 class="modal-title">How did it <em>land?</em></h3>
+    <form id="reception-form" class="modal-form" enctype="multipart/form-data">
+      <input type="hidden" id="reception-sg-id" />
+      <label>
+        <span>What happened? How did the money bless them?</span>
+        <textarea id="reception-content" rows="4" required placeholder="Share the story..."></textarea>
+      </label>
+      <label>
+        <span>Photo <em>(optional)</em></span>
+        <input id="reception-image" type="file" accept="image/*" capture="environment" />
+      </label>
+      <p id="reception-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Add update</button>
+    </form>
+  </div>
+</div>
+
 <!-- DISBURSE MODAL (admin) -->
 <div id="modal-disburse" class="modal hidden">
   <div class="modal-backdrop" data-close-disburse></div>

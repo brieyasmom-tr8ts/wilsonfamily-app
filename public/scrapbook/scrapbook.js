@@ -10,15 +10,26 @@ let selectedTags = new Set();
 let currentPageIdx = 0;
 
 (async function boot() {
+  let res;
   try {
-    const res = await fetch('/api/auth/me');
-    if (!res.ok) { window.location.replace('/'); return; }
+    res = await fetch('/api/auth/me');
+  } catch (e) {
+    console.error('Auth fetch failed:', e);
+    document.body.innerHTML = '<p style="padding:40px;text-align:center">Could not connect. Please refresh.</p>';
+    return;
+  }
+  if (!res.ok) {
+    window.location.replace('/');
+    return;
+  }
+  try {
     const data = await res.json();
     me = data.member;
-  } catch (e) { window.location.replace('/'); return; }
-  try {
     init();
-  } catch (e) { console.error('Scrapbook init error:', e); }
+  } catch (e) {
+    console.error('Scrapbook init error:', e);
+    document.body.innerHTML = '<p style="padding:40px;text-align:center">Something went wrong: ' + e.message + '</p>';
+  }
 })();
 
 function init() {
