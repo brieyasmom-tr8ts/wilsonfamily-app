@@ -75,22 +75,22 @@
   object-fit: cover;
   object-position: center 30%;
 }
-/* Soft vignette fade on all edges */
+/* Subtle vignette on edges */
 .hero-photo-wrap::after {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 28px;
   background:
-    radial-gradient(ellipse at center, transparent 50%, var(--bg) 100%);
+    radial-gradient(ellipse at center, transparent 60%, var(--bg) 100%);
   pointer-events: none;
 }
-/* Bottom fade to blend into page */
+/* Light bottom fade */
 .hero-photo-wrap::before {
   content: '';
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 40%;
+  height: 25%;
   background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
   z-index: 1;
   pointer-events: none;

@@ -1,0 +1,282 @@
+/* =========================================================
+   Rocks of Remembrance — word cloud style
+   ========================================================= */
+
+.rocks-main {
+  padding: 40px 24px 96px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.rocks-hero {
+  text-align: center;
+  padding: 36px 24px 40px;
+  margin-bottom: 48px;
+}
+.rocks-title {
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 800;
+  margin: 10px 0 12px;
+  letter-spacing: -0.03em;
+}
+.rocks-title em { color: var(--primary); }
+.rocks-sub {
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 480px;
+  margin: 0 auto 28px;
+}
+
+/* ---- The Word Cloud ---- */
+.rock-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 16px;
+  min-height: 300px;
+}
+
+.rock-stone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.15);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  animation: rock-appear 0.5s ease-out both;
+  position: relative;
+}
+
+/* Varying sizes for visual interest */
+.rock-stone.size-lg {
+  font-size: 28px;
+  padding: 16px 36px;
+  border-radius: 999px;
+}
+.rock-stone.size-md {
+  font-size: 20px;
+  padding: 14px 28px;
+}
+.rock-stone.size-sm {
+  font-size: 15px;
+  padding: 10px 20px;
+}
+
+/* Slight random rotations via classes */
+.rock-stone.tilt-1 { transform: rotate(-3deg); }
+.rock-stone.tilt-2 { transform: rotate(2deg); }
+.rock-stone.tilt-3 { transform: rotate(-1deg); }
+.rock-stone.tilt-4 { transform: rotate(4deg); }
+.rock-stone.tilt-5 { transform: rotate(-2deg); }
+
+.rock-stone:hover {
+  transform: scale(1.1) rotate(0deg) !important;
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255,255,255,0.2);
+  z-index: 2;
+}
+.rock-stone:active {
+  transform: scale(1.05) rotate(0deg) !important;
+}
+
+@keyframes rock-appear {
+  from { opacity: 0; transform: scale(0.6) rotate(0deg); }
+  to { opacity: 1; }
+}
+
+/* Stagger animation */
+.rock-stone:nth-child(1) { animation-delay: 0s; }
+.rock-stone:nth-child(2) { animation-delay: 0.05s; }
+.rock-stone:nth-child(3) { animation-delay: 0.1s; }
+.rock-stone:nth-child(4) { animation-delay: 0.15s; }
+.rock-stone:nth-child(5) { animation-delay: 0.2s; }
+.rock-stone:nth-child(6) { animation-delay: 0.25s; }
+.rock-stone:nth-child(7) { animation-delay: 0.3s; }
+.rock-stone:nth-child(8) { animation-delay: 0.35s; }
+.rock-stone:nth-child(9) { animation-delay: 0.4s; }
+.rock-stone:nth-child(10) { animation-delay: 0.45s; }
+
+.empty-rocks {
+  text-align: center;
+  width: 100%;
+  color: var(--ink-soft);
+  font-size: 16px;
+  font-weight: 500;
+  padding: 48px 16px;
+}
+
+/* ---- Story Overlay ---- */
+.story-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fade-in 0.2s ease-out;
+}
+.story-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.6);
+  backdrop-filter: blur(12px);
+}
+.story-card {
+  position: relative;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px 32px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  animation: rise 0.3s ease-out both;
+  text-align: center;
+}
+.story-rock-word {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.story-author {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.story-content {
+  text-align: left;
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 60px;
+}
+.story-content p {
+  margin-bottom: 12px;
+}
+.story-content .story-empty {
+  color: var(--ink-soft);
+  font-style: italic;
+  text-align: center;
+}
+.story-content iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: none;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+.story-content audio {
+  width: 100%;
+  margin-top: 8px;
+}
+.story-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+.story-delete-btn { color: var(--rose) !important; border-color: var(--rose) !important; }
+.story-delete-btn:hover { background: rgba(239, 68, 68, 0.08) !important; }
+
+/* ---- Color picker ---- */
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.color-opt {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.color-opt:hover { transform: scale(1.15); }
+.color-opt.selected {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink);
+}
+
+/* Story type tabs */
+.story-type-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  padding: 3px;
+  border-radius: 8px;
+  margin-top: 4px;
+}
+.story-type-tab {
+  flex: 1;
+  padding: 7px 12px;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+.story-type-tab:hover { color: var(--ink); }
+.story-type-tab.active {
+  background: var(--primary);
+  color: white;
+}
+
+.story-input textarea,
+.story-input input {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  resize: vertical;
+  transition: all 0.15s ease;
+}
+.story-input textarea:focus,
+.story-input input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-error {
+  color: var(--rose);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .rocks-main { padding: 24px 12px 64px; }
+  .rocks-hero { padding: 24px 16px 32px; margin-bottom: 24px; }
+  .rock-cloud { gap: 8px; padding: 16px 8px; }
+  .rock-stone.size-lg { font-size: 22px; padding: 12px 24px; }
+  .rock-stone.size-md { font-size: 17px; padding: 10px 20px; }
+  .story-card { padding: 32px 24px 24px; }
+  .story-rock-word { font-size: 28px; }
+}

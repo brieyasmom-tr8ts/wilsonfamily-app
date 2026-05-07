@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rocks of Remembrance · The Wilson Family</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/rocks/rocks.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Rocks of Remembrance</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="rocks-main">
+  <section class="rocks-hero">
+    <p class="eyebrow centered">Remembering God's faithfulness</p>
+    <h1 class="rocks-title">Rocks of <em>Remembrance</em></h1>
+    <p class="rocks-sub">Each word is a stone on our table &mdash; a moment where God showed up. Tap a rock to hear the story.</p>
+    <button id="add-rock-btn" class="btn-primary">+ Place a rock</button>
+  </section>
+
+  <!-- The word cloud -->
+  <section id="rock-cloud" class="rock-cloud">
+    <p id="empty-rocks" class="empty-rocks hidden">No rocks yet. Be the first to place one.</p>
+  </section>
+</main>
+
+<!-- STORY OVERLAY -->
+<div id="story-overlay" class="story-overlay hidden">
+  <div class="story-backdrop"></div>
+  <div class="story-card">
+    <button id="story-close" class="modal-close" aria-label="Close">&times;</button>
+    <div id="story-rock-word" class="story-rock-word"></div>
+    <p id="story-author" class="story-author"></p>
+    <div id="story-content" class="story-content"></div>
+    <div id="story-actions" class="story-actions hidden">
+      <button id="story-edit" class="btn-ghost">Edit</button>
+      <button id="story-delete" class="btn-ghost story-delete-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT ROCK MODAL -->
+<div id="modal-rock" class="modal hidden">
+  <div class="modal-backdrop" data-close-rock></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-rock aria-label="Close">&times;</button>
+    <p class="eyebrow">Place a rock</p>
+    <h3 class="modal-title">A stone of <em>remembrance</em></h3>
+    <form id="rock-form" class="modal-form">
+      <input type="hidden" id="rock-id" value="" />
+      <label>
+        <span>The word or phrase on your rock</span>
+        <input id="rock-word" type="text" required maxlength="60" placeholder="e.g. Provision, Healed, Faithful" />
+      </label>
+      <label>
+        <span>Pick a color</span>
+        <div id="color-grid" class="color-grid"></div>
+        <input type="hidden" id="rock-color" value="#64748b" />
+      </label>
+      <label>
+        <span>Tell the story</span>
+        <div class="story-type-tabs">
+          <button type="button" class="story-type-tab active" data-type="text">Write it</button>
+          <button type="button" class="story-type-tab" data-type="video">Video link</button>
+          <button type="button" class="story-type-tab" data-type="audio">Audio link</button>
+        </div>
+      </label>
+      <div id="story-input-text" class="story-input">
+        <textarea id="rock-story" rows="4" placeholder="What happened? How did God show up?"></textarea>
+      </div>
+      <div id="story-input-video" class="story-input hidden">
+        <input id="rock-video-url" type="url" placeholder="YouTube or video link" />
+      </div>
+      <div id="story-input-audio" class="story-input hidden">
+        <input id="rock-audio-url" type="url" placeholder="Audio link (SoundCloud, etc.)" />
+      </div>
+      <p id="rock-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Place this rock</button>
+    </form>
+  </div>
+</div>
+
+<script src="/rocks/rocks.js"></script>
+</body>
+</html>
