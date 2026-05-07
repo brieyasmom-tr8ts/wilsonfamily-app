@@ -12,8 +12,14 @@ let me = null;
     const data = await res.json();
     me = data.member;
     if (me.role !== 'admin') { window.location.replace('/'); return; }
+  } catch (e) { window.location.replace('/'); return; }
+  try {
     init();
-  } catch (e) { window.location.replace('/'); }
+  } catch (e) {
+    console.error('Admin init error:', e);
+    document.querySelector('#admin-content').classList.remove('hidden');
+    document.querySelector('#admin-content').innerHTML = '<p style="padding:40px;text-align:center;color:red">Error: ' + e.message + '</p>';
+  }
 })();
 
 function init() {
