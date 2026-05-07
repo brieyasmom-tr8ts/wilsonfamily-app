@@ -60,21 +60,41 @@
 }
 
 .hero-photo-wrap {
+  position: relative;
   width: 100%;
-  max-width: 680px;
-  margin: 0 auto 28px;
-  border-radius: var(--radius-lg);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  border: 3px solid var(--surface);
-  outline: 1px solid var(--rule);
+  aspect-ratio: 16 / 9;
 }
 .hero-photo {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
   object-fit: cover;
-  max-height: 340px;
+  object-position: center 30%;
+}
+/* Soft vignette fade on all edges */
+.hero-photo-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at center, transparent 50%, var(--bg) 100%);
+  pointer-events: none;
+}
+/* Bottom fade to blend into page */
+.hero-photo-wrap::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 40%;
+  background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 0 0 28px 28px;
 }
 
 .hero-title {
