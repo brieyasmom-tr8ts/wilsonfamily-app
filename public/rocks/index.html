@@ -106,15 +106,17 @@
       </div>
       <div id="story-input-audio" class="story-input hidden">
         <div class="upload-area">
-          <button type="button" id="record-audio-btn" class="btn-primary" style="width:100%;padding:16px;font-size:16px">🎙️ Start Recording</button>
-          <button type="button" id="stop-recording-btn" class="btn-primary hidden" style="width:100%;padding:16px;font-size:16px;background:var(--rose)">⏹ Stop Recording</button>
-          <div id="recording-indicator" class="recording-indicator hidden">● Recording...</div>
+          <input id="rock-audio-record" type="file" accept="audio/*" capture="microphone" class="file-input" />
+          <label for="rock-audio-record" class="upload-label" style="margin-bottom:8px">
+            <span class="upload-icon">🎙️</span>
+            <span>Record audio</span>
+          </label>
+          <input id="rock-audio-file" type="file" accept="audio/*" class="file-input" />
+          <label for="rock-audio-file" class="upload-label" style="padding:14px 16px;border-style:solid;background:var(--surface)">
+            <span>📁 Choose audio file</span>
+          </label>
           <div id="audio-preview" class="media-preview hidden"></div>
           <p id="audio-upload-status" class="upload-status hidden"></p>
-          <div style="text-align:center;margin-top:10px">
-            <input id="rock-audio-file" type="file" accept="audio/*" class="file-input" />
-            <label for="rock-audio-file" class="link-btn" style="cursor:pointer">or choose an audio file</label>
-          </div>
         </div>
         <textarea id="rock-audio-story" rows="2" placeholder="Add a caption (optional)"></textarea>
       </div>
