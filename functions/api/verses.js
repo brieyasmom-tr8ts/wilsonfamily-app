@@ -107,8 +107,9 @@ export async function onRequestGet({ request, env }) {
     myScores = myScoresResult.results || [];
   } catch (e) { /* table may not exist yet */ }
 
-  // Calculate current week of month (1-4)
-  const weekOfMonth = Math.min(4, Math.ceil(now.getDate() / 7));
+  // Calculate current week since verse was set (1-4)
+  const daysSinceSet = Math.floor((Math.floor(now.getTime() / 1000) - verse.created_at) / 86400);
+  const weekOfMonth = Math.min(4, Math.max(1, Math.floor(daysSinceSet / 7) + 1));
 
   return json({
     verse,
