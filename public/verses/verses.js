@@ -71,6 +71,8 @@ function init() {
       else if (game === 'erase') openEraseGame();
       else if (game === 'speed') openSpeedGame();
       else if (game === 'typeit') openTypeItGame();
+      else if (game === 'missing') openMissingWordGame();
+      else if (game === 'backwards') openBackwardsBuildGame();
     });
   });
 
@@ -307,8 +309,7 @@ function openGame(activityId, type) {
 // GAME STATS / LEADERBOARD
 // =========================================================
 function renderGameStats() {
-  const gameNames = { scramble: '🔀 Scramble', erase: '🧹 Erase', speed: '⚡ Speed', typeit: '⌨️ Type It' };
-  const gameTypes = ['scramble', 'speed', 'typeit'];
+  const gameNames = { scramble: '🔀 Scramble', erase: '🧹 Erase', speed: '⚡ Speed', typeit: '⌨️ Type It', missing: '❓ Missing', backwards: '🔙 Backwards' };
 
   // Show personal bests on game buttons
   $$('.game-menu-btn').forEach(btn => {
@@ -348,7 +349,7 @@ function renderGameStats() {
   }
 
   let html = '<div class="lb-title">Leaderboard</div><div class="lb-games">';
-  for (const type of ['scramble', 'speed', 'typeit', 'erase']) {
+  for (const type of ['scramble', 'speed', 'typeit', 'erase', 'missing', 'backwards']) {
     const entries = byGame[type];
     if (!entries || entries.length === 0) continue;
     // Sort: for timed games lower is better, for typeit higher pct is better
@@ -698,6 +699,147 @@ function openTypeItGame() {
   });
 
   $('#typeit-close').addEventListener('click', closeGame);
+}
+
+// --- MISSING WORD ---
+function openMissingWordGame() {
+  const words = getVerseWords();
+  let currentIdx = 0;
+  let correct = 0;
+  let startTime = performance.now();
+  let timerInterval = null;
+  const myBest = myScores.find(s => s.game_type === 'missing');
+  const bestText = myBest && myBest.best_ms ? `Your best: ${(myBest.best_ms / 1000).toFixed(1)}s` : '';
+
+  // Pick ~40% of words as quiz targets (skip short words)
+  const quizIndices = [];
+  words.forEach((w, i) => {
+    if (i > 0 && w.replace(/[^a-zA-Z]/g, '').length >= 3 && Math.random() < 0.45) quizIndices.push(i);
+  });
+  if (quizIndices.length === 0 && words.length > 2) quizIndices.push(Math.floor(words.length / 2));
+
+  showGameArea(`
+    <div class="game-title">❓ Missing Word</div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:8px">Pick the right word to fill in the blank.</p>
+    ${bestText ? `<p style="text-align:center;font-size:13px;font-weight:600;color:var(--primary);margin-bottom:16px">${bestText}</p>` : ''}
+    <div id="missing-timer" class="speed-timer" style="font-size:20px">0.0s</div>
+    <div id="missing-verse" class="game-words" style="margin-bottom:20px"></div>
+    <div id="missing-choices" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px"></div>
+    <div id="missing-result"></div>
+    <div class="game-actions">
+      <button class="btn-ghost" id="missing-close">Close</button>
+    </div>
+  `);
+
+  const timerEl = $('#missing-timer');
+  timerInterval = setInterval(() => {
+    timerEl.textContent = ((performance.now() - startTime) / 1000).toFixed(1) + 's';
+  }, 100);
+
+  function renderQuestion() {
+    if (currentIdx >= quizIndices.length) {
+      clearInterval(timerInterval);
+      const ms = Math.round(performance.now() - startTime);
+      timerEl.textContent = (ms / 1000).toFixed(1) + 's';
+      const isNewBest = !myBest || !myBest.best_ms || ms < myBest.best_ms;
+      $('#missing-choices').innerHTML = '';
+      $('#missing-result').innerHTML = `<div class="speed-result">🎉 ${correct}/${quizIndices.length} correct in ${(ms / 1000).toFixed(1)}s${isNewBest ? ' — New personal best!' : ''}</div>`;
+      saveScore('missing', ms, Math.round((correct / quizIndices.length) * 100)).then(loadVerse);
+      return;
+    }
+
+    const blankIdx = quizIndices[currentIdx];
+    const correctWord = words[blankIdx];
+
+    // Show verse with blank
+    $('#missing-verse').innerHTML = words.map((w, i) =>
+      i === blankIdx ? '<span class="game-blank" style="cursor:default">_____</span>' : `<span class="game-word">${esc(w)}</span>`
+    ).join(' ');
+
+    // Generate choices: correct + 2 random wrong
+    const otherWords = words.filter((w, i) => i !== blankIdx && w.replace(/[^a-zA-Z]/g, '').length >= 2);
+    const shuffledOthers = otherWords.sort(() => Math.random() - 0.5).slice(0, 2);
+    const choices = [correctWord, ...shuffledOthers].sort(() => Math.random() - 0.5);
+
+    $('#missing-choices').innerHTML = choices.map(c =>
+      `<button class="scramble-word" data-choice="${esc(c)}">${esc(c)}</button>`
+    ).join('');
+
+    $('#missing-choices').querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.dataset.choice === correctWord) {
+          correct++;
+          btn.classList.add('placed');
+        } else {
+          btn.classList.add('wrong');
+          // Highlight correct one
+          $('#missing-choices').querySelectorAll('button').forEach(b => {
+            if (b.dataset.choice === correctWord) b.classList.add('placed');
+          });
+        }
+        setTimeout(() => { currentIdx++; renderQuestion(); }, 600);
+      });
+    });
+  }
+
+  renderQuestion();
+  $('#missing-close').addEventListener('click', () => { clearInterval(timerInterval); closeGame(); });
+}
+
+// --- BACKWARDS BUILD ---
+function openBackwardsBuildGame() {
+  const words = getVerseWords();
+  let revealCount = 1; // start showing last word only
+  let startTime = performance.now();
+  let timerInterval = null;
+  const myBest = myScores.find(s => s.game_type === 'backwards');
+  const bestText = myBest && myBest.best_ms ? `Your best: ${(myBest.best_ms / 1000).toFixed(1)}s` : '';
+
+  showGameArea(`
+    <div class="game-title">🔙 Backwards Build</div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:8px">The verse builds up from the end. Say what comes before!</p>
+    ${bestText ? `<p style="text-align:center;font-size:13px;font-weight:600;color:var(--primary);margin-bottom:16px">${bestText}</p>` : ''}
+    <div id="backwards-timer" class="speed-timer" style="font-size:20px">0.0s</div>
+    <div id="backwards-verse" class="game-words" style="margin-bottom:20px"></div>
+    <div id="backwards-result"></div>
+    <div class="game-actions">
+      <button class="btn-primary" id="backwards-next">Show more &rarr;</button>
+      <button class="btn-ghost" id="backwards-close">Close</button>
+    </div>
+  `);
+
+  const timerEl = $('#backwards-timer');
+  timerInterval = setInterval(() => {
+    timerEl.textContent = ((performance.now() - startTime) / 1000).toFixed(1) + 's';
+  }, 100);
+
+  function renderVerse() {
+    const hidden = words.length - revealCount;
+    const html = words.map((w, i) =>
+      i < hidden ? '<span class="game-hint">•••</span>' : `<span class="game-word" style="animation:rise 0.3s ease-out both">${esc(w)}</span>`
+    ).join(' ');
+    $('#backwards-verse').innerHTML = html;
+  }
+
+  renderVerse();
+
+  $('#backwards-next').addEventListener('click', () => {
+    revealCount += Math.max(1, Math.floor(words.length / 6));
+    if (revealCount >= words.length) {
+      revealCount = words.length;
+      clearInterval(timerInterval);
+      const ms = Math.round(performance.now() - startTime);
+      timerEl.textContent = (ms / 1000).toFixed(1) + 's';
+      const isNewBest = !myBest || !myBest.best_ms || ms < myBest.best_ms;
+      $('#backwards-result').innerHTML = `<div class="speed-result">🎉 Full verse revealed in ${(ms / 1000).toFixed(1)}s${isNewBest ? ' — New personal best!' : ''}</div>`;
+      $('#backwards-next').textContent = 'Done!';
+      $('#backwards-next').disabled = true;
+      saveScore('backwards', ms, null).then(loadVerse);
+    }
+    renderVerse();
+  });
+
+  $('#backwards-close').addEventListener('click', () => { clearInterval(timerInterval); closeGame(); });
 }
 
 function renderRecordings() {

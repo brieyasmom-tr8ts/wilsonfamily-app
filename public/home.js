@@ -126,7 +126,7 @@ function activityDescription(item) {
     case 'list_item':
       return `added "${esc(truncate(item.text, 40))}" to ${esc(item.list_title)}`;
     case 'verse_game': {
-      const gameNames = { scramble: 'Word Scramble', erase: 'Erase the Board', speed: 'Speed Round', typeit: 'Type It Out' };
+      const gameNames = { scramble: 'Word Scramble', erase: 'Erase the Board', speed: 'Speed Round', typeit: 'Type It Out', missing: 'Missing Word', backwards: 'Backwards Build' };
       const gn = gameNames[item.game_type] || item.game_type;
       const time = item.score_ms ? ` in <strong>${(item.score_ms / 1000).toFixed(1)}s</strong>` : '';
       const pct = item.score_pct ? ` — <strong>${item.score_pct}%</strong>` : '';

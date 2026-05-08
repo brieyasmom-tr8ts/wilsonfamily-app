@@ -109,7 +109,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  max-width: 460px;
+  max-width: 480px;
   margin: 0 auto;
 }
 .game-menu-btn {
