@@ -19,6 +19,8 @@ let selectedType = 'text';
 let editingId = null;
 let uploadedMediaUrl = null;
 let isUploading = false;
+let mediaRecorder = null;
+let audioChunks = [];
 
 // Boot
 (async function boot() {
@@ -72,6 +74,10 @@ function init() {
   // File upload handlers
   $('#rock-video-file').addEventListener('change', (e) => handleFileSelect(e, 'video'));
   $('#rock-audio-file').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
+
+  // Audio recording
+  $('#record-audio-btn').addEventListener('click', startRecording);
+  $('#stop-recording-btn').addEventListener('click', stopRecording);
 
   // Modal
   $('#add-rock-btn').addEventListener('click', () => openRockModal());
@@ -329,6 +335,51 @@ async function handleFileSelect(e, type) {
     isUploading = false;
     submitBtn.disabled = false;
     submitBtn.textContent = editingId ? 'Save changes' : 'Place this rock';
+  }
+}
+
+// Audio recording
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(audioChunks, { type: 'audio/webm' });
+      const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+
+      // Show preview
+      const previewEl = $('#audio-preview');
+      previewEl.classList.remove('hidden');
+      previewEl.innerHTML = `<audio src="${URL.createObjectURL(blob)}" controls style="width:100%"></audio>`;
+
+      // Show recording controls back to normal
+      $('#recording-controls').classList.add('hidden');
+      $('.audio-options').style.display = '';
+
+      // Upload
+      const fakeEvent = { target: { files: [file] } };
+      handleFileSelect(fakeEvent, 'audio');
+    };
+
+    mediaRecorder.start();
+    $('.audio-options').style.display = 'none';
+    $('#recording-controls').classList.remove('hidden');
+  } catch (e) {
+    alert('Could not access microphone. Please allow microphone access and try again.');
+    console.error('Recording error:', e);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
   }
 }
 

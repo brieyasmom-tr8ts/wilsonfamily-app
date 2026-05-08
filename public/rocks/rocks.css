@@ -319,6 +319,65 @@
 .upload-status.done { color: var(--emerald); background: var(--emerald-light); }
 .upload-status.error { color: var(--rose); background: rgba(239, 68, 68, 0.08); }
 
+/* Audio recording */
+.audio-options {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  padding: 20px 16px;
+  border: 2px dashed var(--rule);
+  border-radius: 14px;
+  background: var(--bg);
+}
+.record-btn {
+  padding: 12px 20px;
+  border: 1.5px solid var(--rose);
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.06);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--rose);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.record-btn:hover { background: rgba(239, 68, 68, 0.12); }
+.upload-file-btn {
+  padding: 12px 20px;
+  border: 1.5px solid var(--rule);
+  border-radius: 12px;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.upload-file-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+.recording-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
+  border: 2px solid var(--rose);
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.04);
+}
+.recording-indicator {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--rose);
+  animation: pulse-recording 1s ease-in-out infinite;
+}
+@keyframes pulse-recording {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 .form-error {
   color: var(--rose);
   font-size: 14px;
