@@ -25,15 +25,14 @@ let isUploading = false;
   try {
     const res = await fetch('/api/auth/me');
     if (!res.ok) {
-      window.location.replace('/');
+      document.querySelector('.rocks-main').innerHTML = '<div style="text-align:center;padding:60px 20px"><h2>Sign in to see the rocks</h2><p style="margin:12px 0 20px;color:var(--ink-soft)">You need to be signed in to view this page.</p><a href="/" class="btn-primary" style="text-decoration:none">Go sign in</a></div>';
       return;
     }
     const data = await res.json();
     me = data.member;
     init();
   } catch (e) {
-    window.location.replace('/');
-  }
+    document.querySelector('.rocks-main').innerHTML = '<div style="text-align:center;padding:60px 20px"><p>Could not connect. <a href="/">Go home</a></p></div>';
 })();
 
 function init() {
@@ -199,6 +198,7 @@ function closeStory() {
 }
 
 function openRockModal(rock) {
+  document.body.classList.add('modal-open');
   editingId = rock ? rock.id : null;
   uploadedMediaUrl = null;
   $('#rock-id').value = editingId || '';
@@ -234,6 +234,7 @@ function openRockModal(rock) {
 }
 
 function closeRockModal() {
+  document.body.classList.remove('modal-open');
   $('#modal-rock').classList.add('hidden');
   $('#rock-form').reset();
   editingId = null;

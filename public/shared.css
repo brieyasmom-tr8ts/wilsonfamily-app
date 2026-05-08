@@ -191,14 +191,24 @@ em { font-style: italic; }
 /* =========================================================
    MODAL
    ========================================================= */
+/* Body lock when modal is open */
+body.modal-open {
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
 .modal {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 50;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: rgba(26, 26, 46, 0.5);
-  animation: fade-in 0.2s ease-out;
 }
 .modal-backdrop {
   display: none;
@@ -210,10 +220,15 @@ em { font-style: italic; }
   padding: 36px 32px 28px;
   max-width: 460px;
   width: calc(100% - 32px);
-  margin: 24px auto 80px;
+  margin: 40px auto;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--rule);
-  animation: rise 0.3s ease-out both;
+}
+/* Extra space at bottom so save button is always reachable */
+.modal-card::after {
+  content: '';
+  display: block;
+  height: 60px;
 }
 .modal-close {
   position: absolute;
