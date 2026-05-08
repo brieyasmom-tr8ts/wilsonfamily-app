@@ -220,7 +220,6 @@ function renderPage() {
         ${p.caption ? `<div class="page-caption">${esc(p.caption)}</div>` : ''}
         ${p.tags.length > 0 ? `<div class="page-tags">${p.tags.map(t => `<span class="page-tag">${esc(t.avatar_emoji || '🌱')} ${esc(t.name)}</span>`).join('')}</div>` : ''}
         <div class="page-meta">${esc(p.uploaded_by_name)} · ${dateStr}</div>
-        <div class="page-number">Page ${currentPageIdx + 1} of ${photos.length}</div>
         ${canDelete ? `<div class="page-actions"><button class="page-del-btn" id="page-delete">Delete this page</button></div>` : ''}
       </div>
       <div class="page-nav">
