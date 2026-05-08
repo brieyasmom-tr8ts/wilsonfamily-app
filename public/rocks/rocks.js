@@ -300,7 +300,7 @@ async function submitRock(e) {
       return;
     }
     closeRockModal();
-    window.location.reload();
+    window.location.href = '/rocks/?t=' + Date.now();
     return;
   } finally {
     btn.disabled = false;
