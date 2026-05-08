@@ -318,6 +318,9 @@ async function renderStoriesTab() {
     const addUpdateBtn = (s.status === 'approved' || s.status === 'disbursed')
       ? `<button class="btn-ghost add-update-btn" data-sg-id="${s.id}" style="margin-top:12px">+ Add a God story update</button>`
       : '';
+    const deleteBtn = isAdmin
+      ? `<button class="btn-ghost delete-suggestion-btn" data-del-sg="${s.id}" style="margin-top:8px;color:var(--rose);border-color:var(--rose);font-size:12px">Delete this story</button>`
+      : '';
 
     return `
     <div class="story-card">
@@ -332,8 +335,23 @@ async function renderStoriesTab() {
       ${disburseBtn}
       ${receptions.length > 0 ? '<div class="receptions-section"><h4 class="receptions-title">How God moved</h4>' + receptionsHtml + '</div>' : ''}
       ${addUpdateBtn}
+      ${deleteBtn}
     </div>`;
   }).join('');
+
+  // Wire delete suggestion buttons (admin)
+  list.querySelectorAll('.delete-suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this suggestion and all its votes, disbursements, and updates? This cannot be undone.')) return;
+      await fetch('/api/suggestions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: parseInt(btn.dataset.delSg) })
+      });
+      loadSuggestions();
+      loadPot();
+    });
+  });
 
   // Wire disburse buttons
   list.querySelectorAll('.disburse-btn').forEach(btn => {
@@ -371,6 +389,7 @@ function renderSuggestionCard(s, showVoting) {
       </div>
       <span class="vote-counts">${s.yes_count} yes · ${s.pass_count} pass</span>
       ${isAdmin ? '<button class="decide-btn" data-decide-id="' + s.id + '" data-decide-name="' + escapeHtml(s.recipient_name) + '">Decide</button>' : ''}
+      ${isAdmin ? '<button class="delete-suggestion-btn" data-del-sg="' + s.id + '" style="font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--rose);background:none;color:var(--rose);cursor:pointer;font-family:var(--font-body);font-weight:600">Del</button>' : ''}
     </div>`;
   } else {
     footer = `<div class="sg-footer"><span class="vote-counts">${s.yes_count} yes · ${s.pass_count} pass</span>${badge}</div>`;
@@ -415,6 +434,20 @@ function wireVoteButtons() {
       $('#decide-id').value = btn.dataset.decideId;
       $('#decide-title').innerHTML = 'Decide on <em>' + btn.dataset.decideName + '</em>';
       $('#modal-decide').classList.remove('hidden');
+    });
+  });
+
+  // Delete buttons on suggest tab (admin)
+  $$('#my-suggestions .delete-suggestion-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this suggestion and all related data?')) return;
+      await fetch('/api/suggestions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: parseInt(btn.dataset.delSg) })
+      });
+      loadSuggestions();
+      loadPot();
     });
   });
 }

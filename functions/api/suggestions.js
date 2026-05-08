@@ -67,6 +67,28 @@ export async function onRequestPost({ request, env }) {
   return json({ ok: true, id: result.meta.last_row_id });
 }
 
+export async function onRequestDelete({ request, env }) {
+  const member = await getCurrentMember(request, env);
+  if (!member) return unauthorized();
+  if (member.role !== 'admin') return forbidden('Admin only');
+
+  let body;
+  try { body = await request.json(); } catch { return badRequest('Invalid JSON'); }
+
+  const { id } = body;
+  if (!id) return badRequest('Suggestion ID required');
+
+  // Delete suggestion and all related records
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM votes WHERE suggestion_id = ?').bind(id),
+    env.DB.prepare('DELETE FROM receptions WHERE suggestion_id = ?').bind(id),
+    env.DB.prepare('DELETE FROM disbursements WHERE suggestion_id = ?').bind(id),
+    env.DB.prepare('DELETE FROM suggestions WHERE id = ?').bind(id)
+  ]);
+
+  return json({ ok: true });
+}
+
 export async function onRequestPut({ request, env }) {
   const member = await getCurrentMember(request, env);
   if (!member) return unauthorized();
