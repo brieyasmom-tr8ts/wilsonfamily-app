@@ -86,15 +86,20 @@ function init() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioChunks = [];
-      audioRecorder = new MediaRecorder(stream);
+      // Use mp4 on Safari, webm on Chrome/Firefox
+      const mimeType = MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4'
+        : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
+      const ext = mimeType.includes('mp4') ? 'm4a' : 'webm';
+      audioRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
       audioRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
       audioRecorder.onstop = () => {
         stream.getTracks().forEach(t => t.stop());
         isRecording = false;
         $('#record-audio-label').textContent = 'Tap to record';
         $('#record-audio-btn').style.background = '';
-        const blob = new Blob(audioChunks, { type: 'audio/webm' });
-        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+        const actualMime = audioRecorder.mimeType || mimeType || 'audio/mp4';
+        const blob = new Blob(audioChunks, { type: actualMime });
+        const file = new File([blob], `recording.${ext}`, { type: actualMime });
         handleFileSelect({ target: { files: [file] } }, 'audio');
       };
       audioRecorder.start();
@@ -173,7 +178,7 @@ function openStory(rock) {
     content.innerHTML = (rock.story ? `<p>${escLines(rock.story)}</p>` : '') + mediaHtml;
   } else if (rock.media_type === 'audio' && rock.media_url) {
     content.innerHTML = (rock.story ? `<p>${escLines(rock.story)}</p>` : '') +
-      `<audio controls src="${esc(rock.media_url)}" style="width:100%;margin-top:8px"></audio>`;
+      `<audio controls style="width:100%;margin-top:8px"><source src="${esc(rock.media_url)}"><p>Your browser cannot play this audio. <a href="${esc(rock.media_url)}" target="_blank">Download it</a>.</p></audio>`;
   } else if (rock.story) {
     content.innerHTML = `<p>${escLines(rock.story)}</p>`;
   } else {
