@@ -41,6 +41,8 @@
 
   <!-- Current verse display -->
   <div id="verse-display" class="hidden">
+
+    <!-- 1. The verse -->
     <section class="verse-hero">
       <p class="eyebrow centered" id="verse-month-label"></p>
       <h1 class="verse-title" id="verse-reference"></h1>
@@ -50,9 +52,8 @@
       <button id="set-verse-btn" class="btn-ghost hidden" style="margin-top:16px">Change verse</button>
     </section>
 
-    <!-- Practice games -->
+    <!-- 2. Practice games -->
     <section class="games-section">
-      <h2 class="section-heading">Practice</h2>
       <div class="games-menu">
         <button class="game-menu-btn" data-game="scramble"><span class="game-menu-icon">🔀</span><span class="game-menu-label">Word Scramble</span></button>
         <button class="game-menu-btn" data-game="erase"><span class="game-menu-icon">🧹</span><span class="game-menu-label">Erase the Board</span></button>
@@ -61,22 +62,10 @@
       </div>
     </section>
 
-    <!-- Game area (dynamically rendered) -->
+    <!-- 3. Game area (opens inline) -->
     <section id="game-area" class="game-area hidden"></section>
 
-    <!-- Weekly activities -->
-    <section class="activities-section">
-      <h2 class="section-heading">This Month's Activities</h2>
-      <div id="activities-list" class="activities-list"></div>
-    </section>
-
-    <!-- Family progress overview -->
-    <section class="progress-section">
-      <h2 class="section-heading">Family Progress</h2>
-      <div id="family-board" class="family-board"></div>
-    </section>
-
-    <!-- Recordings -->
+    <!-- 4. Record yourself -->
     <section class="recordings-section">
       <h2 class="section-heading">I Memorized It!</h2>
       <p class="recordings-sub">Record yourself saying the verse from memory. See who else has got it!</p>
@@ -88,6 +77,15 @@
       <p id="upload-status" class="upload-status hidden"></p>
       <div id="recordings-list" class="recordings-list"></div>
     </section>
+
+    <!-- 5. Family progress -->
+    <section class="progress-section">
+      <h2 class="section-heading">Family Progress</h2>
+      <div id="family-board" class="family-board"></div>
+    </section>
+
+    <!-- Hidden: weekly activities (used by JS for progress tracking) -->
+    <div id="activities-list" class="hidden"></div>
 
     <!-- Past verses -->
     <section class="archive-section">

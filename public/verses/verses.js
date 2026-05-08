@@ -326,8 +326,8 @@ function renderGameStats() {
     }
   });
 
-  // Build leaderboard under games section
-  const section = document.querySelector('.games-section');
+  // Build leaderboard under family progress section
+  const section = document.querySelector('.progress-section');
   let lb = section.querySelector('.game-leaderboard');
   if (!lb) {
     lb = document.createElement('div');
