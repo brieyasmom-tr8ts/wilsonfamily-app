@@ -45,10 +45,10 @@ function init() {
 }
 
 function setupTabs() {
-  $$('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.tab;
-      $$('.nav-tab').forEach(t => t.classList.toggle('active', t === tab));
+  // Pot nav buttons + any back buttons
+  $$('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.tab;
       $$('.tab').forEach(t => t.classList.toggle('active', t.id === `tab-${target}`));
     });
   });

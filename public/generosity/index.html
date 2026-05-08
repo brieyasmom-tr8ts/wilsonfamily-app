@@ -27,11 +27,6 @@
     <span class="brand-name">The Wilson Family</span>
     <span class="brand-room">/ Generosity</span>
   </a>
-  <nav class="app-nav">
-    <button data-tab="pot" class="nav-tab active">The Pot</button>
-    <button data-tab="suggest" class="nav-tab">Suggest &amp; Vote</button>
-    <button data-tab="stories" class="nav-tab">Stories</button>
-  </nav>
   <div class="user-chip">
     <span id="user-emoji">🌱</span>
     <span id="user-name"></span>
@@ -52,8 +47,19 @@
       <p class="balance-caption">
         <span id="balance-contributed">$0</span> given · <span id="balance-disbursed">$0</span> sent out
       </p>
-      <div class="pot-actions">
-        <button id="add-contribution-btn" class="btn-primary">+ Add to the pot</button>
+      <div class="pot-nav">
+        <button id="add-contribution-btn" class="pot-nav-btn">
+          <span class="pot-nav-icon">💰</span>
+          <span class="pot-nav-label">Add to Pot</span>
+        </button>
+        <button data-tab="suggest" class="pot-nav-btn">
+          <span class="pot-nav-icon">💡</span>
+          <span class="pot-nav-label">Suggest & Vote</span>
+        </button>
+        <button data-tab="stories" class="pot-nav-btn">
+          <span class="pot-nav-icon">📖</span>
+          <span class="pot-nav-label">Stories</span>
+        </button>
       </div>
     </div>
 
@@ -77,6 +83,7 @@
 
   <!-- SUGGEST TAB -->
   <section id="tab-suggest" class="tab">
+    <button data-tab="pot" class="back-link">&larr; Back to the pot</button>
     <div class="suggest-hero">
       <p class="eyebrow centered">Know someone who needs a blessing?</p>
       <h2 class="tab-title">Suggest someone to <em>bless</em></h2>
@@ -88,6 +95,7 @@
 
   <!-- STORIES TAB -->
   <section id="tab-stories" class="tab">
+    <button data-tab="pot" class="back-link">&larr; Back to the pot</button>
     <div class="stories-hero">
       <p class="eyebrow centered">Every gift becomes a story</p>
       <h2 class="tab-title">The story <em>archive</em></h2>
