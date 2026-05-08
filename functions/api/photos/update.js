@@ -9,7 +9,7 @@ export async function onRequestPost({ request, env }) {
   let body;
   try { body = await request.json(); } catch { return badRequest('Invalid JSON'); }
 
-  const { id, caption, page_style, taken_date } = body;
+  const { id, caption, page_style, taken_date, album_id } = body;
   if (!id) return badRequest('Photo ID required');
 
   const photo = await env.DB.prepare('SELECT uploaded_by FROM photos WHERE id = ?').bind(id).first();
@@ -21,6 +21,7 @@ export async function onRequestPost({ request, env }) {
   if (caption !== undefined) { sets.push('caption = ?'); vals.push(caption || null); }
   if (page_style !== undefined) { sets.push('page_style = ?'); vals.push(page_style); }
   if (taken_date !== undefined) { sets.push('taken_date = ?'); vals.push(taken_date || null); }
+  if (album_id !== undefined) { sets.push('album_id = ?'); vals.push(album_id || null); }
 
   if (sets.length === 0) return badRequest('Nothing to update');
   vals.push(id);

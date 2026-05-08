@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Memory Verse · The Wilson Family</title>
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/verses/verses.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Memory Verse</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="verse-main">
+
+  <!-- No verse state -->
+  <div id="no-verse" class="no-verse hidden">
+    <div class="no-verse-icon">📖</div>
+    <h2>No verse this month</h2>
+    <p class="no-verse-sub">Check back soon, or ask a parent to set this month's verse.</p>
+    <button id="set-verse-btn-empty" class="btn-primary hidden">+ Set this month's verse</button>
+  </div>
+
+  <!-- Current verse display -->
+  <div id="verse-display" class="hidden">
+    <section class="verse-hero">
+      <p class="eyebrow centered" id="verse-month-label"></p>
+      <h1 class="verse-title" id="verse-reference"></h1>
+      <div class="verse-text-card">
+        <p id="verse-text" class="verse-text"></p>
+      </div>
+      <button id="set-verse-btn" class="btn-ghost hidden" style="margin-top:16px">Change verse</button>
+    </section>
+
+    <!-- Family progress overview -->
+    <section class="progress-section">
+      <h2 class="section-heading">Family Progress</h2>
+      <div id="family-board" class="family-board"></div>
+    </section>
+
+    <!-- Weekly activities -->
+    <section class="activities-section">
+      <h2 class="section-heading">This Month's Activities</h2>
+      <div id="activities-list" class="activities-list"></div>
+    </section>
+
+    <!-- Activity game area (dynamically rendered) -->
+    <section id="game-area" class="game-area hidden"></section>
+
+    <!-- Recordings -->
+    <section class="recordings-section">
+      <h2 class="section-heading">I Memorized It!</h2>
+      <p class="recordings-sub">Record yourself saying the verse from memory.</p>
+      <div class="recordings-actions">
+        <button id="record-video-btn" class="btn-primary">🎬 Record video</button>
+        <button id="record-audio-btn" class="btn-primary" style="background:var(--emerald)">🎙️ Record audio</button>
+        <input id="media-file" type="file" accept="video/*,audio/*" class="file-input" style="display:none" />
+      </div>
+      <p id="upload-status" class="upload-status hidden"></p>
+      <div id="recordings-list" class="recordings-list"></div>
+    </section>
+
+    <!-- Past verses -->
+    <section class="archive-section">
+      <button id="show-archive-btn" class="link-btn">View past verses</button>
+      <div id="archive-list" class="archive-list hidden"></div>
+    </section>
+  </div>
+
+</main>
+
+<!-- SET VERSE MODAL (admin) -->
+<div id="modal-verse" class="modal hidden">
+  <div class="modal-backdrop" data-close-verse></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-verse aria-label="Close">&times;</button>
+    <p class="eyebrow">Set the verse</p>
+    <h3 class="modal-title">This month's <em>verse</em></h3>
+    <form id="verse-form" class="modal-form">
+      <label><span>Reference</span><input id="verse-ref-input" type="text" required maxlength="100" placeholder="e.g. Philippians 4:13" /></label>
+      <label><span>Full verse text</span><textarea id="verse-text-input" rows="4" required placeholder="I can do all things through Christ who strengthens me."></textarea></label>
+      <p id="verse-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Set verse</button>
+    </form>
+  </div>
+</div>
+
+<script src="/verses/verses.js"></script>
+</body>
+</html>

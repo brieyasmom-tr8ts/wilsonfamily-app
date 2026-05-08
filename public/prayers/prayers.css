@@ -213,9 +213,76 @@ textarea:focus {
   text-align: center;
 }
 
+/* God's Faithfulness Archive */
+.faithfulness-intro {
+  text-align: center;
+  padding: 32px 20px 40px;
+}
+.faithfulness-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+.faithfulness-verse {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.5;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.faith-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+  animation: rise 0.4s ease-out both;
+  position: relative;
+  overflow: hidden;
+}
+.faith-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--emerald) 100%);
+}
+.faith-prayer {
+  margin-bottom: 16px;
+}
+.faith-label {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.faith-label-answer {
+  color: var(--emerald);
+}
+.faith-content {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.faith-answer {
+  background: rgba(16, 185, 129, 0.06);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.faith-meta {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
 @media (max-width: 720px) {
   .prayer-main { padding: 16px 12px 64px; }
   .prayer-toolbar { flex-direction: column; align-items: stretch; }
   .filter-tabs { margin-left: 0; justify-content: center; }
   .prayer-card { padding: 16px 18px; }
+  .faith-card { padding: 18px; }
 }

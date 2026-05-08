@@ -269,6 +269,7 @@
 .room:nth-child(4) { animation-delay: 0.15s; }
 .room:nth-child(5) { animation-delay: 0.2s; }
 .room:nth-child(6) { animation-delay: 0.25s; }
+.room:nth-child(7) { animation-delay: 0.3s; }
 
 .room-live {
   cursor: pointer;
@@ -343,6 +344,71 @@
 .room-soon .room-cta {
   color: var(--ink-soft);
   opacity: 0.5;
+}
+
+/* Birthday countdown */
+.birthdays-section {
+  margin-top: 56px;
+  animation: rise 0.5s ease-out both;
+}
+.birthdays-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.bday-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-sm);
+}
+.bday-emoji { font-size: 22px; }
+.bday-name { color: var(--ink); font-weight: 600; }
+.bday-when { color: var(--ink-soft); }
+.bday-today { color: var(--accent); }
+
+/* Activity feed */
+.activity-section {
+  margin-top: 56px;
+  animation: rise 0.5s ease-out both;
+}
+.activity-feed {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-emoji { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+.activity-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.activity-text strong { font-weight: 600; }
+.activity-text em { font-style: italic; color: var(--primary); }
+.activity-time {
+  font-size: 12px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 /* Footer / verse */

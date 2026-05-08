@@ -35,6 +35,9 @@ const $$ = (sel) => document.querySelectorAll(sel);
         await fetch('/api/auth/signout', { method: 'POST' });
         window.location.reload();
       });
+
+      // Load activity feed + birthdays
+      loadActivity();
     } else {
       // Not signed in — show auth section
       $('#auth-section').classList.remove('hidden');
@@ -43,6 +46,103 @@ const $$ = (sel) => document.querySelectorAll(sel);
     $('#auth-section').classList.remove('hidden');
   }
 })();
+
+// =========================================================
+// ACTIVITY FEED + BIRTHDAYS
+// =========================================================
+async function loadActivity() {
+  try {
+    const res = await fetch('/api/activity');
+    if (!res.ok) return;
+    const data = await res.json();
+    renderBirthdays(data.birthdays || []);
+    renderFeed(data.feed || []);
+  } catch (e) { console.error(e); }
+}
+
+function renderBirthdays(birthdays) {
+  if (birthdays.length === 0) return;
+  const section = $('#birthdays-section');
+  const list = $('#birthdays-list');
+  section.classList.remove('hidden');
+
+  list.innerHTML = birthdays.map(b => {
+    const emoji = esc(b.avatar_emoji || '🌱');
+    const name = esc(b.name);
+    let label;
+    if (b.days_away === 0) label = '<strong class="bday-today">Today!</strong>';
+    else if (b.days_away === 1) label = 'Tomorrow';
+    else label = `in ${b.days_away} days`;
+    return `
+      <div class="bday-card">
+        <span class="bday-emoji">${emoji}</span>
+        <span class="bday-name">${name}</span>
+        <span class="bday-when">🎂 ${label}</span>
+      </div>`;
+  }).join('');
+}
+
+function renderFeed(feed) {
+  if (feed.length === 0) return;
+  const section = $('#activity-section');
+  const container = $('#activity-feed');
+  section.classList.remove('hidden');
+
+  container.innerHTML = feed.map(item => {
+    const emoji = esc(item.avatar_emoji || '🌱');
+    const name = esc(item.name);
+    const desc = activityDescription(item);
+    return `
+      <div class="activity-item">
+        <span class="activity-emoji">${emoji}</span>
+        <span class="activity-text"><strong>${name}</strong> ${desc}</span>
+        <span class="activity-time">${timeAgo(item.created_at)}</span>
+      </div>`;
+  }).join('');
+}
+
+function activityDescription(item) {
+  switch (item.type) {
+    case 'contribution':
+      return `added <strong>$${((item.amount_cents || 0) / 100).toFixed(2)}</strong> to the generosity pot`;
+    case 'prayer':
+      return `posted a prayer`;
+    case 'praise':
+      return `shared a praise`;
+    case 'prayer_answered':
+      return `marked a prayer as answered`;
+    case 'rock':
+      return `placed a rock: <em>"${esc(item.word)}"</em>`;
+    case 'photo':
+      return item.caption ? `added a scrapbook photo: "${esc(item.caption)}"` : 'added a photo to the scrapbook';
+    case 'suggestion':
+      return `suggested blessing <em>${esc(item.recipient_name)}</em>`;
+    case 'list_item':
+      return `added "${esc(truncate(item.text, 40))}" to ${esc(item.list_title)}`;
+    default:
+      return 'did something';
+  }
+}
+
+function truncate(s, len) {
+  if (!s) return '';
+  return s.length > len ? s.slice(0, len) + '...' : s;
+}
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[c]);
+}
+
+function timeAgo(unix) {
+  const seconds = Math.floor(Date.now() / 1000) - unix;
+  if (seconds < 60) return 'just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+  if (seconds < 604800) return `${Math.floor(seconds / 86400)}d`;
+  return new Date(unix * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
 // Auth tab switching
 $$('[data-auth-tab]').forEach(tab => {

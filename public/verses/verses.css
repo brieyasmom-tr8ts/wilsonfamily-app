@@ -1,0 +1,307 @@
+/* =========================================================
+   Memory Verse Room
+   ========================================================= */
+
+.verse-main {
+  padding: 24px 20px 96px;
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* No verse state */
+.no-verse {
+  text-align: center;
+  padding: 80px 24px;
+}
+.no-verse-icon { font-size: 48px; margin-bottom: 16px; }
+.no-verse h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.no-verse-sub { color: var(--ink-soft); font-size: 15px; margin-bottom: 24px; }
+
+/* Verse hero */
+.verse-hero {
+  text-align: center;
+  padding: 48px 20px 40px;
+  animation: rise 0.5s ease-out both;
+}
+.verse-title {
+  font-size: clamp(28px, 6vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 8px 0 24px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.verse-text-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+.verse-text-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+}
+.verse-text {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 3vw, 24px);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+/* Family progress board */
+.progress-section { margin-top: 48px; }
+.family-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+}
+.progress-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  padding: 16px 20px;
+  text-align: center;
+  min-width: 100px;
+  box-shadow: var(--shadow-sm);
+}
+.progress-emoji { font-size: 28px; }
+.progress-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 6px 0 8px;
+}
+.progress-dots {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+.progress-dot.done {
+  background: var(--emerald);
+}
+.progress-star {
+  font-size: 16px;
+  margin-top: 6px;
+}
+
+/* Activities list */
+.activities-section { margin-top: 48px; }
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.activity-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+.activity-card.current {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+.activity-card.completed {
+  opacity: 0.7;
+}
+.activity-card.locked {
+  opacity: 0.45;
+}
+.activity-week {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.activity-card.completed .activity-week {
+  background: var(--emerald);
+  color: white;
+}
+.activity-body { flex: 1; }
+.activity-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.activity-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+.activity-action {
+  flex-shrink: 0;
+}
+.activity-check {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 2px solid var(--rule);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  background: none;
+  transition: all 0.15s ease;
+}
+.activity-check:hover { border-color: var(--primary); }
+.activity-check.done {
+  background: var(--emerald);
+  border-color: var(--emerald);
+}
+
+/* Game area */
+.game-area {
+  margin-top: 32px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  animation: rise 0.3s ease-out both;
+}
+.game-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.game-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  line-height: 2;
+}
+.game-word {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+}
+.game-blank {
+  display: inline-block;
+  min-width: 60px;
+  border-bottom: 2px solid var(--primary);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary);
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.game-blank:hover { background: var(--primary-light); }
+.game-blank.revealed { color: var(--emerald); border-color: var(--emerald); }
+.game-hint {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--primary);
+  letter-spacing: 0.05em;
+}
+.game-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Recordings */
+.recordings-section { margin-top: 48px; }
+.recordings-sub {
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+}
+.recordings-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.recordings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.recording-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+.recording-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.recording-emoji { font-size: 22px; }
+.recording-name { font-weight: 600; font-size: 14px; }
+.recording-time { font-size: 12px; color: var(--ink-soft); margin-left: auto; }
+.recording-media {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* Archive */
+.archive-section {
+  margin-top: 48px;
+  text-align: center;
+}
+.archive-list {
+  margin-top: 16px;
+  text-align: left;
+}
+.archive-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.archive-ref { font-weight: 700; font-size: 15px; color: var(--ink); }
+.archive-text { font-size: 14px; color: var(--ink-soft); font-style: italic; margin-top: 4px; }
+.archive-month { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+
+@media (max-width: 720px) {
+  .verse-main { padding: 16px 12px 64px; }
+  .verse-hero { padding: 32px 12px 28px; }
+  .verse-text-card { padding: 24px 20px; }
+  .activity-card { padding: 16px 18px; }
+  .game-area { padding: 20px 16px; }
+}

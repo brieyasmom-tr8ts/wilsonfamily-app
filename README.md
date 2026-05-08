@@ -3,42 +3,47 @@
 A handcrafted family hub at **wilsonfamily.app**.
 Each "room" is a small app, all sharing one design, one sign-in, one database.
 
-Built on Cloudflare Pages + Workers + D1.
+Built on Cloudflare Pages + D1 + R2.
 
 ## Rooms
 
-| Room | Path | Status |
+| Room | Path | Description |
 |---|---|---|
-| Home | `/` | ✅ Live (this build) |
-| Sign in | `/signin/` | ✅ Live |
-| 🌱 Generosity Fund | `/generosity/` | ✅ Stage 1 (this build) |
-| 🎂 Birthdays & Days | `/birthdays/` | 🔜 Coming |
-| 📅 Family Calendar | `/calendar/` | 🔜 Coming |
-| 📝 Lists & Wishes | `/lists/` | 🔜 Coming |
-| 📸 Memories | `/memories/` | 🔜 Coming |
-| ✏️ Notes & Verses | `/notes/` | 🔜 Coming |
+| 🌱 Generosity Fund | `/generosity/` | Shared pot, contributions, suggestions, voting, disbursements, stories |
+| 📅 Family Calendar | `/calendar/` | Birthdays, anniversaries, custom events, multi-day support |
+| 📸 The Scrapbook | `/scrapbook/` | Photo uploads, captions, member tags, decorative page styles |
+| 📝 Lists & Wishes | `/lists/` | Shared or private lists with checkboxes and visibility controls |
+| 🙏 Prayer Wall | `/prayers/` | Prayers, praises, "praying" responses, mark answered |
+| 🪨 Rocks of Remembrance | `/rocks/` | Words on stones with stories — text, audio, or video |
+| 👤 Profile | `/profile/` | Editable name, emoji, favorites, fun facts |
+| 👶 Kids | `/kids/` | Kids section with PIN-based auth |
+| 🛡️ Admin | `/admin/` | Member management, content moderation (admin only) |
+| 👨‍👩‍👧‍👦 My Family | `/family-members/` | View all family members |
 
-## What's in this build (Stage 1)
+### Supporting pages
 
-- ✨ Beautiful family hub homepage with rooms grid
-- 🔐 Magic-link auth (Postmark, no passwords for the kids)
-- 🌱 Generosity Fund: shared pot, contributions, role-aware
-- 🪴 Shared design system across all rooms
-- 📱 Mobile-friendly throughout
+| Page | Path | Description |
+|---|---|---|
+| Home | `/` | Hub with hero photo, sign-in/join, rooms grid |
+| Setup | `/setup/` | First-time profile setup after joining |
+| Sign in | `/signin/` | Magic-link sign-in (legacy) |
+| Welcome | `/welcome/` | Invite acceptance + onboarding |
+| Family Settings | `/family/` | Invite/manage members (parents only) |
 
-## What's coming next
+## What's built
 
-**Stage 2** — Generosity: Suggestions, voting, parent approve/decline
-**Stage 3** — Generosity: Disbursements, story archive, reception, reflections
-**Stage 4+** — New rooms: birthdays, calendar, etc.
-
----
-
-## Important: build locally first, no email needed
-
-Magic links print to the wrangler console. You can test the whole app
-with no domain and no email service. Add Postmark only when you're ready
-to invite the kids.
+- 🌱 **Generosity Fund** — Full lifecycle: contribute to pot, suggest someone to bless, family votes, parents approve, disburse, record the God story
+- 📅 **Calendar** — Auto-populates birthdays/anniversaries from member profiles + custom events
+- 📸 **Scrapbook** — R2 photo uploads with captions, member tags, 10+ decorative page styles, book-flip view
+- 📝 **Lists & Wishes** — Create lists (Christmas wishes, groceries, etc.), check items off, control who sees what
+- 🙏 **Prayer Wall** — Post prayers or praises, tap "praying" to let family know, mark when God answers
+- 🪨 **Rocks of Remembrance** — Place a rock with a word + story (text, audio recording, or video)
+- 👤 **Profiles** — Fun favorites (ice cream, snack, color, game, movie, song, hobby, fun fact)
+- 🔐 **Auth** — Family code join, username login, kid PIN auth (PBKDF2), legacy magic links via Postmark
+- 🛡️ **Admin panel** — Manage members, delete content
+- 📱 **PWA** — Installable on home screen with app icons
+- 🗂️ **R2 media** — Upload and serve photos, audio, video through Cloudflare R2
+- 💰 **Monthly pledges** — Recurring generosity commitments
 
 ---
 
@@ -62,76 +67,89 @@ wrangler login
 wrangler d1 create wilsonfamily-db
 ```
 
-Copy the `database_id` it prints out and paste it into `wrangler.toml`.
+Copy the `database_id` into `wrangler.toml`.
 
-### 4. Apply the schema (local first)
+### 4. Create the R2 bucket
+
+```
+wrangler r2 bucket create wilsonfamily-media
+```
+
+### 5. Apply the schema + migrations (local first)
 
 ```
 wrangler d1 execute wilsonfamily-db --local --file=./schema/schema.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_002_invites.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_003_kid_pins.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_004_profiles.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_005_rocks.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_006_calendar.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_007_suggestion_deadline.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_008_scrapbook.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_009_pledges.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_010_prayers.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_011_favorites.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_012_lists.sql
+wrangler d1 execute wilsonfamily-db --local --file=./schema/migration_013_photo_styles.sql
 ```
 
-### 5. Edit and seed the family
+### 6. Seed the family
 
-Open `schema/seed.sql` and put in **real names + real emails** for everyone.
+Edit `schema/seed.sql` with real names and emails, then:
 
 ```
 wrangler d1 execute wilsonfamily-db --local --file=./schema/seed.sql
 ```
 
-### 6. Run locally
+### 7. Run locally
 
 ```
 wrangler pages dev public --d1=DB=wilsonfamily-db
 ```
 
-Open http://localhost:8788. The homepage shows. Click "Sign in" or "Open the fund"
-to enter. Magic links will print in the wrangler console — paste into your browser
-to sign in.
+Open http://localhost:8788. Use the family code (set in `wrangler.toml` as `FAMILY_CODE`) to join or sign in.
 
 ---
 
-## When you're ready to go live
+## Going live
 
-### Buy wilsonfamily.app
+### Domain
 
-Use Cloudflare Registrar (cheapest, .app domains ~$14/year, automatic DNS).
+Buy `wilsonfamily.app` via Cloudflare Registrar (~$14/year, automatic DNS).
 
-### Set up Postmark sender for wilsonfamily.app
+### Postmark (for magic-link emails)
 
-1. In Postmark → **Sender Signatures** → Add `hello@wilsonfamily.app` (or `fund@wilsonfamily.app`)
-2. Add the DKIM and Return-Path DNS records to Cloudflare DNS for `wilsonfamily.app`
+1. Postmark → Sender Signatures → Add `hello@wilsonfamily.app`
+2. Add DKIM + Return-Path DNS records to Cloudflare DNS
 3. Verify the signature
-4. Copy your Server API Token from "My First Server" (or rename the server "Wilson Family")
+4. Copy the Server API Token
 
-### Apply schema and seed to remote D1
+### Remote database + migrations
 
 ```
 wrangler d1 execute wilsonfamily-db --remote --file=./schema/schema.sql
-```
-
-```
 wrangler d1 execute wilsonfamily-db --remote --file=./schema/seed.sql
 ```
 
-### Set up production secrets
+Then run each migration in order against `--remote`.
+
+### Secrets
 
 ```
 wrangler pages secret put POSTMARK_API_KEY --project-name=wilsonfamily-app
-```
-
-```
 wrangler pages secret put FROM_EMAIL --project-name=wilsonfamily-app
 ```
 
-### Deploy to main
+### Deploy
 
 ```
 wrangler pages deploy public --project-name=wilsonfamily-app --branch=main
 ```
 
-### Connect the domain
+### Connect domain
 
-In Cloudflare dashboard → Pages → wilsonfamily-app → Custom domains → Add `wilsonfamily.app`. Then update `APP_URL` in `wrangler.toml` to `https://wilsonfamily.app` and redeploy.
+Cloudflare dashboard → Pages → wilsonfamily-app → Custom domains → Add `wilsonfamily.app`.
+Update `APP_URL` in `wrangler.toml` to `https://wilsonfamily.app` and redeploy.
 
 ---
 
@@ -139,30 +157,53 @@ In Cloudflare dashboard → Pages → wilsonfamily-app → Custom domains → Ad
 
 ```
 wilsonfamily-app/
-├── wrangler.toml              ← Cloudflare config (edit DB id)
+├── wrangler.toml                 ← Config: D1, R2, env vars
 ├── schema/
-│   ├── schema.sql             ← All tables for all rooms
-│   └── seed.sql               ← Family members
+│   ├── schema.sql                ← Base tables
+│   ├── seed.sql                  ← Family members
+│   └── migration_002–013_*.sql   ← Feature migrations
 ├── functions/
-│   ├── _lib.js                ← Shared auth helpers
+│   ├── _lib.js                   ← Shared auth/helpers
 │   └── api/
-│       ├── pot.js             ← Generosity: GET/POST /api/pot
-│       └── auth/
-│           ├── request-link.js  ← Magic link (uses Postmark)
-│           ├── verify.js        ← Verify magic link
-│           ├── me.js            ← Current user
-│           └── signout.js       ← End session
+│       ├── auth/                 ← join, login, pin, setup, me, request-link, verify, signout
+│       ├── invites/              ← create, accept, revoke
+│       ├── kids/                 ← kid management, PIN reset
+│       ├── admin/members.js      ← Admin member management
+│       ├── media/upload.js       ← R2 uploads
+│       ├── media/[[path]].js     ← R2 serving
+│       ├── photos/update.js      ← Scrapbook photo updates
+│       ├── pot.js                ← Generosity pot
+│       ├── pledges.js            ← Monthly pledges
+│       ├── suggestions.js        ← Generosity suggestions
+│       ├── votes.js              ← Suggestion voting
+│       ├── disburse.js           ← Disbursements
+│       ├── receptions.js         ← God story updates
+│       ├── events.js             ← Calendar events
+│       ├── rocks.js              ← Rocks of Remembrance
+│       ├── prayers.js            ← Prayer wall
+│       ├── pray.js               ← "Praying" responses
+│       ├── lists.js              ← Lists CRUD
+│       ├── list-items.js         ← List items CRUD
+│       ├── photos.js             ← Scrapbook photos
+│       └── profile.js            ← Profile editing
 └── public/
-    ├── shared.css             ← Shared design system (used by all rooms)
-    ├── index.html             ← Family hub homepage
-    ├── home.css               ← Homepage-only styles
-    ├── home.js                ← Homepage auth state check
-    ├── signin/
-    │   ├── index.html         ← Shared sign-in page
-    │   ├── signin.css
-    │   └── signin.js
-    └── generosity/
-        ├── index.html         ← Generosity room
-        ├── generosity.css
-        └── generosity.js
+    ├── manifest.webmanifest      ← PWA manifest
+    ├── shared.css                ← Shared design system
+    ├── icons/                    ← App icons (SVG, PNG, maskable)
+    ├── images/family-hero.jpg    ← Homepage hero photo
+    ├── index.html + home.*       ← Hub homepage
+    ├── setup/                    ← First-time profile setup
+    ├── signin/                   ← Sign-in page
+    ├── welcome/                  ← Invite acceptance
+    ├── generosity/               ← Generosity Fund room
+    ├── calendar/                 ← Family Calendar room
+    ├── scrapbook/                ← Photo Scrapbook room
+    ├── lists/                    ← Lists & Wishes room
+    ├── prayers/                  ← Prayer Wall room
+    ├── rocks/                    ← Rocks of Remembrance room
+    ├── profile/                  ← Profile page
+    ├── kids/                     ← Kids section
+    ├── admin/                    ← Admin panel
+    ├── family/                   ← Family settings
+    └── family-members/           ← My Family page
 ```

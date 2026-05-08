@@ -120,12 +120,14 @@ async function openListDetail(listId) {
   $('#list-owner-info').textContent = `${list.avatar_emoji || '🌱'} ${list.owner_name}'s list${list.allow_others_add ? ' · anyone can add' : ''}`;
 
   // Show/hide controls
+  $('#share-list-btn').classList.toggle('hidden', !isOwner);
   $('#edit-list-btn').classList.toggle('hidden', !isOwner);
   $('#archive-list-btn').classList.toggle('hidden', !isOwner);
   $('#delete-list-btn').classList.toggle('hidden', !isOwner);
   $('#add-item-wrap').classList.toggle('hidden', !isOwner && !list.allow_others_add);
 
   if (isOwner) {
+    $('#share-list-btn').onclick = () => toggleShare(list);
     $('#edit-list-btn').onclick = () => openListModal(list);
     $('#archive-list-btn').textContent = list.archived ? 'Unarchive' : 'Archive';
     $('#archive-list-btn').onclick = async () => {
@@ -346,6 +348,33 @@ async function submitList(e) {
     }
   } finally {
     btn.disabled = false;
+  }
+}
+
+async function toggleShare(list) {
+  // Check if already shared
+  try {
+    const res = await fetch('/api/list-share', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ list_id: list.id, enable: true })
+    });
+    if (!res.ok) { alert('Could not generate share link.'); return; }
+    const data = await res.json();
+
+    if (data.share_token) {
+      const url = window.location.origin + '/lists/shared/?token=' + data.share_token;
+      if (navigator.share) {
+        navigator.share({ title: list.title, text: list.title + ' — The Wilson Family', url });
+      } else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        alert('Share link copied!\n\n' + url);
+      } else {
+        prompt('Share this link:', url);
+      }
+    }
+  } catch (e) {
+    alert('Could not share. Try again.');
   }
 }
 

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shared List · The Wilson Family</title>
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<style>
+  .shared-wrap {
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 40px 24px 96px;
+    position: relative;
+    z-index: 1;
+  }
+  .shared-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .shared-brand {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 16px;
+  }
+  .shared-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 8px 0;
+  }
+  .shared-owner {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .shared-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .shared-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .shared-item:last-child { border-bottom: none; }
+  .shared-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--rule);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    color: var(--primary);
+  }
+  .shared-check.checked {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+  }
+  .shared-item.checked .shared-text {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+  .shared-text { flex: 1; }
+  .shared-by { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
+  .shared-error {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+  .shared-error a { color: var(--primary); }
+</style>
+</head>
+<body>
+
+<div class="shared-wrap">
+  <div id="loading" class="shared-error">Loading...</div>
+  <div id="error" class="shared-error" style="display:none"></div>
+  <div id="content" style="display:none">
+    <div class="shared-header">
+      <div class="shared-brand">✦ The Wilson Family</div>
+      <h1 id="list-title" class="shared-title"></h1>
+      <p id="list-owner" class="shared-owner"></p>
+    </div>
+    <ul id="list-items" class="shared-items"></ul>
+  </div>
+</div>
+
+<script>
+(async () => {
+  const token = new URLSearchParams(window.location.search).get('token');
+  if (!token) return showError('No share link. Ask for a new link.');
+
+  try {
+    const res = await fetch('/api/list-share?token=' + encodeURIComponent(token));
+    if (!res.ok) return showError('This list isn\u2019t available. The link may have expired or sharing was turned off.');
+    const data = await res.json();
+    render(data);
+  } catch (e) {
+    showError('Could not load the list. Try again?');
+  }
+})();
+
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  const el = document.getElementById('error');
+  el.innerHTML = msg + '<br><br><a href="/">Visit wilsonfamily.app</a>';
+  el.style.display = '';
+}
+
+function render(data) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = '';
+  document.getElementById('list-title').textContent = data.title;
+  document.getElementById('list-owner').innerHTML = esc(data.owner_emoji || '\ud83c\udf31') + ' ' + esc(data.owner_name) + '\u2019s list';
+  document.title = data.title + ' \u00b7 The Wilson Family';
+
+  const ul = document.getElementById('list-items');
+  if (!data.items || data.items.length === 0) {
+    ul.innerHTML = '<li class="shared-item" style="color:var(--ink-soft);justify-content:center">No items yet.</li>';
+    return;
+  }
+
+  ul.innerHTML = data.items.map(item => {
+    const checkHtml = data.has_checkboxes
+      ? '<div class="shared-check ' + (item.checked ? 'checked' : '') + '">' + (item.checked ? '\u2713' : '') + '</div>'
+      : '';
+    return '<li class="shared-item ' + (item.checked ? 'checked' : '') + '">'
+      + checkHtml
+      + '<span class="shared-text">' + esc(item.text) + '</span>'
+      + '<span class="shared-by">' + esc(item.added_by_name) + '</span>'
+      + '</li>';
+  }).join('');
+}
+
+function esc(s) {
+  return String(s || '').replace(/[&<>"']/g, function(c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+</script>
+</body>
+</html>

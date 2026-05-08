@@ -38,12 +38,20 @@
 <main class="scrap-main">
   <div class="scrap-toolbar">
     <button id="add-photo-btn" class="btn-primary">+ Add photo</button>
+    <button id="new-album-btn" class="btn-ghost">+ New album</button>
     <div class="filter-wrap">
+      <select id="filter-album">
+        <option value="">All photos</option>
+        <option value="unassigned">Unsorted</option>
+      </select>
       <select id="filter-member">
         <option value="">Everyone</option>
       </select>
     </div>
   </div>
+
+  <!-- ALBUMS STRIP -->
+  <div id="albums-strip" class="albums-strip hidden"></div>
 
   <div id="photo-grid">
     <div class="book">
@@ -78,6 +86,11 @@
         <input type="hidden" id="photo-style" value="classic" />
       </label>
       <label><span>Date <em>(optional)</em></span><input id="photo-date" type="date" /></label>
+      <label><span>Album <em>(optional)</em></span>
+        <select id="photo-album">
+          <option value="">No album</option>
+        </select>
+      </label>
       <label>
         <span>Who's in this photo?</span>
         <div id="tag-grid" class="tag-grid"></div>
@@ -85,6 +98,22 @@
       <p id="photo-error" class="form-error hidden"></p>
       <p id="photo-status" class="upload-status hidden"></p>
       <button type="submit" class="btn-primary">Add to scrapbook</button>
+    </form>
+  </div>
+</div>
+
+<!-- NEW ALBUM MODAL -->
+<div id="modal-album" class="modal hidden">
+  <div class="modal-backdrop" data-close-album></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-album aria-label="Close">&times;</button>
+    <p class="eyebrow">New album</p>
+    <h3 class="modal-title">Group your <em>memories</em></h3>
+    <form id="album-form" class="modal-form">
+      <label><span>Album name</span><input id="album-title" type="text" required maxlength="120" placeholder="Christmas 2025, Beach Trip, etc." /></label>
+      <label><span>Description <em>(optional)</em></span><input id="album-desc" type="text" maxlength="300" placeholder="What's this album about?" /></label>
+      <p id="album-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Create album</button>
     </form>
   </div>
 </div>

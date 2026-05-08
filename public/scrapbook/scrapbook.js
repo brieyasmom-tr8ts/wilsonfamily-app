@@ -6,6 +6,7 @@ const $$ = (sel) => document.querySelectorAll(sel);
 let me = null;
 let photos = [];
 let members = [];
+let albums = [];
 let selectedTags = new Set();
 let currentPageIdx = 0;
 let selectedStyle = 'classic';
@@ -72,6 +73,12 @@ window.addEventListener('unhandledrejection', (e) => {
   }
 
   try {
+    await loadAlbums();
+  } catch (e) {
+    console.warn('Could not load albums:', e);
+  }
+
+  try {
     await loadPhotos();
   } catch (e) {
     showStatus('Error loading photos: ' + e.message);
@@ -115,6 +122,21 @@ function initUI() {
   $$('[data-close-photo]').forEach(el => el.addEventListener('click', closePhotoModal));
   $('#photo-form').addEventListener('submit', submitPhoto);
 
+  // Album controls
+  $('#new-album-btn').addEventListener('click', () => {
+    $('#modal-album').classList.remove('hidden');
+    setTimeout(() => $('#album-title').focus(), 100);
+  });
+  $$('[data-close-album]').forEach(el => el.addEventListener('click', () => {
+    $('#modal-album').classList.add('hidden');
+    $('#album-form').reset();
+  }));
+  $('#album-form').addEventListener('submit', submitAlbum);
+
+  $('#filter-album').addEventListener('change', () => {
+    currentPageIdx = 0;
+    loadPhotos();
+  });
   $('#filter-member').addEventListener('change', () => {
     currentPageIdx = 0;
     loadPhotos();
@@ -161,14 +183,117 @@ function renderTagPicker() {
   });
 }
 
+async function loadAlbums() {
+  try {
+    const res = await fetch('/api/albums');
+    if (!res.ok) return;
+    const data = await res.json();
+    albums = data.albums || [];
+    renderAlbumFilter();
+    renderAlbumsStrip();
+  } catch (e) { console.warn('Albums not available:', e); }
+}
+
+function renderAlbumFilter() {
+  const sel = $('#filter-album');
+  if (!sel) return;
+  // Keep first two options (All photos, Unsorted)
+  const existing = sel.querySelectorAll('option');
+  while (sel.options.length > 2) sel.remove(2);
+  albums.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    opt.textContent = `${a.title} (${a.photo_count})`;
+    sel.appendChild(opt);
+  });
+
+  // Also update the photo upload album picker
+  const photoAlbum = $('#photo-album');
+  if (photoAlbum) {
+    while (photoAlbum.options.length > 1) photoAlbum.remove(1);
+    albums.forEach(a => {
+      const opt = document.createElement('option');
+      opt.value = a.id;
+      opt.textContent = a.title;
+      photoAlbum.appendChild(opt);
+    });
+  }
+}
+
+function renderAlbumsStrip() {
+  const strip = $('#albums-strip');
+  if (!strip || albums.length === 0) return;
+  strip.classList.remove('hidden');
+  strip.innerHTML = albums.map(a => {
+    const cover = a.cover_url
+      ? `<img src="${esc(a.cover_url)}" class="album-cover" />`
+      : '<div class="album-cover-empty">📸</div>';
+    return `
+      <div class="album-card" data-album-id="${a.id}">
+        ${cover}
+        <div class="album-info">
+          <div class="album-title">${esc(a.title)}</div>
+          <div class="album-count">${a.photo_count} photos</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  strip.querySelectorAll('.album-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const albumId = card.dataset.albumId;
+      $('#filter-album').value = albumId;
+      currentPageIdx = 0;
+      loadPhotos();
+    });
+  });
+}
+
+async function submitAlbum(e) {
+  e.preventDefault();
+  const title = $('#album-title').value.trim();
+  if (!title) return;
+
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  btn.textContent = 'Creating\u2026';
+
+  try {
+    const res = await fetch('/api/albums', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title,
+        description: ($('#album-desc') || {}).value || ''
+      })
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      const errEl = $('#album-error');
+      errEl.textContent = data.error || 'Could not create album.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    $('#modal-album').classList.add('hidden');
+    $('#album-form').reset();
+    await loadAlbums();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Create album';
+  }
+}
+
 async function loadPhotos() {
   const filterMember = ($('#filter-member') || {}).value || '';
+
+  const filterAlbum = ($('#filter-album') || {}).value || '';
 
   let allPhotos = [];
   let page = 1;
   while (page <= 20) { // safety limit
     let fetchUrl = `/api/photos?page=${page}`;
     if (filterMember) fetchUrl += `&member=${filterMember}`;
+    if (filterAlbum === 'unassigned') fetchUrl += '&unassigned=1';
+    else if (filterAlbum) fetchUrl += `&album=${filterAlbum}`;
     const res = await fetch(fetchUrl);
     if (!res.ok) break;
     const data = await res.json();
@@ -317,6 +442,8 @@ async function submitPhoto(e) {
     formData.append('taken_date', ($('#photo-date') || {}).value || '');
     formData.append('tags', Array.from(selectedTags).join(','));
     formData.append('page_style', selectedStyle);
+    const albumVal = ($('#photo-album') || {}).value;
+    if (albumVal) formData.append('album_id', albumVal);
 
     const res = await fetch('/api/photos', { method: 'POST', body: formData });
     const data = await res.json();

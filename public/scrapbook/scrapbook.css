@@ -17,7 +17,63 @@
   margin-bottom: 24px;
   flex-wrap: wrap;
 }
-.filter-wrap { margin-left: auto; }
+.filter-wrap { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Albums strip */
+.albums-strip {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 0 20px;
+  margin-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+.album-card {
+  flex-shrink: 0;
+  width: 140px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.album-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+.album-cover {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+  display: block;
+}
+.album-cover-empty {
+  width: 100%;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: var(--bg);
+}
+.album-info {
+  padding: 10px 12px;
+}
+.album-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.album-count {
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-top: 2px;
+}
 .filter-wrap select {
   background: var(--surface);
   border: 1.5px solid var(--rule);

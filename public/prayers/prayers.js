@@ -68,13 +68,18 @@ function init() {
 
 async function loadPrayers() {
   let url = '/api/prayers';
-  if (currentFilter) url += `?filter=${currentFilter}`;
+  const apiFilter = currentFilter === 'faithfulness' ? 'answered' : currentFilter;
+  if (apiFilter) url += `?filter=${apiFilter}`;
 
   try {
     const res = await fetch(url);
     if (!res.ok) return;
     const data = await res.json();
-    renderWall(data.prayers || []);
+    if (currentFilter === 'faithfulness') {
+      renderFaithfulness(data.prayers || []);
+    } else {
+      renderWall(data.prayers || []);
+    }
   } catch (e) { console.error(e); }
 }
 
@@ -204,6 +209,42 @@ async function submitAnswered(e) {
     $('#answered-form').reset();
     loadPrayers();
   } finally { btn.disabled = false; }
+}
+
+function renderFaithfulness(prayers) {
+  const wall = $('#prayer-wall');
+  if (prayers.length === 0) {
+    wall.innerHTML = '<p class="empty" style="text-align:center;padding:48px;color:var(--ink-soft)">No answered prayers yet. When God moves, mark a prayer as answered to remember it here.</p>';
+    return;
+  }
+
+  wall.innerHTML = `
+    <div class="faithfulness-intro">
+      <div class="faithfulness-icon">🪨</div>
+      <p class="faithfulness-verse"><em>&ldquo;The Lord has done great things for us, and we are filled with joy.&rdquo;</em><br><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--primary)">Psalm 126:3</span></p>
+    </div>
+  ` + prayers.map((p, i) => {
+    const hasNote = p.answered_note && p.answered_note.trim();
+    return `
+    <div class="faith-card" style="animation-delay:${Math.min(i * 0.05, 0.3)}s">
+      <div class="faith-prayer">
+        <span class="faith-label">We prayed</span>
+        <div class="faith-content">${escLines(p.content)}</div>
+      </div>
+      ${hasNote ? `
+      <div class="faith-answer">
+        <span class="faith-label faith-label-answer">God answered</span>
+        <div class="faith-content">${escLines(p.answered_note)}</div>
+      </div>` : `
+      <div class="faith-answer">
+        <span class="faith-label faith-label-answer">God answered!</span>
+      </div>`}
+      <div class="faith-meta">
+        ${esc(p.avatar_emoji || '🌱')} ${esc(p.posted_by_name)} &middot; ${timeAgo(p.created_at)}
+        ${p.pray_count > 0 ? ` &middot; 🙏 ${p.pray_count} prayed` : ''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function esc(s) {
