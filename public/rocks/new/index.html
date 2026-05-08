@@ -203,11 +203,8 @@ let audioRecorder = null;
 let audioChunks = [];
 let recording = false;
 
-// Auth check
+// Init
 (async () => {
-  const res = await fetch('/api/auth/me');
-  if (!res.ok) { window.location.replace('/'); return; }
-
   // Color grid
   $('#color-grid').innerHTML = COLORS.map(c =>
     `<div class="color-opt${c===selectedColor?' selected':''}" data-c="${c}" style="background:${c}"></div>`
