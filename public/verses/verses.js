@@ -780,12 +780,13 @@ async function uploadAndSave(file, type) {
       return;
     }
 
-    // Save recording
-    await fetch('/api/verses', {
+    // Save recording (also auto-adds $50 to pot)
+    const saveRes = await fetch('/api/verses', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ verse_id: verse.id, recording_url: data.url, recording_type: type })
     });
+    const saveData = await saveRes.json().catch(() => ({}));
 
     // Also mark as memorized
     await fetch('/api/verses', {
@@ -794,9 +795,13 @@ async function uploadAndSave(file, type) {
       body: JSON.stringify({ verse_id: verse.id })
     });
 
-    statusEl.textContent = '✓ Recording saved!';
+    if (saveData.rewarded) {
+      statusEl.textContent = '🎉 Recording saved! $50 added to the Generosity Pot!';
+    } else {
+      statusEl.textContent = '✓ Recording saved!';
+    }
     statusEl.className = 'upload-status done';
-    setTimeout(() => statusEl.classList.add('hidden'), 2000);
+    setTimeout(() => statusEl.classList.add('hidden'), 4000);
     loadVerse();
   } catch (e) {
     statusEl.textContent = 'Upload failed. Try again.';

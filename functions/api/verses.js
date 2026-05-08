@@ -181,7 +181,21 @@ export async function onRequestPut({ request, env }) {
     await env.DB.prepare(
       'INSERT INTO verse_recordings (verse_id, member_id, media_url, media_type) VALUES (?, ?, ?, ?)'
     ).bind(verse_id, member.id, recording_url, recording_type || 'video').run();
-    return json({ ok: true, type: 'recording' });
+
+    // Auto-add $50 to the generosity pot (once per person per verse)
+    const alreadyRewarded = await env.DB.prepare(
+      "SELECT id FROM contributions WHERE member_id = ? AND kind = 'verse-reward' AND note LIKE '%verse_id:' || ? || '%'"
+    ).bind(member.id, verse_id).first();
+
+    if (!alreadyRewarded) {
+      const verseRow = await env.DB.prepare('SELECT reference FROM memory_verses WHERE id = ?').bind(verse_id).first();
+      const ref = verseRow ? verseRow.reference : 'memory verse';
+      await env.DB.prepare(
+        "INSERT INTO contributions (member_id, amount_cents, kind, note) VALUES (?, 5000, 'verse-reward', ?)"
+      ).bind(member.id, `Memorized ${ref}! (verse_id:${verse_id})`).run();
+    }
+
+    return json({ ok: true, type: 'recording', rewarded: !alreadyRewarded });
   }
 
   // Mark activity complete (or overall memorized if activity_id is null)

@@ -142,6 +142,7 @@ function kindLabel(kind) {
   return ({
     'monthly-allocation': 'Monthly',
     'one-time': 'One-time',
+    'verse-reward': '📖 Verse reward',
   })[kind] || kind;
 }
 
