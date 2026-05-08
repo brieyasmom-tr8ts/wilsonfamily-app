@@ -78,6 +78,35 @@ export async function onRequestGet({ request, env }) {
     ORDER BY vr.created_at DESC
   `).bind(verse.id).all();
 
+  // Get game scores — best per person per game type
+  let scores = [];
+  try {
+    const scoresResult = await env.DB.prepare(`
+      SELECT vs.game_type, vs.score_ms, vs.score_pct, vs.created_at,
+             vs.member_id, m.name, m.avatar_emoji,
+             MIN(vs.score_ms) AS best_ms
+      FROM verse_scores vs
+      JOIN members m ON m.id = vs.member_id
+      WHERE vs.verse_id = ?
+      GROUP BY vs.member_id, vs.game_type
+      ORDER BY vs.game_type, vs.score_ms ASC
+    `).bind(verse.id).all();
+    scores = scoresResult.results || [];
+  } catch (e) { /* table may not exist yet */ }
+
+  // My personal bests
+  let myScores = [];
+  try {
+    const myScoresResult = await env.DB.prepare(`
+      SELECT game_type, MIN(score_ms) AS best_ms, MAX(score_pct) AS best_pct,
+             COUNT(*) AS attempts
+      FROM verse_scores
+      WHERE verse_id = ? AND member_id = ?
+      GROUP BY game_type
+    `).bind(verse.id, member.id).all();
+    myScores = myScoresResult.results || [];
+  } catch (e) { /* table may not exist yet */ }
+
   // Calculate current week of month (1-4)
   const weekOfMonth = Math.min(4, Math.ceil(now.getDate() / 7));
 
@@ -87,6 +116,8 @@ export async function onRequestGet({ request, env }) {
     my_progress: myProgress.results || [],
     family_progress: familyProgress.results || [],
     recordings: recordings.results || [],
+    scores,
+    my_scores: myScores,
     current_week: weekOfMonth
   });
 }
@@ -134,8 +165,16 @@ export async function onRequestPut({ request, env }) {
   let body;
   try { body = await request.json(); } catch { return badRequest('Invalid JSON'); }
 
-  const { verse_id, activity_id, recording_url, recording_type } = body;
+  const { verse_id, activity_id, recording_url, recording_type, game_type, score_ms, score_pct } = body;
   if (!verse_id) return badRequest('verse_id required');
+
+  // If submitting a game score
+  if (game_type) {
+    await env.DB.prepare(
+      'INSERT INTO verse_scores (verse_id, member_id, game_type, score_ms, score_pct) VALUES (?, ?, ?, ?, ?)'
+    ).bind(verse_id, member.id, game_type, score_ms || null, score_pct || null).run();
+    return json({ ok: true, type: 'score' });
+  }
 
   // If submitting a recording
   if (recording_url) {

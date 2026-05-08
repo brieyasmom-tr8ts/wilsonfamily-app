@@ -8,7 +8,7 @@ export async function onRequestGet({ request, env }) {
   if (!member) return unauthorized();
 
   // Pull recent activity from each table in parallel
-  const [contributions, prayers, rocks, photos, suggestions, listItems] = await Promise.allSettled([
+  const [contributions, prayers, rocks, photos, suggestions, listItems, verseScores] = await Promise.allSettled([
     env.DB.prepare(`
       SELECT 'contribution' AS type, c.created_at, c.amount_cents,
              m.name, m.avatar_emoji
@@ -50,6 +50,14 @@ export async function onRequestGet({ request, env }) {
       JOIN members m ON m.id = li.added_by
       ORDER BY li.created_at DESC LIMIT 5
     `).all(),
+    env.DB.prepare(`
+      SELECT 'verse_game' AS type, vs.created_at, vs.game_type, vs.score_ms, vs.score_pct,
+             m.name, m.avatar_emoji, mv.reference
+      FROM verse_scores vs
+      JOIN members m ON m.id = vs.member_id
+      JOIN memory_verses mv ON mv.id = vs.verse_id
+      ORDER BY vs.created_at DESC LIMIT 5
+    `).all().catch(() => ({ results: [] })),
   ]);
 
   // Merge all results
@@ -65,6 +73,7 @@ export async function onRequestGet({ request, env }) {
   extract(photos);
   extract(suggestions);
   extract(listItems);
+  extract(verseScores);
 
   // Sort by created_at descending, take top 20
   items.sort((a, b) => b.created_at - a.created_at);

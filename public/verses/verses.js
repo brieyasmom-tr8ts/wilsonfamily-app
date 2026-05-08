@@ -9,6 +9,8 @@ let activities = [];
 let myProgress = [];
 let familyProgress = [];
 let recordings = [];
+let scores = [];
+let myScores = [];
 let currentWeek = 1;
 let isUploading = false;
 let uploadedMediaUrl = null;
@@ -88,6 +90,8 @@ async function loadVerse() {
     myProgress = data.my_progress || [];
     familyProgress = data.family_progress || [];
     recordings = data.recordings || [];
+    scores = data.scores || [];
+    myScores = data.my_scores || [];
     currentWeek = data.current_week || 1;
     render();
   } catch (e) { console.error(e); }
@@ -110,6 +114,7 @@ function render() {
   $('#verse-reference').textContent = verse.reference;
   $('#verse-text').textContent = verse.text;
 
+  renderGameStats();
   renderFamilyBoard();
   renderActivities();
   renderRecordings();
@@ -299,6 +304,80 @@ function openGame(activityId, type) {
 }
 
 // =========================================================
+// GAME STATS / LEADERBOARD
+// =========================================================
+function renderGameStats() {
+  const gameNames = { scramble: '🔀 Scramble', erase: '🧹 Erase', speed: '⚡ Speed', typeit: '⌨️ Type It' };
+  const gameTypes = ['scramble', 'speed', 'typeit'];
+
+  // Show personal bests on game buttons
+  $$('.game-menu-btn').forEach(btn => {
+    const game = btn.dataset.game;
+    const existing = btn.querySelector('.game-menu-best');
+    if (existing) existing.remove();
+
+    const mySc = myScores.find(s => s.game_type === game);
+    if (mySc) {
+      const best = document.createElement('span');
+      best.className = 'game-menu-best';
+      if (mySc.best_ms) best.textContent = (mySc.best_ms / 1000).toFixed(1) + 's';
+      else if (mySc.best_pct) best.textContent = mySc.best_pct + '%';
+      if (best.textContent) btn.appendChild(best);
+    }
+  });
+
+  // Build leaderboard under games section
+  const section = document.querySelector('.games-section');
+  let lb = section.querySelector('.game-leaderboard');
+  if (!lb) {
+    lb = document.createElement('div');
+    lb.className = 'game-leaderboard';
+    section.appendChild(lb);
+  }
+
+  if (scores.length === 0) {
+    lb.innerHTML = '';
+    return;
+  }
+
+  // Group by game type
+  const byGame = {};
+  for (const s of scores) {
+    if (!byGame[s.game_type]) byGame[s.game_type] = [];
+    byGame[s.game_type].push(s);
+  }
+
+  let html = '<div class="lb-title">Leaderboard</div><div class="lb-games">';
+  for (const type of ['scramble', 'speed', 'typeit', 'erase']) {
+    const entries = byGame[type];
+    if (!entries || entries.length === 0) continue;
+    // Sort: for timed games lower is better, for typeit higher pct is better
+    if (type === 'typeit') entries.sort((a, b) => (b.score_pct || 0) - (a.score_pct || 0));
+    else entries.sort((a, b) => (a.best_ms || a.score_ms || 9999999) - (b.best_ms || b.score_ms || 9999999));
+
+    html += `<div class="lb-game"><div class="lb-game-name">${gameNames[type] || type}</div>`;
+    entries.slice(0, 5).forEach((s, i) => {
+      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+      const val = s.best_ms ? (s.best_ms / 1000).toFixed(1) + 's' : s.score_pct ? s.score_pct + '%' : '';
+      html += `<div class="lb-row">${medal}<span class="lb-avatar">${esc(s.avatar_emoji || '🌱')}</span><span class="lb-name">${esc(s.name)}</span><span class="lb-score">${val}</span></div>`;
+    });
+    html += '</div>';
+  }
+  html += '</div>';
+  lb.innerHTML = html;
+}
+
+async function saveScore(gameType, scoreMs, scorePct) {
+  try {
+    await fetch('/api/verses', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verse_id: verse.id, game_type: gameType, score_ms: scoreMs || null, score_pct: scorePct || null })
+    });
+  } catch (e) { console.error('Could not save score:', e); }
+}
+
+// =========================================================
 // PRACTICE GAMES
 // =========================================================
 
@@ -322,12 +401,18 @@ function openScrambleGame() {
   const words = getVerseWords();
   const shuffled = [...words].sort(() => Math.random() - 0.5);
   let placed = [];
+  let startTime = null;
+  const myBest = myScores.find(s => s.game_type === 'scramble');
+  const bestText = myBest && myBest.best_ms ? `Your best: ${(myBest.best_ms / 1000).toFixed(1)}s` : '';
 
   showGameArea(`
     <div class="game-title">🔀 Word Scramble</div>
-    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Tap the words in the correct order to rebuild the verse.</p>
-    <div id="scramble-answer" class="scramble-answer"><span style="color:var(--ink-soft);font-size:13px">Tap words below to place them here...</span></div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:8px">Tap the words in the correct order.</p>
+    ${bestText ? `<p style="text-align:center;font-size:13px;font-weight:600;color:var(--primary);margin-bottom:16px">${bestText}</p>` : ''}
+    <div id="scramble-timer" class="speed-timer" style="font-size:20px">0.0s</div>
+    <div id="scramble-answer" class="scramble-answer"><span style="color:var(--ink-soft);font-size:13px">Tap words to place them here...</span></div>
     <div id="scramble-pool" class="scramble-pool"></div>
+    <div id="scramble-result"></div>
     <div class="game-actions">
       <button class="btn-ghost" id="scramble-reset">Reset</button>
       <button class="btn-ghost" id="scramble-close">Close</button>
@@ -336,32 +421,37 @@ function openScrambleGame() {
 
   const pool = $('#scramble-pool');
   const answer = $('#scramble-answer');
+  const timerEl = $('#scramble-timer');
+  let timerInterval = null;
+
+  function startTimer() {
+    if (startTime) return;
+    startTime = performance.now();
+    timerInterval = setInterval(() => {
+      timerEl.textContent = ((performance.now() - startTime) / 1000).toFixed(1) + 's';
+    }, 100);
+  }
 
   function renderPool() {
     pool.innerHTML = shuffled.map((w, i) =>
       placed.includes(i) ? '' : `<button class="scramble-word" data-idx="${i}">${esc(w)}</button>`
     ).join('');
     pool.querySelectorAll('.scramble-word').forEach(btn => {
-      btn.addEventListener('click', () => tapWord(parseInt(btn.dataset.idx)));
+      btn.addEventListener('click', () => { startTimer(); tapWord(parseInt(btn.dataset.idx)); });
     });
   }
 
   function renderAnswer() {
     if (placed.length === 0) {
-      answer.innerHTML = '<span style="color:var(--ink-soft);font-size:13px">Tap words below to place them here...</span>';
+      answer.innerHTML = '<span style="color:var(--ink-soft);font-size:13px">Tap words to place them here...</span>';
       return;
     }
     answer.innerHTML = placed.map((idx, pos) => {
       const correct = shuffled[idx] === words[pos];
       return `<span class="scramble-word ${correct ? 'placed' : 'wrong'}">${esc(shuffled[idx])}</span>`;
     }).join('');
-    // Allow removing from answer by tapping
     answer.querySelectorAll('.scramble-word').forEach((el, pos) => {
-      el.addEventListener('click', () => {
-        placed.splice(pos, 1);
-        renderPool();
-        renderAnswer();
-      });
+      el.addEventListener('click', () => { placed.splice(pos, 1); renderPool(); renderAnswer(); });
     });
   }
 
@@ -369,11 +459,15 @@ function openScrambleGame() {
     placed.push(idx);
     renderPool();
     renderAnswer();
-    // Check win
     if (placed.length === words.length) {
       const allCorrect = placed.every((idx, pos) => shuffled[idx] === words[pos]);
       if (allCorrect) {
-        answer.innerHTML += '<div class="speed-result" style="width:100%;margin-top:12px">🎉 Perfect!</div>';
+        clearInterval(timerInterval);
+        const ms = Math.round(performance.now() - startTime);
+        timerEl.textContent = (ms / 1000).toFixed(1) + 's';
+        const isNewBest = !myBest || !myBest.best_ms || ms < myBest.best_ms;
+        $('#scramble-result').innerHTML = `<div class="speed-result">🎉 ${(ms / 1000).toFixed(1)}s${isNewBest ? ' — New personal best!' : ''}</div>`;
+        saveScore('scramble', ms, null).then(loadVerse);
       }
     }
   }
@@ -382,22 +476,29 @@ function openScrambleGame() {
   renderAnswer();
 
   $('#scramble-reset').addEventListener('click', () => {
-    placed = [];
+    placed = []; startTime = null; clearInterval(timerInterval);
+    timerEl.textContent = '0.0s'; $('#scramble-result').innerHTML = '';
     shuffled.sort(() => Math.random() - 0.5);
-    renderPool();
-    renderAnswer();
+    renderPool(); renderAnswer();
   });
-  $('#scramble-close').addEventListener('click', closeGame);
+  $('#scramble-close').addEventListener('click', () => { clearInterval(timerInterval); closeGame(); });
 }
 
 // --- ERASE THE BOARD ---
 function openEraseGame() {
   const words = getVerseWords();
+  let startTime = null;
+  let timerInterval = null;
+  const myBest = myScores.find(s => s.game_type === 'erase');
+  const bestText = myBest && myBest.best_ms ? `Your best: ${(myBest.best_ms / 1000).toFixed(1)}s` : '';
 
   showGameArea(`
     <div class="game-title">🧹 Erase the Board</div>
-    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Tap words to erase them. Try to say the verse with the gaps!</p>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:8px">Erase every word, then say the verse from memory!</p>
+    ${bestText ? `<p style="text-align:center;font-size:13px;font-weight:600;color:var(--primary);margin-bottom:16px">${bestText}</p>` : ''}
+    <div id="erase-timer" class="speed-timer" style="font-size:20px">0.0s</div>
     <div id="erase-board" class="erase-board"></div>
+    <div id="erase-result"></div>
     <div class="game-actions">
       <button class="btn-ghost" id="erase-reset">Reset</button>
       <button class="btn-primary" id="erase-all">Erase all</button>
@@ -406,7 +507,26 @@ function openEraseGame() {
   `);
 
   const board = $('#erase-board');
+  const timerEl = $('#erase-timer');
   const erased = new Set();
+
+  function startTimer() {
+    if (startTime) return;
+    startTime = performance.now();
+    timerInterval = setInterval(() => {
+      timerEl.textContent = ((performance.now() - startTime) / 1000).toFixed(1) + 's';
+    }, 100);
+  }
+
+  function onAllErased() {
+    clearInterval(timerInterval);
+    const ms = Math.round(performance.now() - startTime);
+    timerEl.textContent = (ms / 1000).toFixed(1) + 's';
+    const isNewBest = !myBest || !myBest.best_ms || ms < myBest.best_ms;
+    board.innerHTML = '<div style="color:#e8e0d0;text-align:center;padding:20px;font-size:18px;font-style:italic">The board is empty. Can you say the whole verse? 🧠</div>';
+    $('#erase-result').innerHTML = `<div class="speed-result">🧹 Erased in ${(ms / 1000).toFixed(1)}s${isNewBest ? ' — New personal best!' : ''}</div>`;
+    saveScore('erase', ms, null).then(loadVerse);
+  }
 
   function renderBoard() {
     board.innerHTML = words.map((w, i) =>
@@ -414,11 +534,10 @@ function openEraseGame() {
     ).join('');
     board.querySelectorAll('.erase-word:not(.erased)').forEach(btn => {
       btn.addEventListener('click', () => {
+        startTimer();
         erased.add(parseInt(btn.dataset.idx));
         renderBoard();
-        if (erased.size === words.length) {
-          board.innerHTML = '<div style="color:#e8e0d0;text-align:center;padding:20px;font-size:18px;font-style:italic">The board is empty. Can you say the whole verse? 🧠</div>';
-        }
+        if (erased.size === words.length) onAllErased();
       });
     });
   }
@@ -426,12 +545,16 @@ function openEraseGame() {
   renderBoard();
 
   $('#erase-all').addEventListener('click', () => {
+    startTimer();
     words.forEach((_, i) => erased.add(i));
-    renderBoard();
-    board.innerHTML = '<div style="color:#e8e0d0;text-align:center;padding:20px;font-size:18px;font-style:italic">The board is empty. Can you say the whole verse? 🧠</div>';
+    onAllErased();
   });
-  $('#erase-reset').addEventListener('click', () => { erased.clear(); renderBoard(); });
-  $('#erase-close').addEventListener('click', closeGame);
+  $('#erase-reset').addEventListener('click', () => {
+    erased.clear(); startTime = null; clearInterval(timerInterval);
+    timerEl.textContent = '0.0s'; $('#erase-result').innerHTML = '';
+    renderBoard();
+  });
+  $('#erase-close').addEventListener('click', () => { clearInterval(timerInterval); closeGame(); });
 }
 
 // --- SPEED ROUND ---
@@ -441,10 +564,13 @@ function openSpeedGame() {
   let nextIdx = 0;
   let startTime = null;
   let timerInterval = null;
+  const myBest = myScores.find(s => s.game_type === 'speed');
+  const bestText = myBest && myBest.best_ms ? `Your best: ${(myBest.best_ms / 1000).toFixed(1)}s` : '';
 
   showGameArea(`
     <div class="game-title">⚡ Speed Round</div>
-    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Tap the words in the correct order as fast as you can!</p>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:8px">Tap the words in the correct order — fast!</p>
+    ${bestText ? `<p style="text-align:center;font-size:13px;font-weight:600;color:var(--primary);margin-bottom:16px">${bestText}</p>` : ''}
     <div id="speed-timer" class="speed-timer">0.0s</div>
     <div id="speed-pool" class="speed-pool"></div>
     <div id="speed-result"></div>
@@ -485,9 +611,12 @@ function openSpeedGame() {
           nextIdx++;
           if (nextIdx === words.length) {
             clearInterval(timerInterval);
-            const time = ((performance.now() - startTime) / 1000).toFixed(1);
+            const ms = Math.round(performance.now() - startTime);
+            const time = (ms / 1000).toFixed(1);
             timerEl.textContent = time + 's';
-            resultEl.innerHTML = `<div class="speed-result">🎉 Done in ${time} seconds!</div>`;
+            const isNewBest = !myBest || !myBest.best_ms || ms < myBest.best_ms;
+            resultEl.innerHTML = `<div class="speed-result">🎉 ${time}s${isNewBest ? ' — New personal best!' : ''}</div>`;
+            saveScore('speed', ms, null).then(loadVerse);
           }
         } else {
           btn.classList.add('wrong');
@@ -513,9 +642,13 @@ function openSpeedGame() {
 
 // --- TYPE IT OUT ---
 function openTypeItGame() {
+  const myBest = myScores.find(s => s.game_type === 'typeit');
+  const bestText = myBest && myBest.best_pct ? `Your best: ${myBest.best_pct}%` : '';
+
   showGameArea(`
     <div class="game-title">⌨️ Type It Out</div>
-    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Type the verse from memory. No peeking!</p>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:8px">Type the verse from memory. No peeking!</p>
+    ${bestText ? `<p style="text-align:center;font-size:13px;font-weight:600;color:var(--primary);margin-bottom:16px">${bestText}</p>` : ''}
     <textarea id="typeit-input" class="typeit-input" placeholder="Start typing the verse..." rows="4"></textarea>
     <div id="typeit-feedback" class="typeit-feedback" style="display:none"></div>
     <div class="game-actions" style="margin-top:16px">
@@ -556,10 +689,12 @@ function openTypeItGame() {
     const isPerfect = pct === 100;
 
     feedback.style.display = '';
+    const isNewBest = !myBest || !myBest.best_pct || pct > myBest.best_pct;
     feedback.className = 'typeit-feedback ' + (isPerfect ? 'perfect' : 'close');
     feedback.innerHTML = isPerfect
-      ? '🎉 Perfect! You got every word right!'
-      : `<strong>${pct}% correct</strong> (${correct}/${targetWords.length} words)<br><br>${highlighted.join(' ')}`;
+      ? `🎉 Perfect! You got every word right!${isNewBest ? ' New personal best!' : ''}`
+      : `<strong>${pct}%</strong> correct (${correct}/${targetWords.length} words)${isNewBest ? ' — <strong>New best!</strong>' : ''}<br><br>${highlighted.join(' ')}`;
+    saveScore('typeit', null, pct).then(loadVerse);
   });
 
   $('#typeit-close').addEventListener('click', closeGame);

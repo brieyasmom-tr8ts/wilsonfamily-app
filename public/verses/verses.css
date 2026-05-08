@@ -132,6 +132,54 @@
 .game-menu-btn:active { transform: translateY(0); }
 .game-menu-icon { font-size: 22px; line-height: 1; }
 .game-menu-label { font-size: 14px; font-weight: 700; color: var(--ink); }
+.game-menu-best {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-left: 4px;
+}
+
+/* Leaderboard */
+.game-leaderboard {
+  margin-top: 24px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+}
+.lb-title {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-bottom: 16px;
+}
+.lb-games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+}
+.lb-game-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 4px 0;
+}
+.lb-avatar { font-size: 16px; }
+.lb-name { flex: 1; color: var(--ink); font-weight: 500; }
+.lb-score { font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
 
 /* Scramble game */
 .scramble-pool {
