@@ -18,6 +18,7 @@ let selectedColor = ROCK_COLORS[0];
 let selectedType = 'text';
 let editingId = null;
 let uploadedMediaUrl = null;
+let isUploading = false;
 
 // Boot
 (async function boot() {
@@ -212,6 +213,21 @@ async function submitRock(e) {
   const errEl = $('#rock-error');
   errEl.classList.add('hidden');
 
+  if (isUploading) {
+    errEl.textContent = 'Please wait for the upload to finish.';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  const mediaUrl = $('#rock-media-url').value || uploadedMediaUrl || null;
+
+  // If they selected video/audio but didn't upload anything, warn
+  if ((selectedType === 'video' || selectedType === 'audio') && !mediaUrl && !editingId) {
+    errEl.textContent = 'Please record or upload your ' + selectedType + ' first, or switch to "Write it".';
+    errEl.classList.remove('hidden');
+    return;
+  }
+
   const storyText = selectedType === 'text' ? $('#rock-story').value.trim() :
                      selectedType === 'video' ? $('#rock-video-story').value.trim() :
                      $('#rock-audio-story').value.trim();
@@ -221,7 +237,7 @@ async function submitRock(e) {
     color: selectedColor,
     media_type: selectedType,
     story: storyText || null,
-    media_url: (selectedType === 'video' || selectedType === 'audio') ? ($('#rock-media-url').value || uploadedMediaUrl || null) : null
+    media_url: (selectedType === 'video' || selectedType === 'audio') ? mediaUrl : null
   };
 
   const btn = e.target.querySelector('button[type=submit]');
@@ -269,6 +285,7 @@ async function handleFileSelect(e, type) {
 
   const previewEl = $(`#${type}-preview`);
   const statusEl = $(`#${type}-upload-status`);
+  const submitBtn = $('#rock-form').querySelector('button[type=submit]');
 
   // Show preview
   const url = URL.createObjectURL(file);
@@ -279,8 +296,11 @@ async function handleFileSelect(e, type) {
     previewEl.innerHTML = `<audio src="${url}" controls></audio>`;
   }
 
-  // Upload
-  statusEl.textContent = 'Uploading\u2026';
+  // Disable submit during upload
+  isUploading = true;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Uploading media\u2026';
+  statusEl.textContent = 'Uploading\u2026 please wait';
   statusEl.className = 'upload-status uploading';
   statusEl.classList.remove('hidden');
 
@@ -294,15 +314,21 @@ async function handleFileSelect(e, type) {
     if (res.ok) {
       uploadedMediaUrl = data.url;
       $('#rock-media-url').value = data.url;
-      statusEl.textContent = 'Uploaded!';
+      statusEl.textContent = 'Uploaded! Ready to save.';
       statusEl.className = 'upload-status done';
     } else {
-      statusEl.textContent = data.error || 'Upload failed';
+      statusEl.textContent = data.error || 'Upload failed. Try again.';
       statusEl.className = 'upload-status error';
+      uploadedMediaUrl = null;
     }
   } catch (err) {
     statusEl.textContent = 'Upload failed. Try again.';
     statusEl.className = 'upload-status error';
+    uploadedMediaUrl = null;
+  } finally {
+    isUploading = false;
+    submitBtn.disabled = false;
+    submitBtn.textContent = editingId ? 'Save changes' : 'Place this rock';
   }
 }
 
