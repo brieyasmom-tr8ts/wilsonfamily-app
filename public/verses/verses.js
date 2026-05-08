@@ -116,9 +116,9 @@ function render() {
   $('#verse-reference').textContent = verse.reference;
   $('#verse-text').textContent = verse.text;
 
+  renderChecklist();
   renderGameStats();
   renderFamilyBoard();
-  renderActivities();
   renderRecordings();
 }
 
@@ -303,6 +303,55 @@ function openGame(activityId, type) {
 
   // Scroll to game
   area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// =========================================================
+// WEEKLY CHECKLIST
+// =========================================================
+const CHECKLIST_ITEMS = [
+  { week: 1, label: 'Read the verse 3 times', icon: '📖' },
+  { week: 2, label: 'Write the verse out by hand', icon: '✍️' },
+  { week: 3, label: 'Say it with only first-letter hints', icon: '💡' },
+  { week: 4, label: 'Say the whole verse from memory', icon: '🧠' },
+];
+
+function renderChecklist() {
+  const list = $('#weekly-checklist');
+  if (!list) return;
+
+  const completedIds = new Set(myProgress.filter(p => p.activity_id).map(p => p.activity_id));
+
+  list.innerHTML = CHECKLIST_ITEMS.map(item => {
+    const activity = activities.find(a => a.week === item.week);
+    const actId = activity ? activity.id : null;
+    const done = actId && completedIds.has(actId);
+    const isCurrent = item.week === currentWeek;
+    const isFuture = item.week > currentWeek;
+    const rowClass = done ? 'done-row' : isCurrent ? 'current' : isFuture ? 'future' : '';
+
+    return `
+      <div class="checklist-item ${rowClass}">
+        <button class="checklist-check ${done ? 'done' : ''}" ${done || isFuture ? 'disabled' : ''} data-act-id="${actId || ''}">✓</button>
+        <span class="checklist-week">${item.icon} Week ${item.week}</span>
+        <span class="checklist-label">${item.label}</span>
+      </div>`;
+  }).join('');
+
+  // Wire check buttons
+  list.querySelectorAll('.checklist-check:not(.done):not([disabled])').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const actId = btn.dataset.actId;
+      if (!actId) return;
+      btn.disabled = true;
+      btn.classList.add('done');
+      await fetch('/api/verses', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ verse_id: verse.id, activity_id: parseInt(actId) })
+      });
+      await loadVerse();
+    });
+  });
 }
 
 // =========================================================
