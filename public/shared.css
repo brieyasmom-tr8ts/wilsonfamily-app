@@ -195,32 +195,25 @@ em { font-style: italic; }
   position: fixed;
   inset: 0;
   z-index: 50;
-  display: flex;
-  flex-direction: column;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  background: rgba(26, 26, 46, 0.5);
   animation: fade-in 0.2s ease-out;
 }
 .modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 26, 46, 0.5);
-  backdrop-filter: blur(8px);
-  z-index: 0;
+  display: none;
 }
 .modal-card {
   position: relative;
-  z-index: 1;
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 36px 32px 28px;
   max-width: 460px;
   width: calc(100% - 32px);
-  margin: 16px auto;
+  margin: 24px auto 80px;
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--rule);
   animation: rise 0.3s ease-out both;
-  overflow-y: auto;
-  max-height: calc(100vh - 32px);
-  -webkit-overflow-scrolling: touch;
 }
 .modal-close {
   position: absolute;
