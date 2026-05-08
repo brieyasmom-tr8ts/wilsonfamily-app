@@ -1,5 +1,5 @@
 /* =========================================================
-   Scrapbook — decorated page styles
+   Scrapbook — richly decorated page styles
    ========================================================= */
 
 .scrap-main {
@@ -42,17 +42,18 @@
 
 /* Base page */
 .page {
-  padding: 32px;
+  padding: 40px 32px 32px;
   position: relative;
   min-height: 400px;
+  overflow: hidden;
 }
 
 .page-photo-wrap {
   width: 100%;
-  border-radius: 8px;
   overflow: hidden;
   margin-bottom: 16px;
   position: relative;
+  z-index: 1;
 }
 .page-photo {
   width: 100%;
@@ -68,6 +69,8 @@
   color: var(--ink);
   margin-bottom: 8px;
   text-align: center;
+  position: relative;
+  z-index: 1;
 }
 .page-tags {
   display: flex;
@@ -75,12 +78,12 @@
   gap: 6px;
   justify-content: center;
   margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
 }
 .page-tag {
   font-size: 12px;
   font-weight: 600;
-  background: var(--primary-light);
-  color: var(--primary);
   padding: 3px 12px;
   border-radius: 999px;
 }
@@ -89,6 +92,8 @@
   font-size: 12px;
   color: var(--ink-soft);
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 .page-number {
   text-align: center;
@@ -97,10 +102,14 @@
   font-weight: 600;
   margin-top: 12px;
   font-style: italic;
+  position: relative;
+  z-index: 1;
 }
 .page-actions {
   text-align: center;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 .page-del-btn {
   font-size: 12px;
@@ -116,215 +125,415 @@
 .page-del-btn:hover { color: var(--rose); border-color: var(--rose); }
 
 /* =========================================================
-   PAGE STYLES — decorative themes
+   DECORATIVE ELEMENTS — reusable across styles
    ========================================================= */
 
-/* 1. Classic — clean white */
-.page-style-classic {
-  background: #fff;
-}
-.page-style-classic .page-photo-wrap {
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  border: 4px solid #fff;
-  outline: 1px solid #e5e5e5;
+/* Tape strip */
+.deco-tape {
+  position: absolute;
+  width: 90px;
+  height: 28px;
+  background: rgba(255, 220, 130, 0.55);
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-/* 2. Polaroid — tilted instant photo */
+/* Round sticker / button */
+.deco-btn {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  z-index: 2;
+  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Corner fold */
+.deco-corner {
+  position: absolute;
+  width: 0;
+  height: 0;
+  z-index: 2;
+}
+
+/* Swirl SVG */
+.deco-swirl {
+  position: absolute;
+  z-index: 0;
+  opacity: 0.12;
+}
+
+/* =========================================================
+   PAGE STYLES
+   ========================================================= */
+
+/* 1. Classic — museum-clean with subtle mat border */
+.page-style-classic {
+  background: #ffffff;
+}
+.page-style-classic .page-photo-wrap {
+  border: 8px solid #fff;
+  outline: 1px solid #ddd;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.page-style-classic .page-tag { background: #f0f0f0; color: #555; }
+.page-style-classic::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #ddd 20%, #ddd 80%, transparent);
+}
+
+/* 2. Polaroid — instant photo with handwriting feel */
 .page-style-polaroid {
-  background: #f5f0e8;
+  background: #f7f2ea;
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='6' height='6' fill='%23f7f2ea'/%3E%3Ccircle cx='1' cy='1' r='0.5' fill='%23e8dfd0' opacity='0.5'/%3E%3C/svg%3E");
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .page-style-polaroid .page-photo-wrap {
   background: #fff;
-  padding: 12px 12px 40px;
-  box-shadow: 2px 3px 15px rgba(0,0,0,0.15);
-  transform: rotate(-2deg);
-  max-width: 85%;
+  padding: 14px 14px 50px;
+  box-shadow: 2px 4px 20px rgba(0,0,0,0.12);
+  transform: rotate(-1.5deg);
+  max-width: 80%;
   border-radius: 2px;
 }
 .page-style-polaroid .page-caption {
-  font-family: 'Comic Sans MS', cursive, var(--font-display);
-  transform: rotate(-1deg);
-  margin-top: 8px;
+  font-family: 'Segoe Script', 'Bradley Hand', cursive;
+  font-weight: 400;
+  font-size: 18px;
+  transform: rotate(-0.5deg);
+  color: #444;
 }
-
-/* 3. Vacation — tropical vibes */
-.page-style-vacation {
-  background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 50%, #ffe0b2 100%);
-}
-.page-style-vacation .page-photo-wrap {
-  border: 5px solid #fff;
-  box-shadow: 3px 3px 0 #26c6da;
-  border-radius: 12px;
-}
-.page-style-vacation .page-caption { color: #00838f; }
-.page-style-vacation::before {
-  content: '🌴';
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  font-size: 32px;
-  opacity: 0.6;
-}
-.page-style-vacation::after {
-  content: '✈️';
-  position: absolute;
-  bottom: 60px;
-  left: 16px;
-  font-size: 28px;
-  opacity: 0.5;
-}
-
-/* 4. Cozy — warm tones, tape corners */
-.page-style-cozy {
-  background: #fdf6ec;
-}
-.page-style-cozy .page-photo-wrap {
-  border: 3px solid #e8d5b7;
-  border-radius: 4px;
-}
-.page-style-cozy::before, .page-style-cozy::after {
+.page-style-polaroid .page-tag { background: rgba(0,0,0,0.06); color: #666; }
+.page-style-polaroid::before {
   content: '';
   position: absolute;
-  width: 60px;
-  height: 24px;
-  background: rgba(200, 180, 140, 0.5);
-  transform: rotate(-45deg);
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(2deg);
+  width: 100px;
+  height: 26px;
+  background: rgba(200, 220, 255, 0.45);
+  z-index: 2;
 }
-.page-style-cozy::before { top: 16px; left: 16px; }
-.page-style-cozy::after { bottom: 70px; right: 16px; transform: rotate(45deg); }
 
-/* 5. Bold — bright and punchy */
+/* 3. Vacation — sun, sand, sea */
+.page-style-vacation {
+  background: linear-gradient(170deg, #d4f1f9 0%, #fff8e7 40%, #ffecd2 100%);
+}
+.page-style-vacation .page-photo-wrap {
+  border: 6px solid #fff;
+  border-radius: 16px;
+  box-shadow: 4px 4px 0 rgba(0, 172, 193, 0.3), 0 8px 30px rgba(0,0,0,0.1);
+}
+.page-style-vacation .page-caption { color: #00796b; }
+.page-style-vacation .page-tag { background: #e0f7fa; color: #00838f; }
+.page-style-vacation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #26c6da, #ffca28, #ff7043, #26c6da);
+}
+.page-style-vacation::after {
+  content: '';
+  position: absolute;
+  bottom: 50px;
+  right: -20px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 202, 40, 0.15) 0%, transparent 70%);
+}
+
+/* 4. Cozy — warm kraft with washi tape */
+.page-style-cozy {
+  background: #faf3e8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+.page-style-cozy .page-photo-wrap {
+  border: 3px solid #dcc9a3;
+  box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+}
+.page-style-cozy .page-caption { color: #6d4c41; }
+.page-style-cozy .page-tag { background: #efebe9; color: #795548; }
+/* Top-left tape */
+.page-style-cozy::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 80px;
+  height: 24px;
+  background: rgba(188, 170, 134, 0.45);
+  transform: rotate(-42deg);
+  z-index: 2;
+  border-radius: 2px;
+}
+/* Bottom-right tape */
+.page-style-cozy::after {
+  content: '';
+  position: absolute;
+  bottom: 65px;
+  right: 18px;
+  width: 80px;
+  height: 24px;
+  background: rgba(188, 170, 134, 0.45);
+  transform: rotate(38deg);
+  z-index: 2;
+  border-radius: 2px;
+}
+
+/* 5. Bold — neon pop art */
 .page-style-bold {
-  background: linear-gradient(135deg, #fce4ec 0%, #e8eaf6 50%, #e0f2f1 100%);
+  background: #fff;
 }
 .page-style-bold .page-photo-wrap {
-  border: 6px solid #e91e63;
-  border-radius: 16px;
-  box-shadow: 4px 4px 0 #7c4dff;
+  border: 7px solid #e91e63;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 #7c4dff;
 }
 .page-style-bold .page-caption {
   color: #e91e63;
   font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
-.page-style-bold .page-tag {
-  background: #e91e63;
-  color: #fff;
-}
-
-/* 6. Rustic — earthy, craft paper feel */
-.page-style-rustic {
-  background: #e8dcc8;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.7' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-}
-.page-style-rustic .page-photo-wrap {
-  border: 3px solid #a1887f;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-.page-style-rustic .page-caption { color: #5d4037; }
-
-/* 7. Celebrate — party confetti */
-.page-style-celebrate {
-  background: linear-gradient(180deg, #fff8e1 0%, #ffffff 100%);
-}
-.page-style-celebrate .page-photo-wrap {
-  border: 4px solid #ffd54f;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(255, 213, 79, 0.3);
-}
-.page-style-celebrate::before {
-  content: '🎉';
-  position: absolute;
-  top: 10px;
-  left: 16px;
-  font-size: 28px;
-}
-.page-style-celebrate::after {
-  content: '🎊';
-  position: absolute;
-  top: 10px;
-  right: 16px;
-  font-size: 28px;
-}
-
-/* 8. Night — dark moody */
-.page-style-night {
-  background: #1a1a2e;
-  color: #e0e0e0;
-}
-.page-style-night .page-photo-wrap {
-  border: 2px solid #333;
-  border-radius: 8px;
-}
-.page-style-night .page-caption { color: #e0e0e0; }
-.page-style-night .page-meta { color: #888; }
-.page-style-night .page-number { color: #666; }
-.page-style-night .page-tag { background: rgba(255,255,255,0.1); color: #aaa; }
-.page-style-night::before {
-  content: '✨';
-  position: absolute;
-  top: 14px;
-  right: 20px;
-  font-size: 24px;
-}
-
-/* 9. Garden — floral, spring */
-.page-style-garden {
-  background: linear-gradient(180deg, #e8f5e9 0%, #fff3e0 100%);
-}
-.page-style-garden .page-photo-wrap {
-  border: 4px solid #a5d6a7;
-  border-radius: 20px;
-}
-.page-style-garden::before {
-  content: '🌸';
-  position: absolute;
-  top: 10px;
-  left: 16px;
-  font-size: 26px;
-}
-.page-style-garden::after {
-  content: '🌿';
-  position: absolute;
-  bottom: 60px;
-  right: 16px;
-  font-size: 26px;
-}
-.page-style-garden .page-caption { color: #2e7d32; }
-
-/* 10. Washi — decorative tape strips */
-.page-style-washi {
-  background: #fafafa;
-}
-.page-style-washi .page-photo-wrap {
-  border: 3px solid #e0e0e0;
-}
-.page-style-washi::before {
+.page-style-bold .page-tag { background: #e91e63; color: #fff; }
+.page-style-bold::before {
   content: '';
   position: absolute;
   top: 0;
-  left: 30px;
-  right: 30px;
-  height: 20px;
-  background: repeating-linear-gradient(90deg, #ef9a9a 0px, #ef9a9a 20px, #90caf9 20px, #90caf9 40px, #a5d6a7 40px, #a5d6a7 60px, #fff59d 60px, #fff59d 80px);
-  opacity: 0.6;
-  border-radius: 0 0 4px 4px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, #e91e63 0, #e91e63 25%, #7c4dff 25%, #7c4dff 50%, #00bcd4 50%, #00bcd4 75%, #ffc107 75%, #ffc107 100%);
 }
+.page-style-bold::after {
+  content: '';
+  position: absolute;
+  bottom: 48px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, #ffc107 0, #ffc107 25%, #00bcd4 25%, #00bcd4 50%, #7c4dff 50%, #7c4dff 75%, #e91e63 75%, #e91e63 100%);
+}
+
+/* 6. Rustic — textured, vintage feel */
+.page-style-rustic {
+  background: #e6d9c4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+}
+.page-style-rustic .page-photo-wrap {
+  border: 6px solid #d4c4a8;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 2px;
+}
+.page-style-rustic .page-caption {
+  color: #4e342e;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+.page-style-rustic .page-tag { background: #d7ccc8; color: #5d4037; }
+/* Corner embellishment */
+.page-style-rustic::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 50px;
+  height: 50px;
+  border-top: 3px solid #a1887f;
+  border-right: 3px solid #a1887f;
+  z-index: 0;
+  opacity: 0.4;
+}
+.page-style-rustic::after {
+  content: '';
+  position: absolute;
+  bottom: 60px;
+  left: 12px;
+  width: 50px;
+  height: 50px;
+  border-bottom: 3px solid #a1887f;
+  border-left: 3px solid #a1887f;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* 7. Celebrate — golden party vibes */
+.page-style-celebrate {
+  background: linear-gradient(180deg, #fffdf0 0%, #fff9e0 100%);
+}
+.page-style-celebrate .page-photo-wrap {
+  border: 5px solid #ffd54f;
+  border-radius: 12px;
+  box-shadow: 0 0 0 2px rgba(255, 213, 79, 0.3), 0 6px 24px rgba(255, 193, 7, 0.2);
+}
+.page-style-celebrate .page-caption { color: #f57f17; }
+.page-style-celebrate .page-tag { background: #fff8e1; color: #ff8f00; border: 1px solid #ffe082; }
+/* Confetti dots */
+.page-style-celebrate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, #ef5350 3px, transparent 3px),
+    radial-gradient(circle, #42a5f5 2px, transparent 2px),
+    radial-gradient(circle, #66bb6a 2.5px, transparent 2.5px),
+    radial-gradient(circle, #ffa726 2px, transparent 2px),
+    radial-gradient(circle, #ab47bc 3px, transparent 3px),
+    radial-gradient(circle, #26c6da 2px, transparent 2px),
+    radial-gradient(circle, #ffee58 2.5px, transparent 2.5px),
+    radial-gradient(circle, #ec407a 2px, transparent 2px);
+  background-position:
+    10% 8%, 85% 12%, 25% 92%, 70% 88%,
+    92% 45%, 8% 55%, 50% 5%, 60% 95%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 8. Night — cinematic dark */
+.page-style-night {
+  background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+}
+.page-style-night .page-photo-wrap {
+  border: 2px solid #30363d;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(56, 139, 253, 0.08);
+}
+.page-style-night .page-caption { color: #e6edf3; }
+.page-style-night .page-meta { color: #7d8590; }
+.page-style-night .page-number { color: #484f58; }
+.page-style-night .page-tag { background: rgba(56, 139, 253, 0.1); color: #58a6ff; }
+/* Stars */
+.page-style-night::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, #fff 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.6) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px);
+  background-position:
+    15% 10%, 80% 20%, 45% 85%,
+    25% 70%, 90% 60%, 10% 40%,
+    65% 15%, 35% 50%, 75% 75%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 9. Garden — botanical elegance */
+.page-style-garden {
+  background: #f1f8e9;
+}
+.page-style-garden .page-photo-wrap {
+  border: 5px solid #a5d6a7;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(76, 175, 80, 0.12);
+}
+.page-style-garden .page-caption { color: #2e7d32; }
+.page-style-garden .page-tag { background: #e8f5e9; color: #388e3c; border: 1px solid #c8e6c9; }
+/* Vine/leaf border */
+.page-style-garden::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 50px;
+  width: 30px;
+  background: linear-gradient(180deg,
+    transparent 0%, #a5d6a7 5%, transparent 10%,
+    transparent 20%, #81c784 25%, transparent 30%,
+    transparent 40%, #a5d6a7 45%, transparent 50%,
+    transparent 60%, #81c784 65%, transparent 70%,
+    transparent 80%, #a5d6a7 85%, transparent 90%
+  );
+  opacity: 0.25;
+  z-index: 0;
+}
+.page-style-garden::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 50px;
+  width: 30px;
+  background: linear-gradient(180deg,
+    transparent 5%, #81c784 10%, transparent 15%,
+    transparent 25%, #a5d6a7 30%, transparent 35%,
+    transparent 45%, #81c784 50%, transparent 55%,
+    transparent 65%, #a5d6a7 70%, transparent 75%,
+    transparent 85%, #81c784 90%, transparent 95%
+  );
+  opacity: 0.25;
+  z-index: 0;
+}
+
+/* 10. Washi — layered decorative tape */
+.page-style-washi {
+  background: #fefefe;
+}
+.page-style-washi .page-photo-wrap {
+  border: 3px solid #eee;
+}
+.page-style-washi .page-tag { background: #e8eaf6; color: #5c6bc0; }
+/* Top washi tape strip */
+.page-style-washi::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 20px;
+  right: 20px;
+  height: 22px;
+  background: repeating-linear-gradient(90deg,
+    #ef9a9a 0, #ef9a9a 18px,
+    #90caf9 18px, #90caf9 36px,
+    #a5d6a7 36px, #a5d6a7 54px,
+    #fff59d 54px, #fff59d 72px
+  );
+  opacity: 0.5;
+  z-index: 2;
+  border-radius: 2px;
+}
+/* Bottom washi tape strip */
 .page-style-washi::after {
   content: '';
   position: absolute;
-  bottom: 50px;
-  left: 30px;
-  right: 30px;
-  height: 20px;
-  background: repeating-linear-gradient(90deg, #ce93d8 0px, #ce93d8 20px, #80deea 20px, #80deea 40px, #ffcc80 40px, #ffcc80 60px, #c5e1a5 60px, #c5e1a5 80px);
-  opacity: 0.6;
-  border-radius: 4px 4px 0 0;
+  bottom: 56px;
+  left: 20px;
+  right: 20px;
+  height: 22px;
+  background: repeating-linear-gradient(90deg,
+    #ce93d8 0, #ce93d8 18px,
+    #80deea 18px, #80deea 36px,
+    #ffcc80 36px, #ffcc80 54px,
+    #c5e1a5 54px, #c5e1a5 72px
+  );
+  opacity: 0.5;
+  z-index: 2;
+  border-radius: 2px;
 }
 
-/* Page navigation */
+/* =========================================================
+   NAV, EMPTY STATE, UPLOAD UI
+   ========================================================= */
+
 .page-nav {
   display: flex;
   justify-content: space-between;
@@ -369,9 +578,9 @@
   margin-top: 6px;
 }
 .style-opt {
-  height: 44px;
-  border: 2px solid var(--rule);
-  border-radius: 8px;
+  height: 48px;
+  border: 2.5px solid var(--rule);
+  border-radius: 10px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -380,40 +589,31 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 3px;
+  padding-bottom: 4px;
   color: rgba(0,0,0,0.5);
   transition: all 0.15s ease;
 }
-.style-opt:hover { transform: scale(1.05); }
-.style-opt.selected { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-light); }
+.style-opt:hover { transform: scale(1.08); }
+.style-opt.selected { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
 .style-opt[data-style="classic"] { background: #fff; }
-.style-opt[data-style="polaroid"] { background: #f5f0e8; }
-.style-opt[data-style="vacation"] { background: linear-gradient(135deg, #e0f7fa, #ffe0b2); }
-.style-opt[data-style="cozy"] { background: #fdf6ec; }
-.style-opt[data-style="bold"] { background: linear-gradient(135deg, #fce4ec, #e0f2f1); }
-.style-opt[data-style="rustic"] { background: #e8dcc8; }
-.style-opt[data-style="celebrate"] { background: #fff8e1; }
-.style-opt[data-style="night"] { background: #1a1a2e; color: rgba(255,255,255,0.6); }
-.style-opt[data-style="garden"] { background: linear-gradient(#e8f5e9, #fff3e0); }
-.style-opt[data-style="washi"] { background: #fafafa; }
+.style-opt[data-style="polaroid"] { background: #f7f2ea; }
+.style-opt[data-style="vacation"] { background: linear-gradient(135deg, #d4f1f9, #ffecd2); }
+.style-opt[data-style="cozy"] { background: #faf3e8; }
+.style-opt[data-style="bold"] { background: #fff; border-bottom: 4px solid #e91e63; }
+.style-opt[data-style="rustic"] { background: #e6d9c4; }
+.style-opt[data-style="celebrate"] { background: #fffdf0; }
+.style-opt[data-style="night"] { background: #0d1117; color: rgba(255,255,255,0.6); }
+.style-opt[data-style="garden"] { background: #f1f8e9; }
+.style-opt[data-style="washi"] { background: #fefefe; border-top: 3px solid #ef9a9a; }
 
-/* Upload */
+/* Upload UI */
 .file-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
 .upload-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 32px 16px;
-  border: 2px dashed var(--rule);
-  border-radius: 14px;
-  background: var(--bg);
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  transition: all 0.15s ease;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 32px 16px; border: 2px dashed var(--rule); border-radius: 14px;
+  background: var(--bg); cursor: pointer; font-size: 15px; font-weight: 500;
+  color: var(--ink-soft); transition: all 0.15s ease;
 }
 .upload-label:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 .upload-icon { font-size: 28px; }
@@ -436,10 +636,10 @@
 
 @media (max-width: 720px) {
   .scrap-main { padding: 16px 12px 64px; }
-  .page { padding: 20px 16px; }
+  .page { padding: 28px 16px 24px; }
   .page-caption { font-size: 17px; }
   .page-photo { max-height: 360px; }
   .book { min-height: 400px; }
   .style-picker { grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .style-opt { height: 36px; font-size: 9px; }
+  .style-opt { height: 40px; font-size: 9px; }
 }
