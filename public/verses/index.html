@@ -50,11 +50,19 @@
       <button id="set-verse-btn" class="btn-ghost hidden" style="margin-top:16px">Change verse</button>
     </section>
 
-    <!-- Family progress overview -->
-    <section class="progress-section">
-      <h2 class="section-heading">Family Progress</h2>
-      <div id="family-board" class="family-board"></div>
+    <!-- Practice games -->
+    <section class="games-section">
+      <h2 class="section-heading">Practice</h2>
+      <div class="games-menu">
+        <button class="game-menu-btn" data-game="scramble"><span class="game-menu-icon">🔀</span><span class="game-menu-label">Word Scramble</span></button>
+        <button class="game-menu-btn" data-game="erase"><span class="game-menu-icon">🧹</span><span class="game-menu-label">Erase the Board</span></button>
+        <button class="game-menu-btn" data-game="speed"><span class="game-menu-icon">⚡</span><span class="game-menu-label">Speed Round</span></button>
+        <button class="game-menu-btn" data-game="typeit"><span class="game-menu-icon">⌨️</span><span class="game-menu-label">Type It Out</span></button>
+      </div>
     </section>
+
+    <!-- Game area (dynamically rendered) -->
+    <section id="game-area" class="game-area hidden"></section>
 
     <!-- Weekly activities -->
     <section class="activities-section">
@@ -62,35 +70,11 @@
       <div id="activities-list" class="activities-list"></div>
     </section>
 
-    <!-- Practice games menu -->
-    <section class="games-section">
-      <h2 class="section-heading">Practice Games</h2>
-      <div class="games-menu">
-        <button class="game-menu-btn" data-game="scramble">
-          <span class="game-menu-icon">🔀</span>
-          <span class="game-menu-label">Word Scramble</span>
-          <span class="game-menu-desc">Put the words in the right order</span>
-        </button>
-        <button class="game-menu-btn" data-game="erase">
-          <span class="game-menu-icon">🧹</span>
-          <span class="game-menu-label">Erase the Board</span>
-          <span class="game-menu-desc">Tap words to erase, then say it</span>
-        </button>
-        <button class="game-menu-btn" data-game="speed">
-          <span class="game-menu-icon">⚡</span>
-          <span class="game-menu-label">Speed Round</span>
-          <span class="game-menu-desc">Tap the words in order — fast!</span>
-        </button>
-        <button class="game-menu-btn" data-game="typeit">
-          <span class="game-menu-icon">⌨️</span>
-          <span class="game-menu-label">Type It Out</span>
-          <span class="game-menu-desc">Type the verse from memory</span>
-        </button>
-      </div>
+    <!-- Family progress overview -->
+    <section class="progress-section">
+      <h2 class="section-heading">Family Progress</h2>
+      <div id="family-board" class="family-board"></div>
     </section>
-
-    <!-- Activity game area (dynamically rendered) -->
-    <section id="game-area" class="game-area hidden"></section>
 
     <!-- Recordings -->
     <section class="recordings-section">

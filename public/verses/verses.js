@@ -60,10 +60,10 @@ function init() {
   $('#record-audio-btn').addEventListener('click', startAudioRecording);
   $('#media-file').addEventListener('change', handleMediaFile);
 
-  // Practice games menu
+  // Practice games menu — wire after DOM is ready
   $$('.game-menu-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (!verse) return;
+      if (!verse) { alert('Set a verse first!'); return; }
       const game = btn.dataset.game;
       if (game === 'scramble') openScrambleGame();
       else if (game === 'erase') openEraseGame();

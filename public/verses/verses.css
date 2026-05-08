@@ -104,34 +104,34 @@
 }
 
 /* Practice games menu */
-.games-section { margin-top: 48px; }
+.games-section { margin-top: 40px; }
 .games-menu {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 .game-menu-btn {
   background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  text-align: left;
+  border: 1.5px solid var(--rule);
+  border-radius: 14px;
+  padding: 14px 20px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 10px;
   font-family: var(--font-body);
 }
 .game-menu-btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
   border-color: var(--primary);
+  background: var(--primary-light);
 }
 .game-menu-btn:active { transform: translateY(0); }
-.game-menu-icon { font-size: 28px; margin-bottom: 4px; }
-.game-menu-label { font-size: 15px; font-weight: 700; color: var(--ink); }
-.game-menu-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+.game-menu-icon { font-size: 22px; line-height: 1; }
+.game-menu-label { font-size: 14px; font-weight: 700; color: var(--ink); }
 
 /* Scramble game */
 .scramble-pool {
