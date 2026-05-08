@@ -7,7 +7,7 @@
 import { getCurrentMember, json, badRequest, unauthorized, forbidden } from '../_lib.js';
 
 const WEEKLY_ACTIVITIES = [
-  { week: 1, type: 'read', title: 'Read It Together', description: 'Read the verse out loud as a family. Say it three times.' },
+  { week: 1, type: 'read', title: 'Read It', description: 'Read the verse out loud. Say it three times to yourself.' },
   { week: 2, type: 'fill-blanks', title: 'Fill in the Blanks', description: 'Can you fill in the missing words?' },
   { week: 3, type: 'first-letters', title: 'First Letter Hints', description: 'Only the first letter of each word is shown. Can you say it?' },
   { week: 4, type: 'recite', title: 'Say It From Memory', description: 'No hints! Record yourself saying the verse from memory.' },

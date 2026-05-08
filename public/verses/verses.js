@@ -197,14 +197,14 @@ function openGame(activityId, type) {
 
   if (type === 'read') {
     area.innerHTML = `
-      <div class="game-title">📖 Read It Together</div>
-      <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Read this verse out loud three times as a family.</p>
+      <div class="game-title">📖 Read It</div>
+      <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Read this verse out loud. Say it three times to yourself.</p>
       <div class="verse-text-card" style="margin-bottom:20px">
         <p class="verse-text">"${esc(verse.text)}"</p>
         <p style="text-align:right;margin-top:8px;font-size:13px;font-weight:600;color:var(--primary)">${esc(verse.reference)}</p>
       </div>
       <div class="game-actions">
-        <button class="btn-primary complete-btn" data-act-id="${activityId}">We read it! ✓</button>
+        <button class="btn-primary complete-btn" data-act-id="${activityId}">I read it! ✓</button>
       </div>`;
   } else if (type === 'fill-blanks') {
     // Remove ~40% of words randomly
