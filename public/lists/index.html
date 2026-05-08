@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lists & Wishes · The Wilson Family</title>
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<link rel="stylesheet" href="/lists/lists.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Lists</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <button id="signout-btn" class="link-btn">Sign out</button>
+  </div>
+</header>
+
+<main class="lists-main">
+  <!-- All lists view -->
+  <div id="lists-view">
+    <div class="lists-toolbar">
+      <button id="new-list-btn" class="btn-primary">+ New list</button>
+      <button id="show-archived-btn" class="link-btn">Show archived</button>
+    </div>
+    <div id="lists-grid" class="lists-grid">
+      <p class="empty">Loading...</p>
+    </div>
+  </div>
+
+  <!-- Single list view -->
+  <div id="list-detail" class="hidden">
+    <div class="list-detail-header">
+      <button id="back-to-lists" class="back-btn">&larr;</button>
+      <h2 id="list-title" class="list-title"></h2>
+      <div class="list-detail-actions">
+        <button id="edit-list-btn" class="link-btn hidden">Settings</button>
+        <button id="archive-list-btn" class="link-btn hidden">Archive</button>
+        <button id="delete-list-btn" class="link-btn hidden" style="color:var(--rose)">Delete</button>
+      </div>
+    </div>
+    <div id="list-owner-info" class="list-owner-info"></div>
+    <div id="add-item-wrap" class="add-item-wrap">
+      <input id="new-item-input" type="text" placeholder="Add an item..." maxlength="300" />
+      <button id="add-item-btn" class="btn-primary" style="padding:10px 20px">Add</button>
+    </div>
+    <ul id="items-list" class="items-list"></ul>
+  </div>
+</main>
+
+<!-- NEW/EDIT LIST MODAL -->
+<div id="modal-list" class="modal hidden">
+  <div class="modal-backdrop" data-close-list></div>
+  <div class="modal-card">
+    <button class="modal-close" data-close-list aria-label="Close">&times;</button>
+    <p class="eyebrow" id="list-modal-eyebrow">New list</p>
+    <h3 class="modal-title">What's the <em>list?</em></h3>
+    <form id="list-form" class="modal-form">
+      <input type="hidden" id="list-edit-id" value="" />
+      <label><span>Title</span><input id="list-form-title" type="text" required maxlength="120" placeholder="Christmas Wishes, Grocery Run, etc." /></label>
+      <label>
+        <span>Checkboxes?</span>
+        <select id="list-form-checkboxes">
+          <option value="1">Yes — items can be checked off</option>
+          <option value="0">No — just a plain list</option>
+        </select>
+      </label>
+      <label>
+        <span>Can others add items?</span>
+        <select id="list-form-others-add">
+          <option value="0">No — only I add items</option>
+          <option value="1">Yes — anyone can add</option>
+        </select>
+      </label>
+      <label>
+        <span>Who can see this?</span>
+        <select id="list-form-visibility">
+          <option value="everyone">Everyone</option>
+          <option value="hide_from">Everyone except...</option>
+          <option value="only">Only specific people</option>
+        </select>
+      </label>
+      <div id="visibility-members-wrap" class="hidden">
+        <label><span id="visibility-members-label">Select people</span>
+        <div id="visibility-members-grid" class="tag-grid"></div>
+        </label>
+      </div>
+      <p id="list-error" class="form-error hidden"></p>
+      <button type="submit" class="btn-primary">Save list</button>
+    </form>
+  </div>
+</div>
+
+<script src="/lists/lists.js"></script>
+</body>
+</html>
