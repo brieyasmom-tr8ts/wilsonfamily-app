@@ -217,6 +217,8 @@ em { font-style: italic; }
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--rule);
   animation: rise 0.3s ease-out both;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 .modal-close {
   position: absolute;

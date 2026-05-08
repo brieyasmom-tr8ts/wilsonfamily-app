@@ -69,11 +69,13 @@
 
 .cal-cell {
   min-height: 80px;
+  max-height: 100px;
   padding: 6px;
   border-right: 1px solid var(--rule);
   border-bottom: 1px solid var(--rule);
   position: relative;
   cursor: default;
+  overflow: hidden;
 }
 .cal-cell:nth-child(7n) { border-right: none; }
 .cal-cell.empty { background: var(--bg); opacity: 0.5; }

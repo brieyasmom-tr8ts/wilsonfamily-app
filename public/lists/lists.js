@@ -185,13 +185,13 @@ function renderItems() {
     const checkboxHtml = useCheckboxes
       ? `<button class="item-checkbox ${item.checked ? 'checked' : ''}" data-item-id="${item.id}">${item.checked ? '✓' : ''}</button>`
       : '';
-    const canDelete = isOwner || item.added_by === me.id;
+    const canEdit = isOwner || item.added_by === me.id;
     return `
     <li class="item-row ${item.checked ? 'checked' : ''}">
       ${checkboxHtml}
-      <span class="item-text">${esc(item.text)}</span>
+      <span class="item-text" ${canEdit ? 'data-edit-id="' + item.id + '" title="Click to edit"' : ''}>${esc(item.text)}</span>
       <span class="item-added-by">${esc(item.added_by_name)}</span>
-      ${canDelete ? '<button class="item-delete" data-del-id="' + item.id + '">×</button>' : ''}
+      ${canEdit ? '<button class="item-delete" data-del-id="' + item.id + '">×</button>' : ''}
     </li>`;
   }).join('');
 
@@ -219,6 +219,24 @@ function renderItems() {
       });
       loadItems(currentList.id);
     });
+  });
+
+  // Wire inline edit
+  list.querySelectorAll('[data-edit-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = parseInt(el.dataset.editId);
+      const item = currentItems.find(i => i.id === id);
+      if (!item) return;
+      const newText = prompt('Edit item:', item.text);
+      if (newText !== null && newText.trim() && newText.trim() !== item.text) {
+        fetch('/api/list-items', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, text: newText.trim() })
+        }).then(() => loadItems(currentList.id));
+      }
+    });
+    el.style.cursor = 'pointer';
   });
 }
 

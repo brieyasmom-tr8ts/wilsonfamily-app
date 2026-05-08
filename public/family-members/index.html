@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Family · The Wilson Family</title>
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<style>
+.fam-main { padding: 32px 20px 96px; max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+.fam-title { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 28px; letter-spacing: -0.02em; }
+.fam-title em { color: var(--primary); }
+.fam-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.fam-card {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 24px 16px; background: var(--surface); border: 1px solid var(--rule);
+  border-radius: var(--radius-lg); cursor: pointer; transition: all 0.2s ease;
+  text-decoration: none; color: var(--ink); animation: rise 0.4s ease-out both;
+}
+.fam-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); text-decoration: none; }
+.fam-emoji { font-size: 40px; width: 68px; height: 68px; display: flex; align-items: center; justify-content: center; background: var(--bg); border-radius: 18px; border: 2px solid var(--rule); }
+.fam-name { font-size: 16px; font-weight: 700; text-align: center; }
+.fam-username { font-size: 12px; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <a href="/" class="brand">
+    <span class="brand-mark">✦</span>
+    <span class="brand-name">The Wilson Family</span>
+    <span class="brand-room">/ Family</span>
+  </a>
+  <div class="user-chip">
+    <span id="user-emoji">🌱</span>
+    <span id="user-name"></span>
+    <a href="/" class="link-btn">Home</a>
+  </div>
+</header>
+
+<main class="fam-main">
+  <h1 class="fam-title">The <em>Family</em></h1>
+  <div id="fam-grid" class="fam-grid">
+    <p class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-soft)">Loading...</p>
+  </div>
+</main>
+
+<script>
+const $ = (sel) => document.querySelector(sel);
+(async () => {
+  try {
+    const res = await fetch('/api/auth/me');
+    if (!res.ok) { window.location.replace('/'); return; }
+    const data = await res.json();
+    const me = data.member;
+    $('#user-name').textContent = me.name;
+    $('#user-emoji').textContent = me.avatar_emoji || '🌱';
+
+    // Load all members
+    let members = [];
+    let mRes = await fetch('/api/admin/members');
+    if (mRes.ok) {
+      members = (await mRes.json()).members || [];
+    } else {
+      mRes = await fetch('/api/invites');
+      if (mRes.ok) members = (await mRes.json()).members || [];
+    }
+
+    const grid = $('#fam-grid');
+    if (members.length === 0) {
+      grid.innerHTML = '<p class="empty" style="grid-column:1/-1;text-align:center">No members found.</p>';
+      return;
+    }
+    grid.innerHTML = members.map((m, i) => `
+      <a href="/profile/?id=${m.id}" class="fam-card" style="animation-delay:${Math.min(i * 0.05, 0.3)}s">
+        <div class="fam-emoji">${esc(m.avatar_emoji || '🌱')}</div>
+        <div class="fam-name">${esc(m.name)}</div>
+        ${m.username ? '<div class="fam-username">@' + esc(m.username) + '</div>' : ''}
+      </a>
+    `).join('');
+  } catch (e) { console.error(e); }
+})();
+
+function esc(s) {
+  return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+}
+</script>
+</body>
+</html>

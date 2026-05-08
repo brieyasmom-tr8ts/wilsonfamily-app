@@ -33,11 +33,6 @@ function init() {
   $('#user-name').textContent = state.member.name;
   $('#user-emoji').textContent = state.member.avatar_emoji || '🌱';
 
-  if (state.member.role !== 'parent' && state.member.role !== 'admin') {
-    const opt = $('#kind-select option[value="monthly-allocation"]');
-    if (opt) opt.remove();
-  }
-
   setupTabs();
   setupModal();
   setupSignout();
@@ -145,9 +140,8 @@ function renderPot() {
 
 function kindLabel(kind) {
   return ({
-    'monthly-allocation': 'Monthly allocation',
-    'kid-contribution': 'Their own money',
-    'one-time': 'One-time gift',
+    'monthly-allocation': 'Monthly',
+    'one-time': 'One-time',
   })[kind] || kind;
 }
 
