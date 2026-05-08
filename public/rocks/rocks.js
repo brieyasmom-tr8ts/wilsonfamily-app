@@ -369,22 +369,20 @@ async function startRecording(type) {
         previewEl.innerHTML = `<audio src="${URL.createObjectURL(blob)}" controls style="width:100%"></audio>`;
       }
 
-      // Hide recording controls, show options again
-      const controlsId = type === 'video' ? '#video-recording-controls' : '#recording-controls';
-      $(controlsId).classList.add('hidden');
-      const optionsEl = $(controlsId).previousElementSibling;
-      if (optionsEl) optionsEl.style.display = '';
+      // Show start button again, hide stop
+      $('#record-audio-btn').classList.remove('hidden');
+      $('#stop-recording-btn').classList.add('hidden');
+      $('#recording-indicator').classList.add('hidden');
 
       // Upload
       const fakeEvent = { target: { files: [file] } };
       handleFileSelect(fakeEvent, type);
     };
 
-    // Hide options, show recording controls
-    const controlsId = type === 'video' ? '#video-recording-controls' : '#recording-controls';
-    $(controlsId).classList.remove('hidden');
-    const optionsEl = $(controlsId).previousElementSibling;
-    if (optionsEl) optionsEl.style.display = 'none';
+    // Show stop button, hide start
+    $('#record-audio-btn').classList.add('hidden');
+    $('#stop-recording-btn').classList.remove('hidden');
+    $('#recording-indicator').classList.remove('hidden');
 
     mediaRecorder.start();
   } catch (e) {
