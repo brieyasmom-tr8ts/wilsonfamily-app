@@ -189,6 +189,7 @@
   transition: all 0.15s ease;
   color: var(--ink-soft);
 }
+.upcoming-actions .edit-btn:hover { color: var(--primary); border-color: var(--primary); }
 .upcoming-actions .del-btn:hover { color: var(--rose); border-color: var(--rose); }
 
 /* Event color grid */

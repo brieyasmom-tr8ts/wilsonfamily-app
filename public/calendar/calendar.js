@@ -150,6 +150,7 @@ function renderUpcoming() {
     const canEdit = isCustom && (ev.created_by === me.id || isAdmin);
     const actions = canEdit ? `
       <div class="upcoming-actions">
+        <button class="edit-btn" data-edit-id="${ev.id}">Edit</button>
         <button class="del-btn" data-del-id="${ev.id}">Del</button>
       </div>` : '';
     return `
@@ -173,6 +174,14 @@ function renderUpcoming() {
         body: JSON.stringify({ id: parseInt(btn.dataset.delId) })
       });
       loadMonth();
+    });
+  });
+
+  list.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.editId);
+      const ev = allEvents.find(e => e.id === id && e.type === 'custom');
+      if (ev) openEventModal(ev);
     });
   });
 }
