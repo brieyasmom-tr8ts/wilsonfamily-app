@@ -9,26 +9,34 @@ let members = [];
 let selectedTags = new Set();
 let currentPageIdx = 0;
 
+// Debug: write to a visible element so we can see what's happening
+function debugLog(msg) {
+  console.log('[scrapbook]', msg);
+  const el = document.getElementById('photo-grid');
+  if (el) el.innerHTML = '<div class="book"><div class="book-empty"><div class="book-empty-text">' + msg + '</div></div></div>';
+}
+
 (async function boot() {
+  debugLog('Checking auth...');
   let res;
   try {
     res = await fetch('/api/auth/me');
   } catch (e) {
-    console.error('Auth fetch failed:', e);
-    document.body.innerHTML = '<p style="padding:40px;text-align:center">Could not connect. Please refresh.</p>';
+    debugLog('Network error: ' + e.message);
     return;
   }
   if (!res.ok) {
-    window.location.replace('/');
+    debugLog('Not signed in (status ' + res.status + '). Redirecting...');
+    setTimeout(() => window.location.replace('/'), 2000);
     return;
   }
   try {
     const data = await res.json();
     me = data.member;
+    debugLog('Signed in as ' + me.name + '. Loading...');
     init();
   } catch (e) {
-    console.error('Scrapbook init error:', e);
-    document.body.innerHTML = '<p style="padding:40px;text-align:center">Something went wrong: ' + e.message + '</p>';
+    debugLog('Init error: ' + e.message + ' | ' + e.stack);
   }
 })();
 
