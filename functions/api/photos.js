@@ -18,7 +18,7 @@ export async function onRequestGet({ request, env }) {
 
   if (filterMember) {
     query = `
-      SELECT p.id, p.r2_key, p.caption, p.taken_date, p.created_at,
+      SELECT p.id, p.r2_key, p.caption, p.taken_date, p.created_at, p.page_style,
              p.uploaded_by, m.name AS uploaded_by_name, m.avatar_emoji
       FROM photos p
       JOIN members m ON m.id = p.uploaded_by
@@ -29,7 +29,7 @@ export async function onRequestGet({ request, env }) {
     binds = [parseInt(filterMember), limit, offset];
   } else {
     query = `
-      SELECT p.id, p.r2_key, p.caption, p.taken_date, p.created_at,
+      SELECT p.id, p.r2_key, p.caption, p.taken_date, p.created_at, p.page_style,
              p.uploaded_by, m.name AS uploaded_by_name, m.avatar_emoji
       FROM photos p
       JOIN members m ON m.id = p.uploaded_by
@@ -100,11 +100,12 @@ export async function onRequestPost({ request, env }) {
   // Insert photo record
   const caption = formData.get('caption') || null;
   const takenDate = formData.get('taken_date') || null;
+  const pageStyle = formData.get('page_style') || 'classic';
   const tagIds = formData.get('tags'); // comma-separated member IDs
 
   const result = await env.DB.prepare(
-    'INSERT INTO photos (r2_key, caption, taken_date, uploaded_by) VALUES (?, ?, ?, ?)'
-  ).bind(key, caption, takenDate, member.id).run();
+    'INSERT INTO photos (r2_key, caption, taken_date, page_style, uploaded_by) VALUES (?, ?, ?, ?, ?)'
+  ).bind(key, caption, takenDate, pageStyle, member.id).run();
 
   const photoId = result.meta.last_row_id;
 

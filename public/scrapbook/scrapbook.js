@@ -8,6 +8,20 @@ let photos = [];
 let members = [];
 let selectedTags = new Set();
 let currentPageIdx = 0;
+let selectedStyle = 'classic';
+
+const PAGE_STYLES = [
+  { id: 'classic', label: 'Classic' },
+  { id: 'polaroid', label: 'Polaroid' },
+  { id: 'vacation', label: 'Vacation' },
+  { id: 'cozy', label: 'Cozy' },
+  { id: 'bold', label: 'Bold' },
+  { id: 'rustic', label: 'Rustic' },
+  { id: 'celebrate', label: 'Party' },
+  { id: 'night', label: 'Night' },
+  { id: 'garden', label: 'Garden' },
+  { id: 'washi', label: 'Washi' },
+];
 
 function showStatus(msg) {
   const el = document.getElementById('scrap-status');
@@ -77,6 +91,21 @@ function initUI() {
     thumb.classList.remove('hidden');
     $('#photo-upload-label').style.display = 'none';
   });
+
+  // Style picker
+  const stylePicker = $('#style-picker');
+  if (stylePicker) {
+    stylePicker.innerHTML = PAGE_STYLES.map(s =>
+      `<div class="style-opt${s.id === selectedStyle ? ' selected' : ''}" data-style="${s.id}">${s.label}</div>`
+    ).join('');
+    stylePicker.addEventListener('click', (e) => {
+      const opt = e.target.closest('.style-opt');
+      if (!opt) return;
+      selectedStyle = opt.dataset.style;
+      $('#photo-style').value = selectedStyle;
+      stylePicker.querySelectorAll('.style-opt').forEach(o => o.classList.toggle('selected', o === opt));
+    });
+  }
 
   $('#add-photo-btn').addEventListener('click', openPhotoModal);
   $$('[data-close-photo]').forEach(el => el.addEventListener('click', closePhotoModal));
@@ -177,9 +206,10 @@ function renderPage() {
     ? new Date(p.taken_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
     : new Date(p.created_at * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
+  const style = p.page_style || 'classic';
   grid.innerHTML = `
     <div class="book">
-      <div class="page">
+      <div class="page page-style-${esc(style)}">
         <div class="page-photo-wrap">
           <img class="page-photo" src="${esc(p.url)}" alt="${esc(p.caption || '')}" />
         </div>
@@ -280,6 +310,7 @@ async function submitPhoto(e) {
     formData.append('caption', ($('#photo-caption') || {}).value || '');
     formData.append('taken_date', ($('#photo-date') || {}).value || '');
     formData.append('tags', Array.from(selectedTags).join(','));
+    formData.append('page_style', selectedStyle);
 
     const res = await fetch('/api/photos', { method: 'POST', body: formData });
     const data = await res.json();
