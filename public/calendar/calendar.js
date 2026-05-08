@@ -96,12 +96,28 @@ function renderCalendar() {
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const isToday = isThisMonth && d === todayDate;
-    const dayEvents = allEvents.filter(e => e.event_date === dateStr);
+    const dayEvents = allEvents.filter(e => {
+      const start = e.event_date;
+      const end = e.end_date || e.event_date;
+      return dateStr >= start && dateStr <= end;
+    });
 
     html += `<div class="cal-cell${isToday ? ' today' : ''}">`;
     html += `<div class="cal-date">${d}</div>`;
     for (const ev of dayEvents.slice(0, 3)) {
-      html += `<span class="cal-event" style="background:${esc(ev.color || '#2563eb')}" title="${esc(ev.title)}">${esc(ev.title)}</span>`;
+      const end = ev.end_date || ev.event_date;
+      const isMulti = ev.end_date && ev.end_date !== ev.event_date;
+      const isStart = dateStr === ev.event_date;
+      const isEnd = dateStr === end;
+      let spanClass = '';
+      if (isMulti) {
+        spanClass = ' cal-event-span';
+        if (isStart) spanClass += ' cal-event-start';
+        if (isEnd) spanClass += ' cal-event-end';
+        if (!isStart && !isEnd) spanClass += ' cal-event-mid';
+      }
+      const label = isMulti && !isStart ? '' : esc(ev.title);
+      html += `<span class="cal-event${spanClass}" style="background:${esc(ev.color || '#2563eb')}" title="${esc(ev.title)}">${label || '&nbsp;'}</span>`;
     }
     if (dayEvents.length > 3) {
       html += `<span class="cal-event" style="background:var(--ink-soft)">+${dayEvents.length - 3} more</span>`;
@@ -125,7 +141,11 @@ function renderUpcoming() {
 
   list.innerHTML = sorted.map(ev => {
     const dateObj = new Date(ev.event_date + 'T00:00:00');
-    const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    let dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    if (ev.end_date && ev.end_date !== ev.event_date) {
+      const endObj = new Date(ev.end_date + 'T00:00:00');
+      dateStr += ' – ' + endObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
     const isCustom = ev.type === 'custom';
     const canEdit = isCustom && (ev.created_by === me.id || isAdmin);
     const actions = canEdit ? `

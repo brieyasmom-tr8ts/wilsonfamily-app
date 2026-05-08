@@ -18,16 +18,16 @@ export async function onRequestGet({ request, env }) {
   const startDate = `${year}-${mm}-01`;
   const endDate = `${year}-${mm}-31`;
 
-  // Custom events for this month
+  // Custom events that overlap this month (multi-day events count if any day falls in range)
   const events = await env.DB.prepare(`
     SELECT e.id, e.title, e.description, e.event_date, e.end_date, e.recurring, e.color,
            e.created_by, m.name AS created_by_name
     FROM events e
     JOIN members m ON m.id = e.created_by
-    WHERE (e.event_date BETWEEN ? AND ?)
+    WHERE (e.event_date <= ? AND COALESCE(e.end_date, e.event_date) >= ?)
        OR (e.recurring = 'yearly' AND substr(e.event_date, 6) BETWEEN substr(?, 6) AND substr(?, 6))
     ORDER BY e.event_date
-  `).bind(startDate, endDate, startDate, endDate).all();
+  `).bind(endDate, startDate, startDate, endDate).all();
 
   // Birthdays and anniversaries from members
   const members = await env.DB.prepare(
@@ -35,6 +35,9 @@ export async function onRequestGet({ request, env }) {
   ).all();
 
   const autoEvents = [];
+  // Group anniversaries by exact date so couples share one event.
+  const anniversaryGroups = new Map();
+
   for (const m of (members.results || [])) {
     if (m.birthday) {
       const bday = m.birthday; // YYYY-MM-DD
@@ -57,19 +60,30 @@ export async function onRequestGet({ request, env }) {
       const anniv = m.anniversary;
       const annivMM = anniv.slice(5, 7);
       if (annivMM === mm) {
-        const annivYear = parseInt(anniv.slice(0, 4));
-        const years = year - annivYear;
-        autoEvents.push({
-          id: `anniv-${m.id}`,
-          title: `💍 ${m.name}'s Anniversary`,
-          description: years > 0 ? `${years} years!` : null,
-          event_date: `${year}-${anniv.slice(5)}`,
-          color: '#ef4444',
-          type: 'anniversary',
-          member_id: m.id
-        });
+        const key = anniv; // exact YYYY-MM-DD — same date means same anniversary
+        if (!anniversaryGroups.has(key)) anniversaryGroups.set(key, []);
+        anniversaryGroups.get(key).push(m);
       }
     }
+  }
+
+  for (const [anniv, group] of anniversaryGroups) {
+    const annivYear = parseInt(anniv.slice(0, 4));
+    const years = year - annivYear;
+    const names = group.length === 1
+      ? `${group[0].name}'s`
+      : group.length === 2
+        ? `${group[0].name} & ${group[1].name}'s`
+        : group.slice(0, -1).map(m => m.name).join(', ') + ` & ${group[group.length - 1].name}'s`;
+    autoEvents.push({
+      id: `anniv-${group.map(m => m.id).join('-')}`,
+      title: `💍 ${names} Anniversary`,
+      description: years > 0 ? `${years} years!` : null,
+      event_date: `${year}-${anniv.slice(5)}`,
+      color: '#ef4444',
+      type: 'anniversary',
+      member_ids: group.map(m => m.id)
+    });
   }
 
   return json({
