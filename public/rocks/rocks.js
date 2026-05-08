@@ -288,16 +288,10 @@ async function handleFileSelect(e, type) {
   const statusEl = $(`#${type}-upload-status`);
   const submitBtn = $('#rock-form').querySelector('button[type=submit]');
 
-  // Hide the upload label, show compact preview
-  const uploadLabel = previewEl.closest('.upload-area').querySelector('.upload-label');
-  if (uploadLabel) uploadLabel.style.display = 'none';
-
-  const url = URL.createObjectURL(file);
-  previewEl.classList.remove('hidden');
-  if (type === 'video') {
-    previewEl.innerHTML = `<video src="${url}" controls playsinline style="max-height:150px;width:100%;border-radius:12px;background:#000;object-fit:contain"></video>`;
-  } else {
-    previewEl.innerHTML = `<audio src="${url}" controls style="width:100%"></audio>`;
+  // Hide the upload label
+  const uploadArea = previewEl.closest('.upload-area');
+  if (uploadArea) {
+    uploadArea.querySelectorAll('.upload-label, label').forEach(el => el.style.display = 'none');
   }
 
   // Disable submit during upload
@@ -318,7 +312,7 @@ async function handleFileSelect(e, type) {
     if (res.ok) {
       uploadedMediaUrl = data.url;
       $('#rock-media-url').value = data.url;
-      statusEl.textContent = 'Uploaded! Ready to save.';
+      statusEl.textContent = '✓ ' + (type === 'video' ? 'Video' : 'Audio') + ' uploaded — scroll down to save';
       statusEl.className = 'upload-status done';
     } else {
       statusEl.textContent = data.error || 'Upload failed. Try again.';
