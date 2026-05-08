@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Wilson Family">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FAF6EF"/>
+      <stop offset="100%" stop-color="#F2EAD8"/>
+    </linearGradient>
+    <radialGradient id="orbGold" cx="0.25" cy="0.3" r="0.55">
+      <stop offset="0%" stop-color="#F5C56C" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#F5C56C" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbRose" cx="0.78" cy="0.78" r="0.5">
+      <stop offset="0%" stop-color="#E89BB1" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#E89BB1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="markGrad" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Cream background (full bleed; iOS rounds the corners) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Soft warm orbs echoing the homepage hero -->
+  <rect width="512" height="512" fill="url(#orbGold)"/>
+  <rect width="512" height="512" fill="url(#orbRose)"/>
+
+  <!-- Quiet ring ornament -->
+  <circle cx="256" cy="256" r="172" fill="none" stroke="#1D4ED8" stroke-width="1.6" opacity="0.18"/>
+  <circle cx="256" cy="256" r="120" fill="none" stroke="#1D4ED8" stroke-width="1.6" opacity="0.28"/>
+
+  <!-- Brand mark: 8-point sparkle ✦, centered -->
+  <g transform="translate(256 256)">
+    <!-- Long axis -->
+    <path d="M 0 -150 C 22 -52 22 -52 150 0 C 22 52 22 52 0 150 C -22 52 -22 52 -150 0 C -22 -52 -22 -52 0 -150 Z"
+          fill="url(#markGrad)"/>
+    <!-- Diagonal axis (rotated 45°) -->
+    <path d="M 0 -90 C 13 -32 13 -32 90 0 C 13 32 13 32 0 90 C -13 32 -13 32 -90 0 C -13 -32 -13 -32 0 -90 Z"
+          fill="url(#markGrad)" opacity="0.85" transform="rotate(45)"/>
+    <!-- Center highlight -->
+    <circle r="8" fill="#FAF6EF" opacity="0.9"/>
+  </g>
+</svg>

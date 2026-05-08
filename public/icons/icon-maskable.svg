@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="The Wilson Family">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FAF6EF"/>
+      <stop offset="100%" stop-color="#F2EAD8"/>
+    </linearGradient>
+    <linearGradient id="markGrad" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Maskable: keep mark inside the safe-zone (inner 80% — Android may crop a circle) -->
+  <g transform="translate(256 256)">
+    <path d="M 0 -110 C 16 -38 16 -38 110 0 C 16 38 16 38 0 110 C -16 38 -16 38 -110 0 C -16 -38 -16 -38 0 -110 Z"
+          fill="url(#markGrad)"/>
+    <path d="M 0 -66 C 10 -23 10 -23 66 0 C 10 23 10 23 0 66 C -10 23 -10 23 -66 0 C -10 -23 -10 -23 0 -66 Z"
+          fill="url(#markGrad)" opacity="0.85" transform="rotate(45)"/>
+    <circle r="6" fill="#FAF6EF" opacity="0.9"/>
+  </g>
+</svg>
