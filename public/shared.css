@@ -196,9 +196,10 @@ em { font-style: italic; }
   inset: 0;
   z-index: 50;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 24px;
+  overflow-y: auto;
   animation: fade-in 0.2s ease-out;
 }
 .modal-backdrop {
@@ -217,8 +218,7 @@ em { font-style: italic; }
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--rule);
   animation: rise 0.3s ease-out both;
-  max-height: 90vh;
-  overflow-y: auto;
+  margin: auto 0;
 }
 .modal-close {
   position: absolute;
