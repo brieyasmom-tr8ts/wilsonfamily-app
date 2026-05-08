@@ -28,6 +28,10 @@ function showStatus(msg) {
   if (el) el.textContent = msg;
   console.log('[scrapbook]', msg);
 }
+function clearStatus() {
+  const el = document.getElementById('scrap-status');
+  if (el) el.textContent = '';
+}
 
 window.addEventListener('error', (e) => {
   showStatus('JS Error: ' + e.message);
@@ -48,7 +52,7 @@ window.addEventListener('unhandledrejection', (e) => {
     }
     const data = await res.json();
     me = data.member;
-    showStatus('Welcome, ' + me.name + '! Loading scrapbook...');
+    clearStatus();
   } catch (e) {
     showStatus('Could not connect: ' + e.message);
     return;
