@@ -103,6 +103,202 @@
   margin-top: 6px;
 }
 
+/* Practice games menu */
+.games-section { margin-top: 48px; }
+.games-menu {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.game-menu-btn {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-body);
+}
+.game-menu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+.game-menu-btn:active { transform: translateY(0); }
+.game-menu-icon { font-size: 28px; margin-bottom: 4px; }
+.game-menu-label { font-size: 15px; font-weight: 700; color: var(--ink); }
+.game-menu-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+
+/* Scramble game */
+.scramble-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  min-height: 50px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.scramble-answer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  min-height: 50px;
+  padding: 12px;
+  border: 2px dashed var(--rule);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.scramble-word {
+  padding: 8px 14px;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: var(--font-body);
+}
+.scramble-word:hover { opacity: 0.85; transform: scale(1.05); }
+.scramble-word.placed {
+  background: var(--emerald);
+}
+.scramble-word.wrong {
+  background: var(--rose);
+  animation: shake 0.3s ease;
+}
+
+/* Erase game */
+.erase-board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  line-height: 2;
+  padding: 20px;
+  background: #2a3a2a;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.erase-word {
+  padding: 4px 10px;
+  color: #e8e0d0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+}
+.erase-word:hover { background: rgba(255,255,255,0.1); }
+.erase-word.erased {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Speed game */
+.speed-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.speed-word {
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 2px solid var(--rule);
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+.speed-word:hover { border-color: var(--primary); background: var(--primary-light); }
+.speed-word.correct {
+  background: var(--emerald);
+  color: white;
+  border-color: var(--emerald);
+  pointer-events: none;
+}
+.speed-word.wrong {
+  border-color: var(--rose);
+  animation: shake 0.3s ease;
+}
+.speed-timer {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.speed-result {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--emerald);
+  margin-top: 16px;
+}
+
+/* Type it game */
+.typeit-input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid var(--rule);
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink);
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.15s ease;
+  background: var(--bg);
+}
+.typeit-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: white;
+}
+.typeit-feedback {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.typeit-feedback.perfect {
+  background: rgba(16,185,129,0.1);
+  color: var(--emerald);
+  font-weight: 600;
+}
+.typeit-feedback.close {
+  background: rgba(245,158,11,0.1);
+  color: #b45309;
+}
+.typeit-match { color: var(--emerald); font-weight: 600; }
+.typeit-miss { color: var(--rose); text-decoration: underline; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
 /* Activities list */
 .activities-section { margin-top: 48px; }
 .activities-list {

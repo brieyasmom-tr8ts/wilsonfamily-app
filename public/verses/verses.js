@@ -60,6 +60,18 @@ function init() {
   $('#record-audio-btn').addEventListener('click', startAudioRecording);
   $('#media-file').addEventListener('change', handleMediaFile);
 
+  // Practice games menu
+  $$('.game-menu-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!verse) return;
+      const game = btn.dataset.game;
+      if (game === 'scramble') openScrambleGame();
+      else if (game === 'erase') openEraseGame();
+      else if (game === 'speed') openSpeedGame();
+      else if (game === 'typeit') openTypeItGame();
+    });
+  });
+
   // Archive
   $('#show-archive-btn').addEventListener('click', loadArchive);
 
@@ -284,6 +296,273 @@ function openGame(activityId, type) {
 
   // Scroll to game
   area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// =========================================================
+// PRACTICE GAMES
+// =========================================================
+
+function getVerseWords() {
+  return verse.text.split(/\s+/).filter(w => w.length > 0);
+}
+
+function showGameArea(html) {
+  const area = $('#game-area');
+  area.innerHTML = html;
+  area.classList.remove('hidden');
+  area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function closeGame() {
+  $('#game-area').classList.add('hidden');
+}
+
+// --- WORD SCRAMBLE ---
+function openScrambleGame() {
+  const words = getVerseWords();
+  const shuffled = [...words].sort(() => Math.random() - 0.5);
+  let placed = [];
+
+  showGameArea(`
+    <div class="game-title">🔀 Word Scramble</div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Tap the words in the correct order to rebuild the verse.</p>
+    <div id="scramble-answer" class="scramble-answer"><span style="color:var(--ink-soft);font-size:13px">Tap words below to place them here...</span></div>
+    <div id="scramble-pool" class="scramble-pool"></div>
+    <div class="game-actions">
+      <button class="btn-ghost" id="scramble-reset">Reset</button>
+      <button class="btn-ghost" id="scramble-close">Close</button>
+    </div>
+  `);
+
+  const pool = $('#scramble-pool');
+  const answer = $('#scramble-answer');
+
+  function renderPool() {
+    pool.innerHTML = shuffled.map((w, i) =>
+      placed.includes(i) ? '' : `<button class="scramble-word" data-idx="${i}">${esc(w)}</button>`
+    ).join('');
+    pool.querySelectorAll('.scramble-word').forEach(btn => {
+      btn.addEventListener('click', () => tapWord(parseInt(btn.dataset.idx)));
+    });
+  }
+
+  function renderAnswer() {
+    if (placed.length === 0) {
+      answer.innerHTML = '<span style="color:var(--ink-soft);font-size:13px">Tap words below to place them here...</span>';
+      return;
+    }
+    answer.innerHTML = placed.map((idx, pos) => {
+      const correct = shuffled[idx] === words[pos];
+      return `<span class="scramble-word ${correct ? 'placed' : 'wrong'}">${esc(shuffled[idx])}</span>`;
+    }).join('');
+    // Allow removing from answer by tapping
+    answer.querySelectorAll('.scramble-word').forEach((el, pos) => {
+      el.addEventListener('click', () => {
+        placed.splice(pos, 1);
+        renderPool();
+        renderAnswer();
+      });
+    });
+  }
+
+  function tapWord(idx) {
+    placed.push(idx);
+    renderPool();
+    renderAnswer();
+    // Check win
+    if (placed.length === words.length) {
+      const allCorrect = placed.every((idx, pos) => shuffled[idx] === words[pos]);
+      if (allCorrect) {
+        answer.innerHTML += '<div class="speed-result" style="width:100%;margin-top:12px">🎉 Perfect!</div>';
+      }
+    }
+  }
+
+  renderPool();
+  renderAnswer();
+
+  $('#scramble-reset').addEventListener('click', () => {
+    placed = [];
+    shuffled.sort(() => Math.random() - 0.5);
+    renderPool();
+    renderAnswer();
+  });
+  $('#scramble-close').addEventListener('click', closeGame);
+}
+
+// --- ERASE THE BOARD ---
+function openEraseGame() {
+  const words = getVerseWords();
+
+  showGameArea(`
+    <div class="game-title">🧹 Erase the Board</div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Tap words to erase them. Try to say the verse with the gaps!</p>
+    <div id="erase-board" class="erase-board"></div>
+    <div class="game-actions">
+      <button class="btn-ghost" id="erase-reset">Reset</button>
+      <button class="btn-primary" id="erase-all">Erase all</button>
+      <button class="btn-ghost" id="erase-close">Close</button>
+    </div>
+  `);
+
+  const board = $('#erase-board');
+  const erased = new Set();
+
+  function renderBoard() {
+    board.innerHTML = words.map((w, i) =>
+      `<button class="erase-word ${erased.has(i) ? 'erased' : ''}" data-idx="${i}">${esc(w)}</button>`
+    ).join('');
+    board.querySelectorAll('.erase-word:not(.erased)').forEach(btn => {
+      btn.addEventListener('click', () => {
+        erased.add(parseInt(btn.dataset.idx));
+        renderBoard();
+        if (erased.size === words.length) {
+          board.innerHTML = '<div style="color:#e8e0d0;text-align:center;padding:20px;font-size:18px;font-style:italic">The board is empty. Can you say the whole verse? 🧠</div>';
+        }
+      });
+    });
+  }
+
+  renderBoard();
+
+  $('#erase-all').addEventListener('click', () => {
+    words.forEach((_, i) => erased.add(i));
+    renderBoard();
+    board.innerHTML = '<div style="color:#e8e0d0;text-align:center;padding:20px;font-size:18px;font-style:italic">The board is empty. Can you say the whole verse? 🧠</div>';
+  });
+  $('#erase-reset').addEventListener('click', () => { erased.clear(); renderBoard(); });
+  $('#erase-close').addEventListener('click', closeGame);
+}
+
+// --- SPEED ROUND ---
+function openSpeedGame() {
+  const words = getVerseWords();
+  const shuffled = [...words].sort(() => Math.random() - 0.5);
+  let nextIdx = 0;
+  let startTime = null;
+  let timerInterval = null;
+
+  showGameArea(`
+    <div class="game-title">⚡ Speed Round</div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Tap the words in the correct order as fast as you can!</p>
+    <div id="speed-timer" class="speed-timer">0.0s</div>
+    <div id="speed-pool" class="speed-pool"></div>
+    <div id="speed-result"></div>
+    <div class="game-actions">
+      <button class="btn-ghost" id="speed-restart">Restart</button>
+      <button class="btn-ghost" id="speed-close">Close</button>
+    </div>
+  `);
+
+  const pool = $('#speed-pool');
+  const timerEl = $('#speed-timer');
+  const resultEl = $('#speed-result');
+
+  function renderPool() {
+    pool.innerHTML = shuffled.map((w, i) =>
+      `<button class="speed-word" data-orig-idx="${words.indexOf(w)}" data-shuf-idx="${i}">${esc(w)}</button>`
+    ).join('');
+
+    // Need to handle duplicate words properly
+    const wordPositions = {};
+    words.forEach((w, i) => {
+      if (!wordPositions[w]) wordPositions[w] = [];
+      wordPositions[w].push(i);
+    });
+
+    pool.querySelectorAll('.speed-word').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!startTime) {
+          startTime = performance.now();
+          timerInterval = setInterval(() => {
+            timerEl.textContent = ((performance.now() - startTime) / 1000).toFixed(1) + 's';
+          }, 100);
+        }
+
+        const clickedWord = shuffled[parseInt(btn.dataset.shufIdx)];
+        if (clickedWord === words[nextIdx]) {
+          btn.classList.add('correct');
+          nextIdx++;
+          if (nextIdx === words.length) {
+            clearInterval(timerInterval);
+            const time = ((performance.now() - startTime) / 1000).toFixed(1);
+            timerEl.textContent = time + 's';
+            resultEl.innerHTML = `<div class="speed-result">🎉 Done in ${time} seconds!</div>`;
+          }
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(() => btn.classList.remove('wrong'), 300);
+        }
+      });
+    });
+  }
+
+  renderPool();
+
+  $('#speed-restart').addEventListener('click', () => {
+    nextIdx = 0;
+    startTime = null;
+    clearInterval(timerInterval);
+    timerEl.textContent = '0.0s';
+    resultEl.innerHTML = '';
+    shuffled.sort(() => Math.random() - 0.5);
+    renderPool();
+  });
+  $('#speed-close').addEventListener('click', () => { clearInterval(timerInterval); closeGame(); });
+}
+
+// --- TYPE IT OUT ---
+function openTypeItGame() {
+  showGameArea(`
+    <div class="game-title">⌨️ Type It Out</div>
+    <p style="text-align:center;color:var(--ink-soft);margin-bottom:16px">Type the verse from memory. No peeking!</p>
+    <textarea id="typeit-input" class="typeit-input" placeholder="Start typing the verse..." rows="4"></textarea>
+    <div id="typeit-feedback" class="typeit-feedback" style="display:none"></div>
+    <div class="game-actions" style="margin-top:16px">
+      <button class="btn-primary" id="typeit-check">Check it</button>
+      <button class="btn-ghost" id="typeit-close">Close</button>
+    </div>
+  `);
+
+  const input = $('#typeit-input');
+  const feedback = $('#typeit-feedback');
+  input.focus();
+
+  $('#typeit-check').addEventListener('click', () => {
+    const typed = input.value.trim();
+    if (!typed) return;
+
+    const targetWords = verse.text.toLowerCase().replace(/[^\w\s']/g, '').split(/\s+/);
+    const typedWords = typed.toLowerCase().replace(/[^\w\s']/g, '').split(/\s+/);
+
+    let correct = 0;
+    const maxLen = Math.max(targetWords.length, typedWords.length);
+    const highlighted = [];
+
+    for (let i = 0; i < maxLen; i++) {
+      const tw = targetWords[i] || '';
+      const uw = typedWords[i] || '';
+      if (tw === uw) {
+        correct++;
+        highlighted.push(`<span class="typeit-match">${esc(verse.text.split(/\s+/)[i] || tw)}</span>`);
+      } else if (uw) {
+        highlighted.push(`<span class="typeit-miss">${esc(uw)}</span>`);
+      } else {
+        highlighted.push(`<span class="typeit-miss">___</span>`);
+      }
+    }
+
+    const pct = Math.round((correct / targetWords.length) * 100);
+    const isPerfect = pct === 100;
+
+    feedback.style.display = '';
+    feedback.className = 'typeit-feedback ' + (isPerfect ? 'perfect' : 'close');
+    feedback.innerHTML = isPerfect
+      ? '🎉 Perfect! You got every word right!'
+      : `<strong>${pct}% correct</strong> (${correct}/${targetWords.length} words)<br><br>${highlighted.join(' ')}`;
+  });
+
+  $('#typeit-close').addEventListener('click', closeGame);
 }
 
 function renderRecordings() {
