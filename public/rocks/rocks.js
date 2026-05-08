@@ -76,7 +76,8 @@ function init() {
   let audioChunks = [];
   let isRecording = false;
 
-  $('#record-audio-btn').addEventListener('click', async () => {
+  const recordBtn = $('#record-audio-btn');
+  if (recordBtn) recordBtn.addEventListener('click', async () => {
     if (isRecording) {
       // Stop
       audioRecorder.stop();
