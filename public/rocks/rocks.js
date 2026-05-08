@@ -75,11 +75,9 @@ function init() {
   $('#rock-video-file').addEventListener('change', (e) => handleFileSelect(e, 'video'));
   $('#rock-audio-file').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
 
-  // Recording
+  // Audio recording
   $('#record-audio-btn').addEventListener('click', () => startRecording('audio'));
   $('#stop-recording-btn').addEventListener('click', stopRecording);
-  $('#record-video-btn').addEventListener('click', () => startRecording('video'));
-  $('#stop-video-btn').addEventListener('click', stopRecording);
 
   // Modal
   $('#add-rock-btn').addEventListener('click', () => openRockModal());
