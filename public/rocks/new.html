@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Place a Rock · The Wilson Family</title>
+<link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta name="theme-color" content="#2563eb" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css" />
+<style>
+.new-rock-page {
+  padding: 20px 16px 80px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.new-rock-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.back-link {
+  width: 40px; height: 40px;
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--ink);
+}
+.new-rock-title {
+  font-size: 22px;
+  font-weight: 800;
+}
+.new-rock-title em { color: var(--primary); }
+.field { margin-bottom: 16px; }
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+  display: block;
+}
+.field input, .field textarea, .field select {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+}
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.color-opt {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+}
+.color-opt.selected {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink);
+}
+.type-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  padding: 3px;
+  border-radius: 8px;
+}
+.type-tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 6px;
+}
+.type-tab.active {
+  background: var(--primary);
+  color: white;
+}
+.upload-btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: 2px dashed var(--rule);
+  border-radius: 12px;
+  background: var(--bg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: center;
+}
+.upload-btn:hover { border-color: var(--primary); color: var(--primary); }
+.status-msg {
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+.status-msg.uploading { color: var(--primary); background: var(--primary-light); }
+.status-msg.done { color: var(--emerald); background: var(--emerald-light); }
+.status-msg.error { color: var(--rose); background: rgba(239,68,68,0.08); }
+.save-btn {
+  width: 100%;
+  margin-top: 20px;
+}
+.err-msg {
+  color: var(--rose);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 8px;
+}
+</style>
+</head>
+<body>
+
+<div class="new-rock-page">
+  <div class="new-rock-header">
+    <a href="/rocks/" class="back-link">&larr;</a>
+    <h1 class="new-rock-title">Place a <em>rock</em></h1>
+  </div>
+
+  <div class="field">
+    <span class="field-label">Word or phrase on your rock</span>
+    <input id="rock-word" type="text" required maxlength="60" placeholder="e.g. Provision, Healed, Faithful" />
+  </div>
+
+  <div class="field">
+    <span class="field-label">Pick a color</span>
+    <div id="color-grid" class="color-grid"></div>
+  </div>
+
+  <div class="field">
+    <span class="field-label">Tell the story</span>
+    <div class="type-tabs">
+      <button type="button" class="type-tab active" data-type="text">Write</button>
+      <button type="button" class="type-tab" data-type="video">Video</button>
+      <button type="button" class="type-tab" data-type="audio">Audio</button>
+    </div>
+  </div>
+
+  <div id="input-text" class="field">
+    <textarea id="rock-story" rows="4" placeholder="What happened? How did God show up?"></textarea>
+  </div>
+
+  <div id="input-video" class="field hidden">
+    <input id="video-file" type="file" accept="video/*" style="display:none" />
+    <button type="button" id="pick-video" class="upload-btn">🎬 Record or choose a video</button>
+    <div id="video-status"></div>
+    <textarea id="video-caption" rows="2" placeholder="Add a caption (optional)" style="margin-top:8px"></textarea>
+  </div>
+
+  <div id="input-audio" class="field hidden">
+    <button type="button" id="audio-record-btn" class="upload-btn">🎙️ Tap to start recording</button>
+    <div id="audio-status"></div>
+    <textarea id="audio-caption" rows="2" placeholder="Add a caption (optional)" style="margin-top:8px"></textarea>
+  </div>
+
+  <p id="error-msg" class="err-msg hidden"></p>
+  <button id="save-btn" class="btn-primary save-btn">Place this rock</button>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+const COLORS = ['#1e3a5f','#2d5a27','#7c3238','#4a3b6b','#2c5f5c','#8b6914','#3d4f7c','#6b3a3a','#1f5f4f','#5c4a1e','#3b3b3b','#64748b'];
+let selectedColor = COLORS[0];
+let selectedType = 'text';
+let mediaUrl = null;
+let uploading = false;
+let audioRecorder = null;
+let audioChunks = [];
+let recording = false;
+
+// Auth check
+(async () => {
+  const res = await fetch('/api/auth/me');
+  if (!res.ok) { window.location.replace('/'); return; }
+
+  // Color grid
+  $('#color-grid').innerHTML = COLORS.map(c =>
+    `<div class="color-opt${c===selectedColor?' selected':''}" data-c="${c}" style="background:${c}"></div>`
+  ).join('');
+  $('#color-grid').addEventListener('click', e => {
+    const el = e.target.closest('.color-opt');
+    if (!el) return;
+    selectedColor = el.dataset.c;
+    $$('.color-opt').forEach(o => o.classList.toggle('selected', o === el));
+  });
+
+  // Type tabs
+  $$('.type-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      selectedType = tab.dataset.type;
+      $$('.type-tab').forEach(t => t.classList.toggle('active', t === tab));
+      $('#input-text').classList.toggle('hidden', selectedType !== 'text');
+      $('#input-video').classList.toggle('hidden', selectedType !== 'video');
+      $('#input-audio').classList.toggle('hidden', selectedType !== 'audio');
+    });
+  });
+
+  // Video file picker
+  $('#pick-video').addEventListener('click', () => $('#video-file').click());
+  $('#video-file').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await uploadFile(file, 'video');
+  });
+
+  // Audio recording
+  $('#audio-record-btn').addEventListener('click', async () => {
+    if (recording) {
+      audioRecorder.stop();
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = [];
+      audioRecorder = new MediaRecorder(stream);
+      audioRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+      audioRecorder.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        recording = false;
+        $('#audio-record-btn').textContent = '🎙️ Tap to start recording';
+        $('#audio-record-btn').style.borderColor = '';
+        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+        await uploadFile(file, 'audio');
+      };
+      audioRecorder.start();
+      recording = true;
+      $('#audio-record-btn').textContent = '⏹ Tap to STOP recording';
+      $('#audio-record-btn').style.borderColor = '#ef4444';
+    } catch (err) {
+      alert('Microphone access needed. Check your browser settings.');
+    }
+  });
+
+  // Save
+  $('#save-btn').addEventListener('click', saveRock);
+})();
+
+async function uploadFile(file, type) {
+  const statusEl = $(`#${type}-status`);
+  uploading = true;
+  $('#save-btn').disabled = true;
+  $('#save-btn').textContent = 'Uploading...';
+  statusEl.innerHTML = '<div class="status-msg uploading">Uploading... please wait</div>';
+
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    const res = await fetch('/api/media/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (res.ok) {
+      mediaUrl = data.url;
+      statusEl.innerHTML = '<div class="status-msg done">✓ Uploaded!</div>';
+    } else {
+      statusEl.innerHTML = '<div class="status-msg error">' + (data.error || 'Upload failed') + '</div>';
+    }
+  } catch (e) {
+    statusEl.innerHTML = '<div class="status-msg error">Upload failed. Try again.</div>';
+  } finally {
+    uploading = false;
+    $('#save-btn').disabled = false;
+    $('#save-btn').textContent = 'Place this rock';
+  }
+}
+
+async function saveRock() {
+  const word = $('#rock-word').value.trim();
+  if (!word) { showErr('Enter a word for your rock'); return; }
+  if (uploading) { showErr('Wait for upload to finish'); return; }
+  if ((selectedType === 'video' || selectedType === 'audio') && !mediaUrl) {
+    showErr('Please record or upload your ' + selectedType + ' first');
+    return;
+  }
+
+  const caption = selectedType === 'text' ? $('#rock-story').value.trim()
+    : selectedType === 'video' ? $('#video-caption').value.trim()
+    : $('#audio-caption').value.trim();
+
+  $('#save-btn').disabled = true;
+  $('#save-btn').textContent = 'Saving...';
+  hideErr();
+
+  try {
+    const res = await fetch('/api/rocks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        word, color: selectedColor, media_type: selectedType,
+        story: caption || null,
+        media_url: (selectedType === 'video' || selectedType === 'audio') ? mediaUrl : null
+      })
+    });
+    if (res.ok) {
+      window.location.replace('/rocks/');
+    } else {
+      const data = await res.json().catch(() => ({}));
+      showErr(data.error || 'Could not save');
+    }
+  } catch (e) {
+    showErr('Network error. Try again.');
+  } finally {
+    $('#save-btn').disabled = false;
+    $('#save-btn').textContent = 'Place this rock';
+  }
+}
+
+function showErr(msg) { const el = $('#error-msg'); el.textContent = msg; el.classList.remove('hidden'); }
+function hideErr() { $('#error-msg').classList.add('hidden'); }
+</script>
+</body>
+</html>
