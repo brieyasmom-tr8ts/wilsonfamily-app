@@ -220,7 +220,7 @@ function renderPage() {
         ${p.caption ? `<div class="page-caption">${esc(p.caption)}</div>` : ''}
         ${p.tags.length > 0 ? `<div class="page-tags">${p.tags.map(t => `<span class="page-tag">${esc(t.avatar_emoji || '🌱')} ${esc(t.name)}</span>`).join('')}</div>` : ''}
         <div class="page-meta">${esc(p.uploaded_by_name)} · ${dateStr}</div>
-        ${canDelete ? `<div class="page-actions"><button class="page-del-btn" id="page-delete">Delete this page</button></div>` : ''}
+        ${canDelete ? `<div class="page-actions"><button class="page-edit-btn" id="page-edit">Edit</button> <button class="page-del-btn" id="page-delete">Delete</button></div>` : ''}
       </div>
       <div class="page-nav">
         <button class="page-nav-btn" id="prev-page" ${currentPageIdx === 0 ? 'disabled' : ''}>&larr; Previous</button>
@@ -236,6 +236,9 @@ function renderPage() {
 
   const delBtn = document.getElementById('page-delete');
   if (delBtn) delBtn.onclick = () => deletePhoto(p.id);
+
+  const editBtn = document.getElementById('page-edit');
+  if (editBtn) editBtn.onclick = () => openEditPhoto(p);
 
   document.onkeydown = (e) => {
     if (e.key === 'ArrowLeft' && currentPageIdx > 0) { currentPageIdx--; renderPage(); }
@@ -338,6 +341,31 @@ async function submitPhoto(e) {
     btn.disabled = false;
     btn.textContent = 'Add to scrapbook';
   }
+}
+
+function openEditPhoto(p) {
+  const caption = prompt('Edit caption:', p.caption || '');
+  if (caption === null) return; // cancelled
+
+  const styleChoices = PAGE_STYLES.map(s => s.id).join(', ');
+  const style = prompt('Page style (' + styleChoices + '):', p.page_style || 'classic');
+  if (style === null) return;
+
+  fetch('/api/photos/update', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: p.id,
+      caption: caption.trim() || null,
+      page_style: PAGE_STYLES.find(s => s.id === style) ? style : p.page_style
+    })
+  }).then(res => {
+    if (res.ok) {
+      p.caption = caption.trim() || null;
+      if (PAGE_STYLES.find(s => s.id === style)) p.page_style = style;
+      renderPage();
+    }
+  });
 }
 
 function esc(s) {

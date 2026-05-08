@@ -111,6 +111,19 @@
   position: relative;
   z-index: 1;
 }
+.page-edit-btn {
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--primary);
+  background: transparent;
+  cursor: pointer;
+  color: var(--primary);
+  margin-right: 8px;
+}
+.page-edit-btn:hover { background: var(--primary-light); }
 .page-del-btn {
   font-size: 12px;
   font-weight: 600;
