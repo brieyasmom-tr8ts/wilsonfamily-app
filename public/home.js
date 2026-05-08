@@ -84,9 +84,15 @@ function renderBirthdays(birthdays) {
 
 function renderFeed(feed) {
   if (feed.length === 0) return;
+  if (sessionStorage.getItem('dismiss_activity')) return;
   const section = $('#activity-section');
   const container = $('#activity-feed');
   section.classList.remove('hidden');
+
+  $('#dismiss-activity').addEventListener('click', () => {
+    section.classList.add('hidden');
+    sessionStorage.setItem('dismiss_activity', '1');
+  });
 
   container.innerHTML = feed.map(item => {
     const emoji = esc(item.avatar_emoji || '🌱');

@@ -375,6 +375,39 @@
 .bday-today { color: var(--accent); }
 
 /* Activity feed */
+.section-heading-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: -28px;
+}
+.section-heading-wrap .section-heading {
+  margin-bottom: 0;
+}
+.dismiss-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.dismiss-btn:hover {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--ink-soft);
+}
 .activity-section {
   margin-top: 56px;
   animation: rise 0.5s ease-out both;
