@@ -123,9 +123,8 @@
   inset: 0;
   z-index: 50;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
+  flex-direction: column;
+  overflow-y: auto;
   animation: fade-in 0.2s ease-out;
 }
 .story-backdrop {
@@ -136,11 +135,13 @@
 }
 .story-card {
   position: relative;
+  z-index: 1;
   background: var(--surface);
   border-radius: var(--radius-lg);
   padding: 40px 36px 32px;
   max-width: 540px;
-  width: 100%;
+  width: calc(100% - 32px);
+  margin: 16px auto;
   box-shadow: var(--shadow-lg);
   animation: rise 0.3s ease-out both;
   text-align: center;
@@ -302,7 +303,12 @@
   border-radius: 12px;
   overflow: hidden;
 }
-.media-preview video,
+.media-preview video {
+  width: 100%;
+  max-height: 200px;
+  border-radius: 12px;
+  background: #000;
+}
 .media-preview audio {
   width: 100%;
   border-radius: 12px;

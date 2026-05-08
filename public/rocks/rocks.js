@@ -268,7 +268,7 @@ async function submitRock(e) {
       return;
     }
     closeRockModal();
-    loadRocks();
+    try { await loadRocks(); } catch (e) { console.error('Reload failed:', e); }
   } finally {
     btn.disabled = false;
     btn.textContent = editingId ? 'Save changes' : 'Place this rock';
