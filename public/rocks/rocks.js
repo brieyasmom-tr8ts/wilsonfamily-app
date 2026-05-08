@@ -71,7 +71,41 @@ function init() {
 
   // File upload handlers
   $('#rock-video-file').addEventListener('change', (e) => handleFileSelect(e, 'video'));
-  $('#rock-audio-file').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
+
+  // Audio recording via MediaRecorder
+  let audioRecorder = null;
+  let audioChunks = [];
+  let isRecording = false;
+
+  $('#record-audio-btn').addEventListener('click', async () => {
+    if (isRecording) {
+      // Stop
+      audioRecorder.stop();
+      return;
+    }
+    // Start
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunks = [];
+      audioRecorder = new MediaRecorder(stream);
+      audioRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
+      audioRecorder.onstop = () => {
+        stream.getTracks().forEach(t => t.stop());
+        isRecording = false;
+        $('#record-audio-label').textContent = 'Tap to record';
+        $('#record-audio-btn').style.background = '';
+        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+        handleFileSelect({ target: { files: [file] } }, 'audio');
+      };
+      audioRecorder.start();
+      isRecording = true;
+      $('#record-audio-label').textContent = '⏹ Tap to stop';
+      $('#record-audio-btn').style.background = 'rgba(239,68,68,0.1)';
+    } catch (e) {
+      alert('Microphone access needed. Please allow it in your browser settings.');
+    }
+  });
 
   // Modal
   $('#add-rock-btn').addEventListener('click', () => openRockModal());
