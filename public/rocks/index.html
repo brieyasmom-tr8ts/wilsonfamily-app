@@ -94,11 +94,16 @@
       </div>
       <div id="story-input-video" class="story-input hidden">
         <div class="upload-area">
-          <input id="rock-video-file" type="file" accept="video/*" capture="environment" class="file-input" />
-          <label for="rock-video-file" class="upload-label">
-            <span class="upload-icon">🎬</span>
-            <span>Record or choose a video</span>
-          </label>
+          <div class="audio-options">
+            <button type="button" id="record-video-btn" class="record-btn">🎬 Record now</button>
+            <span style="color:var(--ink-soft);font-size:13px">or</span>
+            <label for="rock-video-file" class="upload-file-btn">📁 Choose file</label>
+            <input id="rock-video-file" type="file" accept="video/*" class="file-input" />
+          </div>
+          <div id="video-recording-controls" class="recording-controls hidden">
+            <div class="recording-indicator">● Recording...</div>
+            <button type="button" id="stop-video-btn" class="btn-primary" style="padding:10px 24px">Stop</button>
+          </div>
           <div id="video-preview" class="media-preview hidden"></div>
           <p id="video-upload-status" class="upload-status hidden"></p>
         </div>

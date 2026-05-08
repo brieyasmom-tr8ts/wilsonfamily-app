@@ -20,7 +20,7 @@ let editingId = null;
 let uploadedMediaUrl = null;
 let isUploading = false;
 let mediaRecorder = null;
-let audioChunks = [];
+let recordChunks = [];
 
 // Boot
 (async function boot() {
@@ -75,9 +75,11 @@ function init() {
   $('#rock-video-file').addEventListener('change', (e) => handleFileSelect(e, 'video'));
   $('#rock-audio-file').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
 
-  // Audio recording
-  $('#record-audio-btn').addEventListener('click', startRecording);
+  // Recording
+  $('#record-audio-btn').addEventListener('click', () => startRecording('audio'));
   $('#stop-recording-btn').addEventListener('click', stopRecording);
+  $('#record-video-btn').addEventListener('click', () => startRecording('video'));
+  $('#stop-video-btn').addEventListener('click', stopRecording);
 
   // Modal
   $('#add-rock-btn').addEventListener('click', () => openRockModal());
@@ -338,41 +340,58 @@ async function handleFileSelect(e, type) {
   }
 }
 
-// Audio recording
-async function startRecording() {
+// Recording (audio or video)
+let recordingType = null;
+
+async function startRecording(type) {
+  recordingType = type;
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioChunks = [];
+    const constraints = type === 'video'
+      ? { audio: true, video: { facingMode: 'user' } }
+      : { audio: true };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    recordChunks = [];
     mediaRecorder = new MediaRecorder(stream);
 
     mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunks.push(e.data);
+      if (e.data.size > 0) recordChunks.push(e.data);
     };
 
     mediaRecorder.onstop = async () => {
       stream.getTracks().forEach(t => t.stop());
-      const blob = new Blob(audioChunks, { type: 'audio/webm' });
-      const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+      const mimeType = type === 'video' ? 'video/webm' : 'audio/webm';
+      const blob = new Blob(recordChunks, { type: mimeType });
+      const file = new File([blob], `recording.webm`, { type: mimeType });
 
-      // Show preview
-      const previewEl = $('#audio-preview');
+      const previewEl = $(`#${type}-preview`);
       previewEl.classList.remove('hidden');
-      previewEl.innerHTML = `<audio src="${URL.createObjectURL(blob)}" controls style="width:100%"></audio>`;
+      if (type === 'video') {
+        previewEl.innerHTML = `<video src="${URL.createObjectURL(blob)}" controls playsinline style="width:100%;border-radius:12px"></video>`;
+      } else {
+        previewEl.innerHTML = `<audio src="${URL.createObjectURL(blob)}" controls style="width:100%"></audio>`;
+      }
 
-      // Show recording controls back to normal
-      $('#recording-controls').classList.add('hidden');
-      $('.audio-options').style.display = '';
+      // Hide recording controls, show options again
+      const controlsId = type === 'video' ? '#video-recording-controls' : '#recording-controls';
+      $(controlsId).classList.add('hidden');
+      const optionsEl = $(controlsId).previousElementSibling;
+      if (optionsEl) optionsEl.style.display = '';
 
       // Upload
       const fakeEvent = { target: { files: [file] } };
-      handleFileSelect(fakeEvent, 'audio');
+      handleFileSelect(fakeEvent, type);
     };
 
+    // Hide options, show recording controls
+    const controlsId = type === 'video' ? '#video-recording-controls' : '#recording-controls';
+    $(controlsId).classList.remove('hidden');
+    const optionsEl = $(controlsId).previousElementSibling;
+    if (optionsEl) optionsEl.style.display = 'none';
+
     mediaRecorder.start();
-    $('.audio-options').style.display = 'none';
-    $('#recording-controls').classList.remove('hidden');
   } catch (e) {
-    alert('Could not access microphone. Please allow microphone access and try again.');
+    const what = type === 'video' ? 'camera and microphone' : 'microphone';
+    alert(`Could not access ${what}. Please allow access and try again.`);
     console.error('Recording error:', e);
   }
 }
