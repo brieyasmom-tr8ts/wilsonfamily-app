@@ -60,16 +60,19 @@ export async function onRequestGet({ request, env }) {
       const anniv = m.anniversary;
       const annivMM = anniv.slice(5, 7);
       if (annivMM === mm) {
-        const key = anniv; // exact YYYY-MM-DD — same date means same anniversary
+        // Group by MM-DD so a couple shares one event even if their
+        // stored anniversary years differ (one may not know exact year).
+        const key = anniv.slice(5);
         if (!anniversaryGroups.has(key)) anniversaryGroups.set(key, []);
         anniversaryGroups.get(key).push(m);
       }
     }
   }
 
-  for (const [anniv, group] of anniversaryGroups) {
-    const annivYear = parseInt(anniv.slice(0, 4));
-    const years = year - annivYear;
+  for (const [mmdd, group] of anniversaryGroups) {
+    // Use the earliest year in the group for "X years!" — most likely the wedding year.
+    const earliestYear = Math.min(...group.map(g => parseInt(g.anniversary.slice(0, 4))));
+    const years = year - earliestYear;
     const names = group.length === 1
       ? `${group[0].name}'s`
       : group.length === 2
@@ -79,7 +82,7 @@ export async function onRequestGet({ request, env }) {
       id: `anniv-${group.map(m => m.id).join('-')}`,
       title: `💍 ${names} Anniversary`,
       description: years > 0 ? `${years} years!` : null,
-      event_date: `${year}-${anniv.slice(5)}`,
+      event_date: `${year}-${mmdd}`,
       color: '#ef4444',
       type: 'anniversary',
       member_ids: group.map(m => m.id)
