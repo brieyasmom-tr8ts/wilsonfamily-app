@@ -106,14 +106,10 @@
       </div>
       <div id="story-input-audio" class="story-input hidden">
         <div class="upload-area">
-          <input id="rock-audio-record" type="file" accept="audio/*" capture="microphone" class="file-input" />
-          <label for="rock-audio-record" class="upload-label" style="margin-bottom:8px">
+          <input id="rock-audio-file" type="file" accept="audio/*,.m4a,.mp3,.wav,.ogg,.webm" class="file-input" />
+          <label for="rock-audio-file" class="upload-label">
             <span class="upload-icon">🎙️</span>
-            <span>Record audio</span>
-          </label>
-          <input id="rock-audio-file" type="file" accept="audio/*" class="file-input" />
-          <label for="rock-audio-file" class="upload-label" style="padding:14px 16px;border-style:solid;background:var(--surface)">
-            <span>📁 Choose audio file</span>
+            <span>Choose or record audio</span>
           </label>
           <div id="audio-preview" class="media-preview hidden"></div>
           <p id="audio-upload-status" class="upload-status hidden"></p>

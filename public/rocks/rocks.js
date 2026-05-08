@@ -72,7 +72,6 @@ function init() {
   // File upload handlers
   $('#rock-video-file').addEventListener('change', (e) => handleFileSelect(e, 'video'));
   $('#rock-audio-file').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
-  $('#rock-audio-record').addEventListener('change', (e) => handleFileSelect(e, 'audio'));
 
   // Modal
   $('#add-rock-btn').addEventListener('click', () => openRockModal());
