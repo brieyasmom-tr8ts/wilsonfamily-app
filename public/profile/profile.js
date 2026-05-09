@@ -18,6 +18,18 @@ let isMe = false;
   $('#user-name').textContent = me.name;
   $('#user-emoji').textContent = me.avatar_emoji || '🌱';
 
+  $('#back-link').addEventListener('click', () => {
+    let sameOrigin = false;
+    if (document.referrer) {
+      try { sameOrigin = new URL(document.referrer).origin === location.origin; } catch {}
+    }
+    if (sameOrigin && history.length > 1) {
+      history.back();
+    } else {
+      window.location.href = '/family-members/';
+    }
+  });
+
   // Check if viewing another member
   const params = new URLSearchParams(window.location.search);
   const viewId = params.get('id') || me.id;

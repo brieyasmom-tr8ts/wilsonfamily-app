@@ -188,18 +188,23 @@
   white-space: nowrap;
 }
 .item-delete {
-  font-size: 16px;
+  font-size: 18px;
+  line-height: 1;
   color: var(--ink-soft);
   background: none;
   border: none;
   cursor: pointer;
-  padding: 2px 6px;
-  border-radius: 4px;
-  opacity: 0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0.4;
   transition: all 0.15s ease;
 }
 .item-row:hover .item-delete { opacity: 1; }
 .item-delete:hover { color: var(--rose); }
+/* Touch devices have no hover — keep delete visibly tappable */
+@media (hover: none) {
+  .item-delete { opacity: 0.7; }
+}
 
 /* Tag grid for visibility */
 .tag-grid {
