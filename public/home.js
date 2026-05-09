@@ -84,17 +84,24 @@ function renderBirthdays(birthdays) {
 
 function renderFeed(feed) {
   if (feed.length === 0) return;
-  if (sessionStorage.getItem('dismiss_activity')) return;
+
+  // Only show items newer than the last-dismissed timestamp.
+  const dismissedAt = parseInt(localStorage.getItem('activity_dismissed_at') || '0', 10);
+  const fresh = feed.filter(item => (item.created_at || 0) > dismissedAt);
+  if (fresh.length === 0) return;
+
   const section = $('#activity-section');
   const container = $('#activity-feed');
   section.classList.remove('hidden');
 
-  $('#dismiss-activity').addEventListener('click', () => {
+  $('#dismiss-activity').onclick = () => {
     section.classList.add('hidden');
-    sessionStorage.setItem('dismiss_activity', '1');
-  });
+    // Mark everything currently shown as seen — anything newer will reappear.
+    const latestTs = fresh.reduce((max, it) => Math.max(max, it.created_at || 0), 0);
+    localStorage.setItem('activity_dismissed_at', String(latestTs));
+  };
 
-  container.innerHTML = feed.map(item => {
+  container.innerHTML = fresh.map(item => {
     const emoji = esc(item.avatar_emoji || '🌱');
     const name = esc(item.name);
     const desc = activityDescription(item);
